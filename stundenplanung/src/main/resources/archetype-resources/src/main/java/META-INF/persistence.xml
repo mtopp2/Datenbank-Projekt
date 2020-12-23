@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="stundenplanung">
+		<jta-data-source>jdbc/stundenplanung</jta-data-source>
+		<class>model.Account</class>
+		<class>model.Benutzergruppe</class>
+		<class>model.Dozenten</class>
+		<class>model.Faculty</class>
+		<class>model.Lehrveranstaltungsart</class>
+		<class>model.Location</class>
+		<class>model.Modul</class>
+		<class>model.Raum</class>
+		<class>model.Sgmodul</class>
+		<class>model.Studiengang</class>
+		<class>model.Stundenplaneintrag</class>
+		<class>model.Stundenplansemester</class>
+		<class>model.Stundenplanstatus</class>
+		<exclude-unlisted-classes>false</exclude-unlisted-classes>
+	</persistence-unit>
+</persistence>

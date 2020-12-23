@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+               <h:outputStylesheet library="css" name="layout.css"/>
+    </h:head>
+    <h:body>
+        <h:form>
+            <ul>
+                <li>
+                    <h:commandLink value="Anmelden" 
+                                   action="/login.xhtml"/>                
+                </li>
+                 <li>
+                    <h:commandLink value="Registrieren" 
+                                   action="/register.xhtml"/>                
+                </li>
+                <li>
+                    <h:commandLink value="Abmelden" 
+                                   action="/logout.xhtml"/>                
+                </li>
+                <li>
+                    <h:commandLink value="Module" 
+                                   action="/index.xhtml"/>                
+                </li>
+            </ul>
+        </h:form>
+    </h:body>
+</html>

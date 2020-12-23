@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="FacultyListe" var="list" value="#{FacultyController.facList}" editable="true" rowKey="#{list.fbid}" selection="#{FacultyController.selectedfaculty}" selectionMode="single">
+		        <f:facet name="header">
+		            Cell Editing with Click and RightClick
+		        </f:facet>
+		 		<!-- editMode="cell" widgetVar="cellModul" -->
+		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
+		        <p:ajax event="rowEdit" listener="#{FacultyController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{FacultyController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.fbid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.fbid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Facultyname">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.facName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.facName}" style="width:96%" label="Facultyname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Facultykürzel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.facShortName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.facShortName}" style="width:96%" label="Facultykürzel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		     
+		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
+		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
+		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
+		    </p:contextMenu> -->
+		    <p:contextMenu for="FacultyListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="FacultyListe" icon="pi pi-times" action="#{FacultyController.deleteFaculty}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

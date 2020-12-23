@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="StundenplanstatusListe" var="list" value="#{StundenplanstatusController.spslist}" editable="true" rowKey="#{list.spstid}" selection="#{StundenplanstatusController.selectedsps}" selectionMode="single">
+			
+		        <p:ajax event="rowEdit" listener="#{StundenplanstatusController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{StundenplanstatusController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.spstid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.spstid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Stundenplanstatus Bezeichnung">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SPSTBezeichnung}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SPSTBezeichnung}" style="width:96%" label="SPSTBezeichnung"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Stundenplanstatus Hinweis">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SPSTHint}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SPSTHint}" style="width:96%" label="SPSTHint"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Stundenplanstatus Farbe">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.PColor}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.PColor}" style="width:96%" label="PColor"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		    <p:contextMenu for="StundenplanstatusListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="StundenplanstatusListe" icon="pi pi-times" action="#{StundenplanstatusController.deleteStundenplanstatus}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

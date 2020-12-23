@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="SgmodulListe" var="list" value="#{SgmodulController.sgmodullist}" editable="true" rowKey="#{list.sgmid}" selection="#{SgmodulController.selectedsgmodul}" selectionMode="single">
+		        <f:facet name="header">
+		            Cell Editing with Click and RightClick
+		        </f:facet>
+		 		<!-- editMode="cell" widgetVar="cellModul" -->
+		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
+		        <p:ajax event="rowEdit" listener="#{SgmodulController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{SgmodulController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.sgmid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.sgmid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+	           
+
+		        <p:column headerText="Modul">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.modul.modID}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.modul.modID}" style="width:100%">
+		                        <f:selectItems value="#{SgmodulController.modulListe}" var="#{modul.modID}" itemLabel="#{modul.modID}" itemValue="#{modul.modID}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Studiengang">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.studiengang.SGName}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.studiengang.SGName}" style="width:100%">
+		                        <f:selectItems value="#{SgmodulController.studiengangListe}" var="#{studiengang.SGName}" itemLabel="#{studiengang.SGName}" itemValue="#{studiengang.SGName}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Dozenten">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.dozenten.did}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.dozenten.did}" style="width:100%">
+		                        <f:selectItems value="#{SgmodulController.dozentenListe}" var="#{dozenten.did}" itemLabel="#{dozenten.did}" itemValue="#{dozenten.did}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		 
+		        <p:column headerText="modulSemester">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.modSemester}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.modSemester}" style="width:96%" label="modulSemester"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="SGMNotiz">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SGMNotiz}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SGMNotiz}" style="width:96%" label="SGMNotiz"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+	        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		     
+		    <p:contextMenu for="SgmodulListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="SgmodulListe" icon="pi pi-times" action="#{SgmodulController.deleteSgmodul}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

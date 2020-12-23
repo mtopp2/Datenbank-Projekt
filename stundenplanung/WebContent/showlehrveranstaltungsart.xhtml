@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="LehrveranstaltungsartListe" var="list" value="#{LehrveranstaltungsartController.lvalist}" editable="true" rowKey="#{list.lvid}" selection="#{LehrveranstaltungsartController.selectedlva}" selectionMode="single">
+			
+		        <p:ajax event="rowEdit" listener="#{LehrveranstaltungsartController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{LehrveranstaltungsartController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.lvid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.lvid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Lehrveranstaltungsname">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.lvname}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.lvname}" style="width:96%" label="Lehrveranstaltungsname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Lehrveranstaltungsdauer">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.lvdauer}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.lvdauer}" style="width:96%" label="Lehrveranstaltungsdauer"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Lehrveranstaltungskurzform">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.lvkurz}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.lvkurz}" style="width:96%" label="Lehrveranstaltungskurzform"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		    <p:contextMenu for="LehrveranstaltungsartListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="LehrveranstaltungsartListe" icon="pi pi-times" action="#{LehrveranstaltungsartController.deleteLehrveranstaltungsart}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

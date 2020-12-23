@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+        <h:body>
+        	<ui:composition template="WEB-INF/template/master.xhtml" >
+				<ui:define name="content"> 
+	            <div>
+	            <div class="row">
+	                <div class="col col-md-4 col-md-offset-4"
+	                     style="background: whitesmoke">
+	                    <h:form id="registerform">
+	                        <h:outputLabel      
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="idName" 
+	                            value="Benutzername: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:inputText                                     
+	                                id="idName_reg"     
+	                                styleClass="form-control"                                 
+	                                value="#{RegisterController.accName}"
+	                                required = "true"  
+	                                requiredMessage="Bitte einen Benutzernamen eingeben">
+	                            </h:inputText>
+	                            <h:outputLabel  
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="idName_reg" style="color: red"/>
+	                        </h:panelGrid>
+	                        <h:outputLabel      
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="idPwd" 
+	                            value="Passwort: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:inputSecret                                     
+	                                id="idPwd_reg"     
+	                                styleClass="form-control"                                 
+	                                value="#{RegisterController.accPwd}"
+	                                required = "true"  
+	                                requiredMessage="Bitte ein Passwort eingeben">
+	                            </h:inputSecret>
+	                            <h:outputLabel      
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="idPwd_reg" style="color: red"/>
+	                        </h:panelGrid>
+	                        <h:outputLabel      
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="idEmail" 
+	                            value="Email: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:inputText                                     
+	                                id="idMail_reg"     
+	                                styleClass="form-control"                                 
+	                                value="#{RegisterController.accEmail}"
+	                                required = "true"  
+	                                requiredMessage="Bitte eine Email Adresse angeben">
+	                            </h:inputText>
+	                            <h:outputLabel     
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="idMail_reg" style="color: red"/>
+	                        </h:panelGrid>
+	                        <h:outputLabel     
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="idName" 
+	                            value="Fakultät: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:selectOneMenu
+	                                styleClass="form-control" 
+	                                id="Gruppe"
+	                                required="true"
+	                                requiredMessage="Bitte eine Fakultät wählen"
+	                                value="#{RegisterController.facName}">
+	                                <f:selectItem
+	                                    itemLabel="-----"
+	                                    noSelectionOption="true"/>
+	                                    <f:selectItems
+	                                        value="#{RegisterController.facultyListe}"/>
+	                               </h:selectOneMenu>
+	                            <h:outputLabel     
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="Gruppe" style="color: red"/>
+	                        </h:panelGrid>
+	                        <h:panelGrid>
+	                            <h:commandButton    
+	                                id="idsubmit" 
+	                                styleClass="btn btn-primary" 
+	                                value="Registrieren" 
+	                                style="margin-top: 10px" 
+	                                action="#{RegisterController.register_button()}"/>
+	                            <h:message for="idsubmit"/>
+	                        </h:panelGrid> 
+	                    </h:form>
+	                </div>
+	            </div>
+	            <div class="row">
+	                <div class="col col-md-4 col-md-offset-4"
+	                     style="background: whitesmoke">
+	                    <h:outputLabel      
+	                        style="color: whitesmoke"
+	                        value="Name: #{RegisterController.accName}"/>
+	                </div>
+	            </div>
+	        </div>
+	        </ui:define>
+		</ui:composition>
+    </h:body>
+</html>

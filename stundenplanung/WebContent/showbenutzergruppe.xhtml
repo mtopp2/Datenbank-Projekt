@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="BenutzergruppeListe" var="list" value="#{BenutzergruppeController.bglist}" editable="true" rowKey="#{list.groupID}" selection="#{BenutzergruppeController.selectedbenutzergruppe}" selectionMode="single">
+		        <f:facet name="header">
+		            Cell Editing with Click and RightClick
+		        </f:facet>
+		 		<!-- editMode="cell" widgetVar="cellModul" -->
+		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
+		        <p:ajax event="rowEdit" listener="#{BenutzergruppeController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{BenutzergruppeController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.groupID}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.groupID}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Benutzergruppename">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.BGName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.BGName}" style="width:96%" label="Benutzergruppename"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Benutzergruppekürzel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.BGShortName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.BGShortName}" style="width:96%" label="Benutzergruppekürzel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Benutzergruppeid">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.BGRechte}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.BGRechte}" style="width:96%" label="Benutzergruppeid"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		     
+		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
+		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
+		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
+		    </p:contextMenu> -->
+		    <p:contextMenu for="BenutzergruppeListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="BenutzergruppeListe" icon="pi pi-times" action="#{BenutzergruppeController.deleteBenutzergruppe}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+		<ui:composition template="WEB-INF/template/master.xhtml" >
+			<ui:define name="content">	
+	            <div>
+	                <div class="row">
+	                    <div                   
+	                        class="col col-md-4 col-md-offset-4"
+	                        style="background: whitesmoke">
+	                    <h:outputLabel      
+	                        style="color: whitesmoke"
+	                        value=""/>
+	                    </div>
+	                </div>
+	                <div class="row">
+	                    <div class="col col-md-4 col-md-offset-4"
+	                         style="background: whitesmoke">
+	                        <h:form  id="loginForm" rendered="#{LoginController.isLoggedIn==false}">	                                                    
+	                            <h:outputLabel      
+	                                styleClass="label" 
+	                                style="font-size:12pt; color:black;"
+	                                for="idName" 
+	                                value="Benutzername: "/>
+	                            <h:panelGrid        
+	                                columns="3">
+	                                <h:inputText                                     
+	                                    id="idName_login"     
+	                                    styleClass="form-control"                                 
+	                                    value="#{LoginController.accName}" 
+	                                    required = "true"  
+	                                    requiredMessage="Ein Benutzername muss eingegeben werden.">
+	                                </h:inputText>
+	                                <h:outputLabel   
+	                                    value="" 
+	                                    style="margin: 10px;"/>
+	                                <h:messages for="idName_login" style="color: red"/>
+	                            </h:panelGrid>                          
+	                            <h:outputLabel      
+	                                styleClass="label" 
+	                                style="font-size:12pt; color:black;"
+	                                for="idpwd_login" 
+	                                value="Passwort: "/>
+	                            <h:panelGrid        
+	                                columns="3">
+	                                <h:inputSecret                                     
+	                                    id="idPwd_login"     
+	                                    styleClass="form-control"                                 
+	                                    value="#{LoginController.accPwd}" 
+	                                    required = "true"  
+	                                    requiredMessage="Ein Passwort muss eingegeben werden.">
+	                                </h:inputSecret>
+	                                <h:outputLabel   
+	                                    value="" 
+	                                    style="margin: 10px;"/>
+	                                <h:messages for="idPwd_login" style="color: red"/>
+	                            </h:panelGrid>
+	                            <h:panelGrid>
+	                                <h:commandButton   
+	                                    id="submit"
+	                                    type="submit"
+	                                    styleClass="btn btn-primary" 
+	                                    value="Login" 
+	                                    style="margin-top: 10px" 
+	                                    action="#{LoginController.login()}"/>
+	                            </h:panelGrid> 
+	                            <h:message for="submit"/>
+	                        </h:form>
+	                    </div>
+	                </div>
+	        	</div>
+        	</ui:define>
+		</ui:composition>	        	
+    </h:body>
+</html>

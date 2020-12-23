@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="DozentenListe" var="list" value="#{DozentenController.dozlist}" editable="true" rowKey="#{list.did}" selection="#{DozentenController.selecteddozenten}" selectionMode="single">
+		        <f:facet name="header">
+		            Cell Editing with Click and RightClick
+		        </f:facet>
+		 		<!-- editMode="cell" widgetVar="cellModul" -->
+		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
+		        <p:ajax event="rowEdit" listener="#{DozentenController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{DozentenController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.did}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.did}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Name">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.DName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.DName}" style="width:96%" label="Name"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Vorname">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.DVorname}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.DVorname}" style="width:96%" label="Vorname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Dkurz">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.DKurz}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.DKurz}" style="width:96%" label="Dkurz"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Titel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.DTitel}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.DTitel}" style="width:96%" label="Titel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Acc">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.account.accName}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.account.accName}" style="width:100%">
+		                        <f:selectItems value="#{DozentenController.accountListe}" var="#{account.accName}" itemLabel="#{account.accName}" itemValue="#{account.accName}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		     
+		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
+		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
+		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
+		    </p:contextMenu> -->
+		    <p:contextMenu for="DozentenListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="DozentenListe" icon="pi pi-times" action="#{DozentenController.deleteDozenten}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="LocationListe" var="list" value="#{LocationController.loclist}" editable="true" rowKey="#{list.lid}" selection="#{LocationController.selectedlocation}" selectionMode="single">
+			
+		        <p:ajax event="rowEdit" listener="#{LocationController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{LocationController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.lid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.lid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Stadt">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.LCity}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.LCity}" style="width:96%" label="Modulname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Straße">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.LStreet}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.LStreet}" style="width:96%" label="Modulkürzel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		    <p:contextMenu for="LocationListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="LocationListe" icon="pi pi-times" action="#{LocationController.deleteLocation}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

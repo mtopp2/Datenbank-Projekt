@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="RaumListe" var="list" value="#{RaumController.raumlist}" editable="true" rowKey="#{list.rid}" selection="#{RaumController.selectedraum}" selectionMode="single">
+			
+		        <p:ajax event="rowEdit" listener="#{RaumController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{RaumController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.rid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.rid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Raumname">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.RName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.RName}" style="width:96%" label="Raumname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Kapazität">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.kapazitaet}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.kapazitaet}" style="width:96%" label="Kapazität"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Nachbarraum">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.nachbarRaum}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.nachbarRaum}" style="width:96%" label="Nachbarraum"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Straße:">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.location.LStreet}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.location.LStreet}" style="width:100%">
+		                        <f:selectItems value="#{RaumController.locationListe}" var="#{location.LStreet}" itemLabel="#{location.LStreet}" itemValue="#{location.LStreet}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		    <p:contextMenu for="RaumListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="RaumListe" icon="pi pi-times" action="#{RaumController.deleteRaum}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

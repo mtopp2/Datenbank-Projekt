@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="StudiengangListe" var="list" value="#{StudiengangController.sglist}" editable="true" rowKey="#{list.sgid}" selection="#{StudiengangController.selectedstudiengang}" selectionMode="single">
+		        <f:facet name="header">
+		            Cell Editing with Click and RightClick
+		        </f:facet>
+		 		<!-- editMode="cell" widgetVar="cellModul" -->
+		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
+		        <p:ajax event="rowEdit" listener="#{StudiengangController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{StudiengangController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.sgid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.sgid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Studiengang">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SGName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SGName}" style="width:96%" label="Studiengang"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Kürzel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SGKurz}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SGKurz}" style="width:96%" label="Kürzel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Semester">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.semester}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.semester}" style="width:96%" label="Semester"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Faculty">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.faculty.facName}" style="width:100%">
+		                        <f:selectItems value="#{StudiengangController.facultyListe}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Stundenplansemesterid">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.stundenplansemester.spsid}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.stundenplansemester.spsid}" style="width:100%">
+		                        <f:selectItems value="#{StudiengangController.stundenplansemesterListe}" var="#{stundenplansemester.spsid}" itemLabel="#{stundenplansemester.spsid}" itemValue="#{stundenplansemester.spsid}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		       
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>	 
+		       
+		    </p:dataTable>
+		     
+		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
+		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
+		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
+		    </p:contextMenu> -->
+		    <p:contextMenu for="StudiengangListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="StudiengangListe" icon="pi pi-times" action="#{StudiengangController.deleteStudiengang}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

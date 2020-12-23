@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="StundenplansemesterListe" var="list" value="#{StundenplansemesterController.spslist}" editable="true" rowKey="#{list.spsid}" selection="#{StundenplansemesterController.selectedsps}" selectionMode="single">
+			
+		        <p:ajax event="rowEdit" listener="#{StundenplansemesterController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{StundenplansemesterController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.spsid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.spsid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Stundenplansemester">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SPSemester}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SPSemester}" style="width:96%" label="Stundenplansemester"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Stundenplanjahr">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SPJahr}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SPJahr}" style="width:96%" label="Stundenplanjahr"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Stundenplankalenderwoche">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.SPKw}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.SPKw}" style="width:96%" label="Stundenplankalenderwoche"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Startdatum">
+		            <p:cellEditor>
+		            	<!-- <p:datePicker value="#{StundenplansemesterController.startDatum}" locale="de" pattern="dd.MM.yyyy"/> -->
+		                <f:facet name="output"><h:outputText value="#{list.startDatum}" locale="de" pattern="yyyy-MM-dd"/></f:facet>
+		                <f:facet name="input"><p:datePicker value="#{list.startDatum}" locale="de" pattern="yyyy-MM-dd"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="SPSTBezeichnung">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.stundenplanstatus.SPSTBezeichnung}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.stundenplanstatus.SPSTBezeichnung}" style="width:100%">
+		                        <f:selectItems value="#{StundenplansemesterController.stundenplanstatusListe}" var="#{stundenplanstatus.SPSTBezeichnung}" itemLabel="#{stundenplanstatus.SPSTBezeichnung}" itemValue="#{stundenplanstatus.SPSTBezeichnung}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		    <p:contextMenu for="StundenplansemesterListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="StundenplansemesterListe" icon="pi pi-times" action="#{StundenplansemesterController.deleteStundenplansemester}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

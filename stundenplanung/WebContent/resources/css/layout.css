@@ -1,0 +1,77 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 15.09.2020, 16:23:53
+    Author     : Anil Demirci
+*/
+
+body{
+    background-color: #FFFFFF;
+    font-family: sans-serif;
+}
+
+#main{
+    position: relative;
+    margin: 10px auto;
+    width: 1024px;
+    height: 688px;
+    background-color: #cccccc;
+}
+
+#menu{
+    position: absolute;
+    top: 145px;
+    left: 5px;
+    width: 195px;
+    height: 536px;
+    background-color: #909090;
+    text-decoration: none;
+    line-height: 22px;
+}
+
+#banner{
+    position: absolute;
+    top: 50px;
+    left: 205px;
+    width: 814px;
+    background-color: #cccccc;
+    background-size: cover;  
+}
+
+#content{
+    position: absolute;
+    top: 145px;
+    left: 205px;
+    width: 814px;
+    height: 536px;
+    background-image: url("./images/FH.jpg");
+    background-repeat: no-repeat;
+}
+
+li{
+    list-style: none;
+    font-family: Calibri;
+    font-size: 14pt;
+    padding-top: 5px; 
+}
+
+a:link{
+    text-decoration: none;
+    font-family: Calibri;
+    color: #FFFFFF;
+}
+
+a:visited{
+    text-decoration: none;
+    font-family: Calibri;
+    color: #000000;
+}
+
+a:hover{
+    text-decoration: none;
+    font-family: Calibri;
+    color: #FFFFFF;
+}

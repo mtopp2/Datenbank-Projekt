@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+			<p:dataTable id="AccountListe" var="list" value="#{AccountController.acclist}" editable="true" rowKey="#{list.accID}" selection="#{AccountController.selectedaccount}" selectionMode="single">
+		        <f:facet name="header">
+		            Cell Editing with Click and RightClick
+		        </f:facet>
+		 		<!-- editMode="cell" widgetVar="cellModul" -->
+		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
+		        <p:ajax event="rowEdit" listener="#{AccountController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{AccountController.onRowCancel}" update=":form:msgs" />
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.accID}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.accID}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Accountname">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.accName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.accName}" style="width:96%" label="Accountname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="PWD">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.accPwd}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.accPwd}" style="width:96%" label="PWD"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Accountemail">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.accEmail}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.accEmail}" style="width:96%" label="Accountemail"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="BGruppe">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.benutzergruppe.BGName}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.benutzergruppe.BGName}" style="width:100%">
+		                        <f:selectItems value="#{AccountController.benutzergruppeListe}" var="#{benutzergruppe.BGName}" itemLabel="#{benutzergruppe.BGName}" itemValue="#{benutzergruppe.BGName}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Faculty">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.faculty.facName}" style="width:100%">
+		                        <f:selectItems value="#{AccountController.facultyListe}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		       
+		      		        
+		        
+		        <p:column>
+		            <p:rowEditor />
+		        </p:column>		 
+		       
+		    </p:dataTable>
+		     
+		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
+		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
+		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
+		    </p:contextMenu> -->
+		    <p:contextMenu for="AccountListe" widgetVar="cMenu">   
+		        <p:menuitem value="Delete" update="AccountListe" icon="pi pi-times" action="#{AccountController.deleteAccount}"/>  
+		    </p:contextMenu> 
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

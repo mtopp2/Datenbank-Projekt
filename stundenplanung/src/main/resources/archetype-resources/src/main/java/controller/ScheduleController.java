@@ -63,7 +63,6 @@ import controller.MessageForPrimefaces;
 * @author Manuel
 */
 @Named(value="scheduleController")
-//@ManagedBean(name="ScheduleController")
 @SessionScoped
 public class ScheduleController implements Serializable {
 	private static final long serialVersionUID = 1L;

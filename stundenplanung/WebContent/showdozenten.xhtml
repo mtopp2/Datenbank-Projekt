@@ -10,14 +10,14 @@
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="DozentenListe" var="list" value="#{DozentenController.dozlist}" editable="true" rowKey="#{list.did}" selection="#{DozentenController.selecteddozenten}" selectionMode="single">
+			<p:dataTable id="DozentenListe" var="list" value="#{dozentenController.dozlist}" editable="true" rowKey="#{list.did}" selection="#{dozentenController.selecteddozenten}" selectionMode="single">
 		        <f:facet name="header">
 		            Cell Editing with Click and RightClick
 		        </f:facet>
 		 		<!-- editMode="cell" widgetVar="cellModul" -->
 		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{DozentenController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{DozentenController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowEdit" listener="#{dozentenController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{dozentenController.onRowCancel}" update=":form:msgs" />
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -59,7 +59,7 @@
 		                <f:facet name="output"><h:outputText value="#{list.account.accName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.account.accName}" style="width:100%">
-		                        <f:selectItems value="#{DozentenController.accountListe}" var="#{account.accName}" itemLabel="#{account.accName}" itemValue="#{account.accName}" />
+		                        <f:selectItems value="#{dozentenController.accountListe}" var="#{account.accName}" itemLabel="#{account.accName}" itemValue="#{account.accName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -78,7 +78,7 @@
 		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
 		    </p:contextMenu> -->
 		    <p:contextMenu for="DozentenListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="DozentenListe" icon="pi pi-times" action="#{DozentenController.deleteDozenten}"/>  
+		        <p:menuitem value="Delete" update="DozentenListe" icon="pi pi-times" action="#{dozentenController.deleteDozenten}"/>  
 		    </p:contextMenu> 
 		 </h:form>
 		 </ui:define>

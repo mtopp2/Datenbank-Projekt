@@ -12,7 +12,7 @@
 		    <p:growl id="messages" showDetail="true" />
 		      
 		    <h:panelGrid columnClasses="value">
-		        <p:schedule id="schedule" value="#{scheduleController.lazyEventModel}" widgetVar="myschedule" allDaySlot="false" showWeekends="false" axisFormat="H:mm" timeFormat="H:mm {- H:mm}" slotMinutes="15" locale="de" timeZone="CET" resizable="true">
+		        <p:schedule id="schedule" value="#{scheduleController.lazyEventModel}" widgetVar="myschedule" allDaySlot="false" showWeekends="false" axisFormat="H:mm" slotMinutes="15" locale="de" clientTimeZone="local">
 		 
 		            <p:ajax event="dateSelect" listener="#{scheduleController.onDateSelect}" update=":eventDetailsForm:eventDialog" oncomplete="PF('eventDialog').show();" />
 		            <p:ajax event="eventSelect" listener="#{scheduleController.onEventSelect}" update=":eventDetailsEditForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" />
@@ -22,7 +22,7 @@
 		        </p:schedule>
 		    </h:panelGrid>
 		    
-		    <h:panelGrid id="buttons" columns="3">
+		    <h:panelGrid id="buttons" columns="4">
             <p:selectOneMenu
                         id="semid"
                         value="#{scheduleController.semester_auswahl}"
@@ -35,31 +35,40 @@
                         required="true">
                         <f:selectItems value="#{scheduleController.studiengangList}" />
             </p:selectOneMenu>
+            <p:selectOneMenu
+                        id="fid"
+                        value="#{scheduleController.faculty_auswahl}"
+                        required="true">
+                        <f:selectItems value="#{scheduleController.facultyList}" />
+            </p:selectOneMenu>
             <p:commandButton value="filtern"
                                      process="@parent"
                                      update=":idForm"
                                      oncomplete="PF('myschedule').update();" />
         	</h:panelGrid>
-        	<h:panelGrid id="test" columns="2">
+        	<h:panelGrid id="test" columns="4">
         		<p:outputLabel for="von12" value="Von:" />
         		<p:datePicker id="von12" value="#{scheduleController.te}" pattern="yyyy/MM/dd" showTime="true"/>
-        		<!-- <h:outputText id="von12" value="#{scheduleController.te}" /> -->
+        		<p:datePicker id="von1234" value="#{scheduleController.l}" pattern="yyyy/MM/dd" showTime="true"/>
+        		<p:datePicker id="von123" value="#{scheduleController.l3}" pattern="yyyy/MM/dd" showTime="true"/>
+        		<!-- <h:outputText id="von123" value="#{scheduleController.l}" /> -->
 		        
 		        <p:outputLabel for="von23" value="Von:" />
-		        <!-- <p:datePicker id="von23" value="#{scheduleController.te2}" pattern="yyyy/MM/dd" showTime="true"/>-->
-		        <h:outputText id="von23" value="#{scheduleController.moin}" />
+		        <p:datePicker id="von23" value="#{scheduleController.te2}" pattern="yyyy/MM/dd" showTime="true"/>
+		        <p:datePicker id="von234" value="#{scheduleController.l2}" pattern="yyyy/MM/dd" showTime="true"/>
+		        <p:datePicker id="von2345" value="#{scheduleController.l4}" pattern="yyyy/MM/dd" showTime="true"/>
+		        <!-- <h:outputText id="von234" value="#{scheduleController.l2}" />  -->
         	</h:panelGrid>
-        	
 		</h:form>
 		<h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <p:outputLabel for="von" value="Von:" />
-		            <p:datePicker id="von" value="#{scheduleController.SPEStartZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)"  />
+		            <p:datePicker id="von" value="#{scheduleController.event.startDate}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)"  />
 		 
 		            <p:outputLabel for="bis" value="Bis:" />
-		            <p:datePicker id="bis" value="#{scheduleController.SPEEndZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)" />
+		            <p:datePicker id="bis" value="#{scheduleController.event.endDate}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)" />
 		 			
 		 			<p:outputLabel for="termin" value="Termin:" />
 		            <p:inputText id="termin" value="#{scheduleController.SPTermin}" />
@@ -82,7 +91,7 @@
 			        <p:outputLabel for="anzahl" value="Studierendenanzahl:" />
 		            <p:inputText id="anzahl" value="#{scheduleController.studierendenzahl}" />
 		 			
-		 			 <p:commandButton id="addButton" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+		 			<p:commandButton id="addButton" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
 		            <p:commandButton id="reset" type="reset" value="Reset" />
 		            
 		        </h:panelGrid>
@@ -119,7 +128,7 @@
 			        <p:outputLabel for="anzahl1" value="Studierendenanzahl:" />
 		            <p:inputText id="anzahl1" value="#{scheduleController.selectedEvent.studierendenzahl}" />
 		 			
-		 			<p:commandButton id="addButton1" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
+		 			<p:commandButton id="addButton1" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventEditDialog').hide();" />
 		            <p:commandButton id="reset1" type="reset" value="Reset" />
 		            
 		            <p:commandButton value="Löschen" process="@parent" update=":idForm" actionListener="#{scheduleController.deleteEvent()}" oncomplete="PF('myschedule').update(); PF('eventEditDialog').hide();"/>

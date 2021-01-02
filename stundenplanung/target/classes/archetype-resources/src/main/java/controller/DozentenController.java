@@ -51,8 +51,8 @@ import controller.MessageForPrimefaces;
 * @author Manuel
 */
 
-@ManagedBean(name="DozentenController")
-//@Named(value = "ModulController")
+//@ManagedBean(name="DozentenController")
+@Named(value = "dozentenController")
 //@SessionScoped
 @SessionScoped
 public class DozentenController implements Serializable {
@@ -253,31 +253,56 @@ public class DozentenController implements Serializable {
         
         Dozenten newdoz = new Dozenten();
         newdoz = event.getObject();
-        
-        try {
-	        ut.begin();
-	        EntityManager em = emf.createEntityManager();
-	        //em.joinTransaction();
-	        em.find(Dozenten.class, newdoz.getDid());
-	        //em.persist(q)
-	        dozenten.setDid(newdoz.getDid());
-	        dozenten.setDKurz(newdoz.getDKurz());
-	        dozenten.setDName(newdoz.getDName());
-	        dozenten.setDVorname(newdoz.getDVorname());
-	        dozenten.setDTitel(newdoz.getDTitel());
-	        dozenten.setAccount(findAcc(newdoz.account.getAccName()));
-	        
-	        
-	        em.merge(dozenten);
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+        if(newdoz.getAccount() != null) {
 	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+		        ut.begin();
+		        EntityManager em = emf.createEntityManager();
+		        //em.joinTransaction();
+		        em.find(Dozenten.class, newdoz.getDid());
+		        //em.persist(q)
+		        dozenten.setDid(newdoz.getDid());
+		        dozenten.setDKurz(newdoz.getDKurz());
+		        dozenten.setDName(newdoz.getDName());
+		        dozenten.setDVorname(newdoz.getDVorname());
+		        dozenten.setDTitel(newdoz.getDTitel());
+		        dozenten.setAccount(findAcc(newdoz.account.getAccName()));
+		        
+		        
+		        em.merge(dozenten);
+		        
+		        
+		        
+		        ut.commit();
+		    }
+		    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+		        try {
+		            ut.rollback();
+		        } 
+		        catch (IllegalStateException | SecurityException | SystemException ex) {
+		        }
+		    }
+        }
+        
+        if(newdoz.getAccount() == null) {
+	        try {
+		        ut.begin();
+		        EntityManager em = emf.createEntityManager();
+		        em.find(Dozenten.class, newdoz.getDid());
+		        dozenten.setAccount(findAcc(AccountListe.get(0)));
+		        
+		        em.joinTransaction();  
+		        em.persist(dozenten);
+		        ut.commit();
+		    }
+		    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+		        try {
+		            ut.rollback();
+		        } 
+		        catch (IllegalStateException | SecurityException | SystemException ex) {
+		        }
+		    }
+        }
+        
     }
      
     public void onRowCancel(RowEditEvent<Dozenten> event) {

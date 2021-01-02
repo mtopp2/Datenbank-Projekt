@@ -30,8 +30,8 @@ import javax.faces.bean.ManagedBean;
  * @author Manuel
  */
 
-//@Named(value = "loginController")
-@ManagedBean(name="LoginController")
+@Named(value = "loginController")
+//@ManagedBean(name="LoginController")
 @SessionScoped
 public class LoginController implements Serializable {
 	//Serial Version ID Es kann sein, dass man die nicht braucht.
@@ -109,19 +109,19 @@ public class LoginController implements Serializable {
         if(accName!=null){
             if(findUser(accName)){
                 nameFound=true;
-                if(nameFound==true && current.getBenutzergruppe() == findBGID((byte)1)){
+                if(nameFound==true && current.getBenutzergruppe().getGroupID() == 1){
                     isAdm = true;
                     
                 }
-                if(nameFound==true && current.getBenutzergruppe() == findBGID((byte)2)){
+                if(nameFound==true && current.getBenutzergruppe().getGroupID() == 2){
                     isNob = true;
                 
                 }
-                if(nameFound==true && current.getBenutzergruppe() == findBGID((byte)3)){
+                if(nameFound==true && current.getBenutzergruppe().getGroupID() == 3){
                     isSgl = true;
                 
                 }
-                if(nameFound==true && current.getBenutzergruppe() == findBGID((byte)9)){
+                if(nameFound==true && current.getBenutzergruppe().getGroupID() == 9){
                     isRzp = true;
                 
                 }
@@ -217,7 +217,7 @@ public class LoginController implements Serializable {
     }
     
     
-    private Benutzergruppe findBGID(byte id) {
+    private Benutzergruppe findBGID(int id) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Benutzergruppe> query

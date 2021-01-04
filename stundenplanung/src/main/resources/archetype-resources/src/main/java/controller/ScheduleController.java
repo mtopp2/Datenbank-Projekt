@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,7 +70,6 @@ public class ScheduleController implements Serializable {
 	private Lehrveranstaltungsart lehrveranstaltungsart;
 	private Sgmodul sgmodul;
 	private Faculty faculty;
-	//private Stundenplaneintrag stundenplaneintrag;
 	
 	@PostConstruct
     public void init() {
@@ -90,6 +90,8 @@ public class ScheduleController implements Serializable {
 	private int studierendenzahl;
 	private Timestamp zeitStempel;
 	
+	TimeZone time_zone_default = TimeZone.getDefault(); 
+	
 	private ScheduleModel eventModel;
     private ScheduleModel lazyEventModel;
     private ScheduleEvent event = new DefaultScheduleEvent();
@@ -97,6 +99,7 @@ public class ScheduleController implements Serializable {
     
     private List<Stundenplaneintrag> eintragListe;
     private Stundenplaneintrag selectedEvent;
+    private Stundenplaneintrag spe;
 	
 	ArrayList<String> LehrveranstaltungsListe = new ArrayList<>();
     private String lvname;
@@ -120,15 +123,11 @@ public class ScheduleController implements Serializable {
     ArrayList<Sgmodul> sgsemModulList = new ArrayList<>();
     ArrayList<String> modulList = new ArrayList<>();
     
-    LocalDateTime l;
-    LocalDateTime l2;
-    LocalDateTime l3;
-    LocalDateTime l4;
     Calendar cal;
     Calendar t;
     Calendar t2;
-    Date te;
-    Date te2;
+    LocalDateTime l;
+    LocalDateTime l2;
     
   //--------------------------------------------------------------
     public void moduleLaden() {
@@ -187,15 +186,15 @@ public class ScheduleController implements Serializable {
         }
         catch(Exception e){}
         
-        for(Object eintrag : eintragListe){
+        for(int i = 0; i < eintragListe.size(); i++){
+        	this.spe = new Stundenplaneintrag();
+        	spe = eintragListe.get(i);
             //Eventeinträge
-            Stundenplaneintrag spe = (Stundenplaneintrag) eintrag;
-            dayOffset = spe.getSPEStartZeit().getDay()-3;
+            dayOffset = spe.getSPEStartZeit().getDay()-1;
             
             t = (Calendar) cal.clone();
             //Zeiten
             t.add(Calendar.DATE, dayOffset);
-            //t.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
             t.set(Calendar.HOUR_OF_DAY, spe.getSPEStartZeit().getHours());
             t.set(Calendar.MINUTE, spe.getSPEStartZeit().getMinutes());
             t.set(Calendar.SECOND, spe.getSPEStartZeit().getSeconds());
@@ -206,6 +205,7 @@ public class ScheduleController implements Serializable {
             t2.set(Calendar.MINUTE, spe.getSPEEndZeit().getMinutes());
             t2.set(Calendar.SECOND, spe.getSPEEndZeit().getSeconds());
             LocalDateTime ltime2 = convertToLocalDateTimeViaInstant(t2.getTime());
+        	
             
             String eintragString = (String) (spe.getSgmodul().getModul().getModKuerzel() +" / "+
                                              spe.getLehrveranstaltungsart().getLvkurz()+ " / " +
@@ -213,19 +213,7 @@ public class ScheduleController implements Serializable {
                                              spe.getRaum().getRName()
                                              );
             
-            //Ereignis hinzufügen
-            /*lazyEventModel.addEvent(new DefaultScheduleEvent(
-                            eintragString,
-                            ltime,
-                            ltime2,
-                            spe));*/
-            
-            /*lazyEventModel.addEvent(new DefaultScheduleEvent(
-                    eintragString,
-                    ltime,
-                    ltime2));*/
-            
-            
+            //Ereignis hinzufügen            
             DefaultScheduleEvent event = DefaultScheduleEvent.builder()
                     .title(eintragString)
                     .startDate(ltime)
@@ -233,12 +221,6 @@ public class ScheduleController implements Serializable {
                     .data(spe)
                     .build();
             lazyEventModel.addEvent(event);
-            
-            /*eventModel.addEvent(new DefaultScheduleEvent(
-                    eintragString,
-                    ltime,
-                    ltime2,
-                    spe));*/
             
         }
         
@@ -349,117 +331,20 @@ public class ScheduleController implements Serializable {
                 zeitStempel = new Timestamp(time);
                 selectedEvent.setZeitStempel(zeitStempel);
                 
-                te = selectedEvent.getSPEStartZeit();
-                te2 = selectedEvent.getSPEEndZeit();
                 
-                l3 = event.getStartDate();
-                //l3 = l3.plusDays(2);
-                l4 = event.getEndDate();
-                //l4 = l4.plusDays(2);
-                
-                String eintragString = (String) selectedEvent.getSgmodul().getModul().getModKuerzel() +" / "+
-        				selectedEvent.getLehrveranstaltungsart().getLvkurz()+ " / " +
-        				selectedEvent.getSPTermin() + " \n " +
-        				selectedEvent.getRaum().getRName();
-				       
-                DefaultScheduleEvent event = DefaultScheduleEvent.builder()
-                        .title(eintragString)
-                        .startDate(l3)
-                        .endDate(l4)
-                        .data(selectedEvent)
-                        .build();
-                lazyEventModel.addEvent(event);
-                
-                // Titel wird eintragen                
-                /*event = new DefaultScheduleEvent(
-                		selectedEvent.getSgmodul().getModul().getModKuerzel() +" / "+
-        				selectedEvent.getLehrveranstaltungsart().getLvkurz()+ " / " +
-        				selectedEvent.getSPTermin() + " \n " +
-        				selectedEvent.getRaum().getRName(),
-                		l3, l4, selectedEvent);*/
-                
-                /*event = new DefaultScheduleEvent(
-                		selectedEvent.getSgmodul().getModul().getModKuerzel() +" / "+
-        				selectedEvent.getLehrveranstaltungsart().getLvkurz()+ " / " +
-        				selectedEvent.getSPTermin() + " \n " +
-        				selectedEvent.getRaum().getRName(),
-                		l3, l4, selectedEvent);
-                                
-                // Hinzufügen des neuen Events
-                lazyEventModel.addEvent(event);*/
-                //eventModel.addEvent(event);
-                
-                /*String eintragString = (String) selectedEvent.getSgmodul().getModul().getModKuerzel() +" / "+
-        				selectedEvent.getLehrveranstaltungsart().getLvkurz()+ " / " +
-        				selectedEvent.getSPTermin() + " \n " +
-        				selectedEvent.getRaum().getRName();
+                eventLaden();
 
-				//Ereignis hinzufügen
-				lazyEventModel.addEvent(new DefaultScheduleEvent(
-				       eintragString,
-				       l3,
-				       l4,
-				       selectedEvent));*/
-                
-             
-                
                 
                 ut.begin();
             	em.joinTransaction();
                 em.persist(selectedEvent);
                 ut.commit();
-                msg = "Ereignis wurde hinzugefügt!";
-                //eventLaden();
-                //moduleLaden();
-                
-               /* int dayOffset;
-                wochenStart = getWeekStartDate();
-                cal = Calendar.getInstance();
-                cal.setTime(wochenStart);
-                
-                dayOffset = selectedEvent.getSPEStartZeit().getDay()-3;
-                Calendar t = (Calendar) cal.clone();
-                //Zeiten
-                t.add(Calendar.DATE, dayOffset);
-                
-                //t.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-                t.set(Calendar.HOUR_OF_DAY, SPEStartZeit.getHours());
-                t.set(Calendar.MINUTE, SPEStartZeit.getMinutes());
-                t.set(Calendar.SECOND, SPEStartZeit.getSeconds());
-                l3 = convertToLocalDateTimeViaInstant(t.getTime());
-                
-                Calendar t2 = (Calendar) t.clone();
-                t2.set(Calendar.HOUR_OF_DAY, SPEEndZeit.getHours());
-                t2.set(Calendar.MINUTE, SPEEndZeit.getMinutes());
-                t2.set(Calendar.SECOND, SPEEndZeit.getSeconds());
-                l4 = convertToLocalDateTimeViaInstant(t2.getTime());*/
-                
-                //te = t.getTime();
-                
-                //te2 = t2.getTime();
-                
-               /* String eintragString = (String) (selectedEvent.getSgmodul().getModul().getModKuerzel() +" / "+
-                		selectedEvent.getLehrveranstaltungsart().getLvkurz()+ " / " +
-                		selectedEvent.getSPTermin() + " \n " +
-                		selectedEvent.getRaum().getRName()
-                        );
-
-				//Ereignis hinzufügen
-				lazyEventModel.addEvent(new DefaultScheduleEvent(
-				       eintragString,
-				       l3,
-				       l4,
-				       selectedEvent));*/
-                
-                
-                
+                msg = "Ereignis wurde hinzugefügt!";                
                 
             }
             else{/* ID schon vorhanden*/
                 lazyEventModel.updateEvent(getEvent());
-            	//eventModel.updateEvent(getEvent());
                 ut.begin();
-                //em = emf.createEntityManager();
                 em.find(Stundenplaneintrag.class, selectedEvent.getSpid());
                 
                 selectedEvent.setSPEStartZeit(selectedEvent.getSPEStartZeit());
@@ -517,7 +402,6 @@ public class ScheduleController implements Serializable {
         }
         addMessage("messages", msg);
         lazyEventModel.deleteEvent(event);
-        //eventModel.deleteEvent(event);
     }
     
     //Auswahl der Events
@@ -532,11 +416,9 @@ public class ScheduleController implements Serializable {
     
     public void onDateSelect(SelectEvent<LocalDateTime> selectEvent) {
         this.selectedEvent = new Stundenplaneintrag();
-        //event = DefaultScheduleEvent.builder().startDate(selectEvent.getObject()).endDate(selectEvent.getObject().plusHours(1)).build();
         
         l = selectEvent.getObject();
         l2 = selectEvent.getObject().plusHours(1);
-        //event = DefaultScheduleEvent.builder().startDate(l).endDate(l2).build();
         
         event = DefaultScheduleEvent.builder()
                 .title("")
@@ -544,41 +426,6 @@ public class ScheduleController implements Serializable {
                 .endDate(l2)
                 .data(selectedEvent)
                 .build();
-        
-        
-        /*int dayOffset;
-        wochenStart = getWeekStartDate();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(wochenStart);
-        
-        dayOffset = selectedEvent.getSPEStartZeit().getDay()-3;
-        
-        Calendar t = (Calendar) cal.clone();
-        //Zeiten
-        t.add(Calendar.DATE, dayOffset);
-        //t.setTimeZone(TimeZone.getTimeZone("Europe/Berlin"));
-        t.set(Calendar.HOUR_OF_DAY, SPEStartZeit.getHours());
-        t.set(Calendar.MINUTE, SPEStartZeit.getMinutes());
-        t.set(Calendar.SECOND, SPEStartZeit.getSeconds());
-        LocalDateTime l = convertToLocalDateTimeViaInstant(t.getTime());
-        
-        Calendar t2 = (Calendar) t.clone();
-        t2.set(Calendar.HOUR_OF_DAY, SPEEndZeit.getHours());
-        t2.set(Calendar.MINUTE, SPEEndZeit.getMinutes());
-        t2.set(Calendar.SECOND, SPEEndZeit.getSeconds());
-        LocalDateTime l2 = convertToLocalDateTimeViaInstant(t2.getTime());*/
-        
-       /*event = new DefaultScheduleEvent("",
-               (LocalDateTime) selectEvent.getObject(),
-               (LocalDateTime) selectEvent.getObject().plusHours(1),
-                selectedEvent);
-       
-       l = (LocalDateTime) selectEvent.getObject();
-       l2 = (LocalDateTime) selectEvent.getObject().plusHours(1);*/
-        /*event = new DefaultScheduleEvent("",
-                l,
-                l2,
-                selectedEvent);*/
         
     }
     
@@ -811,6 +658,14 @@ public class ScheduleController implements Serializable {
 		this.selectedEvent = selectedEvent;
 	}
 	
+	public Stundenplaneintrag getSpe() {
+		return spe;
+	}
+
+	public void setSpe(Stundenplaneintrag spe) {
+		this.spe = spe;
+	}	
+	
     //--------------------------------------------------------------
 	
 	public ArrayList<Integer> getSemesterList() {
@@ -1015,44 +870,12 @@ public class ScheduleController implements Serializable {
 		this.l2 = l2;
 	}
 
-	public LocalDateTime getL3() {
-		return l3;
-	}
-
-	public void setL3(LocalDateTime l3) {
-		this.l3 = l3;
-	}
-
-	public LocalDateTime getL4() {
-		return l4;
-	}
-
-	public void setL4(LocalDateTime l4) {
-		this.l4 = l4;
-	}
-
 	public Calendar getCal() {
 		return cal;
 	}
 
 	public void setCal(Calendar cal) {
 		this.cal = cal;
-	}
-
-	public Date getTe() {
-		return te;
-	}
-
-	public void setTe(Date te) {
-		this.te = te;
-	}
-
-	public Date getTe2() {
-		return te2;
-	}
-
-	public void setTe2(Date te2) {
-		this.te2 = te2;
 	}
 	
 	private Date ConvertToDate(String dateString){
@@ -1080,6 +903,14 @@ public class ScheduleController implements Serializable {
 
 	public void setT2(Calendar t2) {
 		this.t2 = t2;
-	}	
-	
+	}
+
+	public TimeZone getTime_zone_default() {
+		return time_zone_default;
+	}
+
+	public void setTime_zone_default(TimeZone time_zone_default) {
+		this.time_zone_default = time_zone_default;
+	}
+
 }

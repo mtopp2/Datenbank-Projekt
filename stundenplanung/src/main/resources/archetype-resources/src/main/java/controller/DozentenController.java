@@ -48,7 +48,7 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
 //@ManagedBean(name="DozentenController")
@@ -265,33 +265,10 @@ public class DozentenController implements Serializable {
 		        dozenten.setDName(newdoz.getDName());
 		        dozenten.setDVorname(newdoz.getDVorname());
 		        dozenten.setDTitel(newdoz.getDTitel());
-		        dozenten.setAccount(findAcc(newdoz.account.getAccName()));
-		        
+		        dozenten.setAccount(findAcc(newdoz.getAccount().getAccName()));   
 		        
 		        em.merge(dozenten);
 		        
-		        
-		        
-		        ut.commit();
-		    }
-		    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-		        try {
-		            ut.rollback();
-		        } 
-		        catch (IllegalStateException | SecurityException | SystemException ex) {
-		        }
-		    }
-        }
-        
-        if(newdoz.getAccount() == null) {
-	        try {
-		        ut.begin();
-		        EntityManager em = emf.createEntityManager();
-		        em.find(Dozenten.class, newdoz.getDid());
-		        dozenten.setAccount(findAcc(AccountListe.get(0)));
-		        
-		        em.joinTransaction();  
-		        em.persist(dozenten);
 		        ut.commit();
 		    }
 		    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {

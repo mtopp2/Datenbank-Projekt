@@ -25,7 +25,7 @@ public class Studiengang implements Serializable {
 	@Id
 	private int sgid;
 
-	private Integer semester;
+	private int semester;
 
 	private String SGKurz;
 
@@ -33,17 +33,17 @@ public class Studiengang implements Serializable {
 
 	//bi-directional many-to-one association to Sgmodul
 	@OneToMany(mappedBy="studiengang")
-	public List<Sgmodul> sgmoduls;
+	private List<Sgmodul> sgmoduls;
 
 	//bi-directional many-to-one association to Faculty
 	@ManyToOne
 	@JoinColumn(name="FK_FBID")
-	public Faculty faculty;
+	private Faculty faculty;
 
 	//bi-directional many-to-one association to Stundenplansemester
 	@ManyToOne
 	@JoinColumn(name="FK_SPSID")
-	public Stundenplansemester stundenplansemester;
+	private Stundenplansemester stundenplansemester;
 
 	public Studiengang() {
 	}
@@ -56,11 +56,11 @@ public class Studiengang implements Serializable {
 		this.sgid = sgid;
 	}
 
-	public Integer getSemester() {
+	public int getSemester() {
 		return this.semester;
 	}
 
-	public void setSemester(Integer semester) {
+	public void setSemester(int semester) {
 		this.semester = semester;
 	}
 

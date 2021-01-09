@@ -7,13 +7,15 @@
 
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
+	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="RaumListe" var="list" value="#{RaumController.raumlist}" editable="true" rowKey="#{list.rid}" selection="#{RaumController.selectedraum}" selectionMode="single">
+		    <p:growl id="msgs" showDetail="true"/>
+		    <p:commandButton value="Create Raum" id="ajax" update="msgs" action="/createraum.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="RaumListe" var="list" value="#{raumController.raumlist}" editable="true" rowKey="#{list.rid}" selection="#{raumController.selectedraum}" selectionMode="single">
 			
-		        <p:ajax event="rowEdit" listener="#{RaumController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{RaumController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowEdit" listener="#{raumController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{raumController.onRowCancel}" update=":form:msgs" />
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -48,7 +50,7 @@
 		                <f:facet name="output"><h:outputText value="#{list.location.LStreet}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.location.LStreet}" style="width:100%">
-		                        <f:selectItems value="#{RaumController.locationListe}" var="#{location.LStreet}" itemLabel="#{location.LStreet}" itemValue="#{location.LStreet}" />
+		                        <f:selectItems value="#{raumController.locationListe}" var="#{location.LStreet}" itemLabel="#{location.LStreet}" itemValue="#{location.LStreet}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -60,7 +62,7 @@
 		       
 		    </p:dataTable>
 		    <p:contextMenu for="RaumListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="RaumListe" icon="pi pi-times" action="#{RaumController.deleteRaum}"/>  
+		        <p:menuitem value="Delete" update="RaumListe" icon="pi pi-times" action="#{raumController.deleteRaum}"/>  
 		    </p:contextMenu> 
 		 </h:form>
 		 </ui:define>

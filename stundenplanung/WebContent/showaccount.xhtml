@@ -7,17 +7,19 @@
       
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
+<!-- einzeiliger Kommentar 	<ui:define name="menu"> <ui:include src="WEB-INF/template/eingeloggt.xhtml"/></ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="AccountListe" var="list" value="#{AccountController.acclist}" editable="true" rowKey="#{list.accID}" selection="#{AccountController.selectedaccount}" selectionMode="single">
+		    <p:growl id="msgs" showDetail="true"/>
+		    <p:commandButton value="Create Account" id="ajax" update="msgs" action="/register.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="AccountListe" var="list" value="#{accountController.acclist}" editable="true" rowKey="#{list.accID}" selection="#{accountController.selectedaccount}" selectionMode="single">
 		        <f:facet name="header">
 		            Cell Editing with Click and RightClick
 		        </f:facet>
 		 		<!-- editMode="cell" widgetVar="cellModul" -->
 		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{AccountController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{AccountController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowEdit" listener="#{accountController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{accountController.onRowCancel}" update=":form:msgs" />
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -52,7 +54,7 @@
 		                <f:facet name="output"><h:outputText value="#{list.benutzergruppe.BGName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.benutzergruppe.BGName}" style="width:100%">
-		                        <f:selectItems value="#{AccountController.benutzergruppeListe}" var="#{benutzergruppe.BGName}" itemLabel="#{benutzergruppe.BGName}" itemValue="#{benutzergruppe.BGName}" />
+		                        <f:selectItems value="#{accountController.benutzergruppeListe}" var="#{benutzergruppe.BGName}" itemLabel="#{benutzergruppe.BGName}" itemValue="#{benutzergruppe.BGName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -63,7 +65,7 @@
 		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.faculty.facName}" style="width:100%">
-		                        <f:selectItems value="#{AccountController.facultyListe}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
+		                        <f:selectItems value="#{accountController.facultyListe}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -82,7 +84,7 @@
 		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
 		    </p:contextMenu> -->
 		    <p:contextMenu for="AccountListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="AccountListe" icon="pi pi-times" action="#{AccountController.deleteAccount}"/>  
+		        <p:menuitem value="Delete" update="AccountListe" icon="pi pi-times" action="#{accountController.deleteAccount}"/>  
 		    </p:contextMenu> 
 		 </h:form>
 		 </ui:define>

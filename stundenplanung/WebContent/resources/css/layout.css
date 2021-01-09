@@ -16,7 +16,7 @@ body{
 #main{
     position: relative;
     margin: 10px auto;
-    width: 1024px;
+    width: 1246px;
     height: 688px;
     background-color: #cccccc;
 }
@@ -45,10 +45,9 @@ body{
     position: absolute;
     top: 145px;
     left: 205px;
-    width: 814px;
+    width: 1032px;
     height: 536px;
-    background-image: url("./images/FH.jpg");
-    background-repeat: no-repeat;
+    
 }
 
 li{

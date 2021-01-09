@@ -7,13 +7,15 @@
 
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
+	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="StundenplanstatusListe" var="list" value="#{StundenplanstatusController.spslist}" editable="true" rowKey="#{list.spstid}" selection="#{StundenplanstatusController.selectedsps}" selectionMode="single">
+		    <p:growl id="msgs" showDetail="true"/>
+		    <p:commandButton value="Create Stundenplanstatus" id="ajax" update="msgs" action="/createstundenplanstatus.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="StundenplanstatusListe" var="list" value="#{stundenplanstatusController.spslist}" editable="true" rowKey="#{list.spstid}" selection="#{stundenplanstatusController.selectedsps}" selectionMode="single">
 			
-		        <p:ajax event="rowEdit" listener="#{StundenplanstatusController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{StundenplanstatusController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowEdit" listener="#{stundenplanstatusController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{stundenplanstatusController.onRowCancel}" update=":form:msgs" />
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -49,7 +51,7 @@
 		       
 		    </p:dataTable>
 		    <p:contextMenu for="StundenplanstatusListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="StundenplanstatusListe" icon="pi pi-times" action="#{StundenplanstatusController.deleteStundenplanstatus}"/>  
+		        <p:menuitem value="Delete" update="StundenplanstatusListe" icon="pi pi-times" action="#{stundenplanstatusController.deleteStundenplanstatus}"/>  
 		    </p:contextMenu> 
 		 </h:form>
 		 </ui:define>

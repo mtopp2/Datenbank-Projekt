@@ -32,10 +32,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="RaumController")
+//@ManagedBean(name="RaumController")
+@Named(value="raumController")
 @SessionScoped
 public class RaumController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -232,7 +233,7 @@ public class RaumController implements Serializable {
 	        raum.setRName(newrau.getRName());
 	        raum.setKapazitaet(newrau.getKapazitaet());
 	        raum.setNachbarRaum(newrau.getNachbarRaum());
-	        raum.setLocation(findLoc(newrau.location.getLStreet()));
+	        raum.setLocation(findLoc(newrau.getLocation().getLStreet()));
 	        em.merge(raum);
 	        ut.commit(); 
 	    }

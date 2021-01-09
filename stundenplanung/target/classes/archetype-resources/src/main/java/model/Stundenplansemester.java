@@ -37,7 +37,7 @@ public class Stundenplansemester implements Serializable {
 	//bi-directional many-to-one association to Stundenplanstatus
 	@ManyToOne
 	@JoinColumn(name="FK_SPSTID")
-	public Stundenplanstatus stundenplanstatus;
+	private Stundenplanstatus stundenplanstatus;
 
 	public Stundenplansemester() {
 	}

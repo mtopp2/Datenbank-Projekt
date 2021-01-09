@@ -46,11 +46,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="ModulController")
-//@Named(value = "ModulController")
+//@ManagedBean(name="ModulController")
+@Named(value="modulController")
 //@SessionScoped
 @SessionScoped
 public class ModulController implements Serializable {
@@ -193,10 +193,10 @@ public class ModulController implements Serializable {
 	public String createDoModul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(modName_ok == true && modKuerzel_ok == true && pcid_ok == true) {
 			createModul();
-			return "index.xhtml";
+			return "showmodul.xhtml";
 		}
 		else{
-			return "index.xhtml";
+			return "createmodul.xhtml";
 		}
 	}
 	

@@ -28,7 +28,7 @@ public class Raum implements Serializable {
 	//bi-directional many-to-one association to Location
 	@ManyToOne
 	@JoinColumn(name="FK_LID")
-	public Location location;
+	private Location location;
 
 	//bi-directional many-to-one association to Stundenplaneintrag
 	@OneToMany(mappedBy="raum")

@@ -7,6 +7,7 @@
 
 <h:body>
 		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 			<ui:define name="content">
             <div>
                 <div class="row">
@@ -32,7 +33,7 @@
                                 <h:inputText                                     
                                     id="RName_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{RaumController.RName}" 
+                                    value="#{raumController.RName}" 
                                     required = "true"  
                                     requiredMessage="Ein Raumname muss eingegeben werden.">
                                 </h:inputText>
@@ -51,7 +52,7 @@
                                 <h:inputText                                     
                                     id="kapazitaet_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{RaumController.kapazitaet}" 
+                                    value="#{raumController.kapazitaet}" 
                                     required = "true"  
                                     requiredMessage="Eine Kapazität muss eingegeben werden.">
                                 </h:inputText>
@@ -70,7 +71,7 @@
                                 <h:inputText                                     
                                     id="nachbarRaum_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{RaumController.nachbarRaum}" 
+                                    value="#{raumController.nachbarRaum}" 
                                     required = "true"  
                                     requiredMessage="Ein Nachbarraum muss eingegeben werden.">
                                 </h:inputText>
@@ -91,12 +92,12 @@
 	                                id="loc_reg"
 	                                required="true"
 	                                requiredMessage="Bitte eine Straße zu dem Standort auswählen:"
-	                                value="#{RaumController.LStreet}">
+	                                value="#{raumController.LStreet}">
 	                                <f:selectItem
 	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{RaumController.locationListe}"/>
+	                                        value="#{raumController.locationListe}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
@@ -110,7 +111,7 @@
                                     styleClass="btn btn-primary" 
                                     value="Hinzufügen" 
                                     style="margin-top: 10px" 
-                                    action="#{RaumController.createDoRaum()}"/>
+                                    action="#{raumController.createDoRaum()}"/>
                             </h:panelGrid> 
                             <h:message for="submit"/>
                     	</h:form>

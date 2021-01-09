@@ -6,6 +6,7 @@
 
 	<h:body>
 		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 			<ui:define name="content">
             <div>
                 <div class="row">
@@ -31,7 +32,7 @@
                                 <h:inputText                                     
                                     id="lCity_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{LocationController.LCity}" 
+                                    value="#{locationController.LCity}" 
                                     required = "true"  
                                     requiredMessage="Eine Stadt muss eingegeben werden.">
                                 </h:inputText>
@@ -50,7 +51,7 @@
                                 <h:inputText                                     
                                     id="lStreet_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{LocationController.LStreet}" 
+                                    value="#{locationController.LStreet}" 
                                     required = "true"  
                                     requiredMessage="Eine Straße muss eingegeben werden.">
                                 </h:inputText>
@@ -66,7 +67,7 @@
                                     styleClass="btn btn-primary" 
                                     value="Hinzufügen" 
                                     style="margin-top: 10px" 
-                                    action="#{LocationController.createDoLocation()}"/>
+                                    action="#{locationController.createDoLocation()}"/>
                             </h:panelGrid> 
                             <h:message for="submit"/>
                     	</h:form>

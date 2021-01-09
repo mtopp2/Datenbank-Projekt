@@ -1,34 +1,45 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
     <h:head>
     	<h:outputStylesheet library="css" name="layout.css"/>
         <title>Prüfplan</title>        
     </h:head>
     <h:body>
-        <div id="main">
-            <div id="banner">
-                
-            </div>
-            <div id="banner">
+    <p:layout fullPage ="true" id="main" >
+        
+        
+             
+            <p:layoutUnit position="north" id="banner">
                 <ui:insert name="banner">
+                <h:form rendered="#{loginController.isLoggedIn}">
+                    <a class="alert alert-light ml-10" role="alert">Willkommen ${loginController.accName} | In der Rolle als: ${loginController.BGruppe.BGName} </a>
+                    </h:form>
                     <h1>Prüfplan</h1>
                 </ui:insert>
-            </div>
-            <div id="menu">
+            </p:layoutUnit>
+           
+            <p:layoutUnit  position="west" id="menu">
                 <ui:insert name="menu">
                     <ui:include src="menu.xhtml"/>
                 </ui:insert>
-            </div>
-            <div id="content">
-                <ui:insert name="content">
+            </p:layoutUnit>
+            
+           <p:layoutUnit position="center" id="content">					            
+            <p:scrollPanel mode="native" style="width:1030px;">               
+                <ui:insert name="content">               
                     Content
                 </ui:insert>
-            </div>
-        </div>
+                </p:scrollPanel>            
+            </p:layoutUnit>
+            
+        
+            
+     </p:layout>
        
     </h:body>
 </html>

@@ -32,10 +32,10 @@ import javax.faces.bean.ManagedBean;
 
 /**
  *
- * @author Manuel
+ * @author Anil
  */
-//@Named(value = "RegisterController")
-@ManagedBean(name="RegisterController")
+@Named(value="registerController")
+//@ManagedBean(name="RegisterController")
 @SessionScoped
 public class RegisterController implements Serializable {
 	private static final long serialVersionUID = 1L;

@@ -47,11 +47,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="BenutzergruppeController")
-//@Named(value = "ModulController")
+//@ManagedBean(name="BenutzergruppeController")
+@Named(value="benutzergruppeController")
 //@SessionScoped
 @SessionScoped
 public class BenutzergruppeController implements Serializable {

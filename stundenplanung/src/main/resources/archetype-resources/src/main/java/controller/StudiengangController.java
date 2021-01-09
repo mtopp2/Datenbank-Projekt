@@ -33,10 +33,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="StudiengangController")
+//@ManagedBean(name="StudiengangController")
+@Named(value="studiengangController")
 @SessionScoped
 public class StudiengangController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -63,44 +64,30 @@ public class StudiengangController implements Serializable {
             Faculty fac =(Faculty)FListitem;
             FacultyListe.add(fac.getFacName());
         }
-        EntityManager em2 = emf.createEntityManager();
-        Query s = em2.createNamedQuery("Stundenplansemester.findAll");
+        Query s = em.createNamedQuery("Stundenplansemester.findAll");
         List SList = s.getResultList();
         for (Object SListitem : SList)
         {
         	Stundenplansemester sm =(Stundenplansemester)SListitem;
-        	StundenplansemesterListe.add(sm.getSpsid());
+        	StundenplansemesterListe.add(sm.getSPSemester());
         }
     }
  
     ArrayList<String> FacultyListe = new ArrayList<>();
-    ArrayList<Integer> StundenplansemesterListe = new ArrayList<>();
+    ArrayList<String> StundenplansemesterListe = new ArrayList<>();
     
-    private String semesterName;
-    private int spsid;
+    private String SPSemester;
     private String facName;
-    
-    private Integer semester;
+    private int semester;
 	private String SGKurz;
 	private String SGName;
 	private boolean SGName_ok = false;
 	private boolean SGKurz_ok = false;
-	private boolean semester_ok = false;
 	
 	List<Studiengang> sglist;
 	
 	private Studiengang selectedstudiengang;
 	
-	
-	
-	public int getSpsid() {
-		return spsid;
-	}
-
-	public void setSpsid(int spsid) {
-		this.spsid = spsid;
-	}
-
 	public String getFacName() {
 		return facName;
 	}
@@ -108,28 +95,28 @@ public class StudiengangController implements Serializable {
 	public void setFacName(String facName) {
 		this.facName = facName;
 	}
-	public String getSemesterName() {
-		return semesterName;
+	public String getSPSemester() {
+		return SPSemester;
 	}
 
-	public void setSemesterName(String semesterName) {
-		this.semesterName = semesterName;
+	public void setSPSemester(String SPSemester) {
+		this.SPSemester = SPSemester;
 	}
 
 	public ArrayList<String> getFacultyListe() {
 		return FacultyListe;
 	}
 
-	public void setFacultyListe(ArrayList<String> FacultyListe) {
-		this.FacultyListe = FacultyListe;
+	public void setFacultyListe(ArrayList<String> facultyListe) {
+		this.FacultyListe = facultyListe;
 	}
 	
-	public ArrayList<Integer> getStundenplansemesterListe() {
+	public ArrayList<String> getStundenplansemesterListe() {
 		return StundenplansemesterListe;
 	}
 
-	public void setStundenplansemesterListe(ArrayList<Integer> StundenplansemesterListe) {
-		this.StundenplansemesterListe = StundenplansemesterListe;
+	public void setStundenplansemesterListe(ArrayList<String> stundenplansemesterListe) {
+		this.StundenplansemesterListe = stundenplansemesterListe;
 	}
 
 	public Studiengang getStudiengang() {
@@ -186,19 +173,12 @@ public class StudiengangController implements Serializable {
 	    }
 	}
 
-	public Integer getSemester() {
+	public int getSemester() {
 		return semester;
 	}
 
-	public void setSemester(Integer semester) {
-		if(semester!=null){
-			this.semester = semester;
-			semester_ok=true;
-	    }
-	    else{
-	    	FacesMessage message = new FacesMessage("Semester konnte nicht gesetzt werden.");
-            FacesContext.getCurrentInstance().addMessage("StudiengangForm:semester_reg", message);
-	    }
+	public void setSemester(int semester) {
+		this.semester = semester;
 	}
 
 	public List<Studiengang> getSglist() {
@@ -235,7 +215,7 @@ public class StudiengangController implements Serializable {
 		bg.setSGKurz(SGKurz);
 		bg.setSemester(semester);
 		bg.setFaculty(findFac(facName));
-		bg.setStundenplansemester(findSP(spsid));
+		bg.setStundenplansemester(findSP(SPSemester));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -253,7 +233,7 @@ public class StudiengangController implements Serializable {
 	}
 	
 	public String createDoStudiengang() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(SGName_ok == true && SGKurz_ok == true && semester_ok) {
+		if(SGName_ok == true && SGKurz_ok == true) {
 			createStudiengang();
 			return "showstudiengang.xhtml";
 		}
@@ -288,8 +268,8 @@ public class StudiengangController implements Serializable {
 	        studiengang.setSGName(newsg.getSGName());
 	        studiengang.setSGKurz(newsg.getSGKurz());
 	        studiengang.setSemester(newsg.getSemester());
-	        studiengang.setFaculty(findFac(newsg.faculty.getFacName()));
-	        studiengang.setStundenplansemester(findSP(newsg.stundenplansemester.getSpsid()));
+	        studiengang.setFaculty(findFac(newsg.getFaculty().getFacName()));
+	        studiengang.setStundenplansemester(findSP(newsg.getStundenplansemester().getSPSemester()));
 	        em.merge(studiengang);
 	        ut.commit(); 
 	    }
@@ -346,17 +326,16 @@ public class StudiengangController implements Serializable {
         return faculty;
     }
     
-    private Stundenplansemester findSP(int id) {
+    private Stundenplansemester findSP(String sm) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Stundenplansemester> query
-                = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
-            query.setParameter("spsid", id);
+                = em.createNamedQuery("Stundenplansemester.findBySPSemester",Stundenplansemester.class);
+            query.setParameter("SPSemester", sm);
             stundenplansemester = (Stundenplansemester)query.getSingleResult();
         }
         catch(Exception e){   
         }
         return stundenplansemester;
     }
-    
 }

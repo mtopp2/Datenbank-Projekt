@@ -3,7 +3,6 @@ package controller;
 import model.Modul;
 import model.Dozenten;
 import model.Studiengang;
-import model.Stundenplansemester;
 import model.Sgmodul;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -35,10 +34,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="SgmodulController")
+//@ManagedBean(name="SgmodulController")
+@Named(value="sgmodulController")
 @SessionScoped
 public class SgmodulController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -64,36 +64,33 @@ public class SgmodulController implements Serializable {
         for (Object FListitem : FList)
         {
         	Modul mod =(Modul)FListitem;
-        	ModulListe.add(mod.getModID());
+        	ModulListe.add(mod.getModName());
         }
-        EntityManager em1 = emf.createEntityManager();
-        Query s = em1.createNamedQuery("Studiengang.findAll");
+        Query s = em.createNamedQuery("Studiengang.findAll");
         List SList = s.getResultList();
         for (Object SListitem : SList)
         {
         	Studiengang sg =(Studiengang)SListitem;
         	StudiengangListe.add(sg.getSGName());
         }
-        EntityManager em2 = emf.createEntityManager();
-        Query d = em2.createNamedQuery("Dozenten.findAll");
+        Query d = em.createNamedQuery("Dozenten.findAll");
         List DList = d.getResultList();
         for (Object DListitem : DList)
         {
         	Dozenten doz =(Dozenten)DListitem;
-        	DozentenListe.add(doz.getDid());
+        	DozentenListe.add(doz.getDName());
         }
     }
  
-    ArrayList<Integer> DozentenListe = new ArrayList<>();
-    ArrayList<Integer> ModulListe = new ArrayList<>();
+    ArrayList<String> DozentenListe = new ArrayList<>();
+    ArrayList<String> ModulListe = new ArrayList<>();
     ArrayList<String> StudiengangListe = new ArrayList<>();
     
-    private Integer modSemester;
-    private boolean modSemester_ok = false;
+    private int modSemester;
 	private String SGMNotiz;
     private String SGName;
-	private int did;
-	private int mid;
+	private String DName;
+	private String modName;
 	
 	
 	List<Sgmodul> sgmodullist;
@@ -109,11 +106,11 @@ public class SgmodulController implements Serializable {
 		this.SGMNotiz = SGMNotiz;
 	}
 
-	public ArrayList<Integer> getDozentenListe() {
+	public ArrayList<String> getDozentenListe() {
 		return DozentenListe;
 	}
 
-	public void setDozentenListe(ArrayList<Integer> dozentenListe) {
+	public void setDozentenListe(ArrayList<String> dozentenListe) {
 		this.DozentenListe = dozentenListe;
 	}
 	
@@ -124,11 +121,11 @@ public class SgmodulController implements Serializable {
 	public void setStudiengangListe(ArrayList<String> studiengangListe) {
 		this.StudiengangListe = studiengangListe;
 	}
-	public ArrayList<Integer> getModulListe() {
+	public ArrayList<String> getModulListe() {
 		return ModulListe;
 	}
 
-	public void setModulListe(ArrayList<Integer> modulListe) {
+	public void setModulListe(ArrayList<String> modulListe) {
 		this.ModulListe = modulListe;
 	}
 
@@ -172,35 +169,28 @@ public class SgmodulController implements Serializable {
 			this.SGName = SGName;
 	}			
 
-	public int getDid() {
-		return did;
+	public String getDName() {
+		return DName;
 	}
 
-	public void setDid(int did) {
-			this.did = did;
+	public void setDName(String DName) {
+			this.DName = DName;
 	}
 	
-	public int getMid() {
-		return mid;
+	public String getModName() {
+		return modName;
 	}
 
-	public void setMid(int mid) {
-			this.mid = mid;
+	public void setModName(String modName) {
+			this.modName = modName;
 	}
 
-	public Integer getModSemester() {
+	public int getModSemester() {
 		return modSemester;
 	}
 
-	public void setModSemester(Integer modSemester) {
-		if(modSemester!=null){
-			this.modSemester = modSemester;
-			modSemester_ok=true;
-	    }
-		else{
-	    	FacesMessage message = new FacesMessage("Modulsemester konnte nicht gesetzt werden.");
-            FacesContext.getCurrentInstance().addMessage("SgmodulForm:modSemester_reg", message);
-	    }
+	public void setModSemester(int modSemester) {
+		this.modSemester = modSemester;
 	}
 
 	public List<Sgmodul> getSgmodullist() {
@@ -233,11 +223,11 @@ public class SgmodulController implements Serializable {
 	public void createSgmodul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
 		Sgmodul sgm = new Sgmodul();  
-		sgm.setModul(findMod(mid));
-		sgm.setDozenten(findDoz(did));
-		sgm.setStudiengang(findSg(SGName));
-		sgm.setModSemester(modSemester);
 		sgm.setSGMNotiz(SGMNotiz);
+		sgm.setModSemester(modSemester);
+		sgm.setModul(findMod(modName));
+		sgm.setDozenten(findDoz(DName));
+		sgm.setStudiengang(findSg(SGName));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -255,12 +245,10 @@ public class SgmodulController implements Serializable {
 	}
 	
 	public String createDoSgmodul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(modSemester_ok == true) {
+		
 			createSgmodul();
 			return "showsgmodul.xhtml";
-		}else {
-			return "createsgmodul.xhtml";
-		}
+	
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -286,12 +274,11 @@ public class SgmodulController implements Serializable {
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Sgmodul.class, newsgm.getSgmid());
 	        sgmodul.setSgmid(newsgm.getSgmid());
-	        sgmodul.setModul(findMod(newsgm.modul.getModID()));
-	        //sgmodul.setModul(findMod2());
-	        sgmodul.setStudiengang(findSg(newsgm.studiengang.getSGName()));
-	        sgmodul.setDozenten(findDoz(newsgm.dozenten.getDid()));
 	        sgmodul.setModSemester(newsgm.getModSemester());
 	        sgmodul.setSGMNotiz(newsgm.getSGMNotiz());
+	        sgmodul.setModul(findMod(newsgm.getModul().getModName()));
+	        sgmodul.setDozenten(findDoz(newsgm.getDozenten().getDName()));
+	        sgmodul.setStudiengang(findSg(newsgm.getStudiengang().getSGName()));
 	        em.merge(sgmodul);
 	        ut.commit(); 
 	    }
@@ -335,12 +322,12 @@ public class SgmodulController implements Serializable {
 		em.close();
     }
     
-    private Modul findMod(int mid) {
+    private Modul findMod(String mod) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Modul> query
-                = em.createNamedQuery("Modul.findByModID",Modul.class);
-            query.setParameter("modID", mid);
+                = em.createNamedQuery("Modul.findByModName",Modul.class);
+            query.setParameter("modName", mod);
             modul = (Modul)query.getSingleResult();
         }
         catch(Exception e){   
@@ -361,17 +348,16 @@ public class SgmodulController implements Serializable {
         return studiengang;
     }
     
-    private Dozenten findDoz(int did) {
+    private Dozenten findDoz(String doz) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Dozenten> query
-                = em.createNamedQuery("Dozenten.findByDid",Dozenten.class);
-            query.setParameter("did", did);
+                = em.createNamedQuery("Dozenten.findByDName",Dozenten.class);
+            query.setParameter("DName", doz);
             dozenten = (Dozenten)query.getSingleResult();
         }
         catch(Exception e){   
         }
         return dozenten;
     }
-    
 }

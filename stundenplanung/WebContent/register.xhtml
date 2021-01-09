@@ -23,7 +23,7 @@
 	                            <h:inputText                                     
 	                                id="idName_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{RegisterController.accName}"
+	                                value="#{registerController.accName}"
 	                                required = "true"  
 	                                requiredMessage="Bitte einen Benutzernamen eingeben">
 	                            </h:inputText>
@@ -42,7 +42,7 @@
 	                            <h:inputSecret                                     
 	                                id="idPwd_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{RegisterController.accPwd}"
+	                                value="#{registerController.accPwd}"
 	                                required = "true"  
 	                                requiredMessage="Bitte ein Passwort eingeben">
 	                            </h:inputSecret>
@@ -61,7 +61,7 @@
 	                            <h:inputText                                     
 	                                id="idMail_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{RegisterController.accEmail}"
+	                                value="#{registerController.accEmail}"
 	                                required = "true"  
 	                                requiredMessage="Bitte eine Email Adresse angeben">
 	                            </h:inputText>
@@ -82,12 +82,12 @@
 	                                id="Gruppe"
 	                                required="true"
 	                                requiredMessage="Bitte eine Fakultät wählen"
-	                                value="#{RegisterController.facName}">
+	                                value="#{registerController.facName}">
 	                                <f:selectItem
 	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{RegisterController.facultyListe}"/>
+	                                        value="#{registerController.facultyListe}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
@@ -100,7 +100,7 @@
 	                                styleClass="btn btn-primary" 
 	                                value="Registrieren" 
 	                                style="margin-top: 10px" 
-	                                action="#{RegisterController.register_button()}"/>
+	                                action="#{registerController.register_button()}"/>
 	                            <h:message for="idsubmit"/>
 	                        </h:panelGrid> 
 	                    </h:form>
@@ -111,7 +111,7 @@
 	                     style="background: whitesmoke">
 	                    <h:outputLabel      
 	                        style="color: whitesmoke"
-	                        value="Name: #{RegisterController.accName}"/>
+	                        value="Name: #{registerController.accName}"/>
 	                </div>
 	            </div>
 	        </div>

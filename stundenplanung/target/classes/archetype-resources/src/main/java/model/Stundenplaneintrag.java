@@ -36,17 +36,17 @@ public class Stundenplaneintrag implements Serializable {
 	//bi-directional many-to-one association to Lehrveranstaltungsart
 	@ManyToOne
 	@JoinColumn(name="FK_LVID")
-	public Lehrveranstaltungsart lehrveranstaltungsart;
+	private Lehrveranstaltungsart lehrveranstaltungsart;
 
 	//bi-directional many-to-one association to Raum
 	@ManyToOne
 	@JoinColumn(name="FK_RID")
-	public Raum raum;
+	private Raum raum;
 
 	//bi-directional many-to-one association to Sgmodul
 	@ManyToOne
 	@JoinColumn(name="FK_SGMID")
-	public Sgmodul sgmodul;
+	private Sgmodul sgmodul;
 
 	public Stundenplaneintrag() {
 	}

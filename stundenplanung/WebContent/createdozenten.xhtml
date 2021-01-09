@@ -7,6 +7,7 @@
 
         <h:body>
         	<ui:composition template="WEB-INF/template/master.xhtml" >
+        	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 				<ui:define name="content"> 
 	            <div>
 	            <div class="row">
@@ -23,7 +24,7 @@
 	                            <h:inputText                                     
 	                                id="DName_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{DozentenController.DName}"
+	                                value="#{dozentenController.DName}"
 	                                required = "true"  
 	                                requiredMessage="Bitte einen Benutzernamen eingeben">
 	                            </h:inputText>
@@ -42,7 +43,7 @@
 	                            <h:inputText                                     
 	                                id="DVorname_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{DozentenController.DVorname}"
+	                                value="#{dozentenController.DVorname}"
 	                                required = "true"  
 	                                requiredMessage="Bitte ein Vorname eingeben">
 	                            </h:inputText>
@@ -61,7 +62,7 @@
 	                            <h:inputText                                     
 	                                id="DTitel_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{DozentenController.DTitel}"
+	                                value="#{dozentenController.DTitel}"
 	                                required = "true"  
 	                                requiredMessage="Bitte eine Titel angeben">
 	                            </h:inputText>
@@ -80,7 +81,7 @@
 	                            <h:inputText                                     
 	                                id="DKurz_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{DozentenController.DKurz}"
+	                                value="#{dozentenController.DKurz}"
 	                                required = "true"  
 	                                requiredMessage="Bitte ein Kürzel angeben">
 	                            </h:inputText>
@@ -101,12 +102,12 @@
 	                                id="Gruppe"
 	                                required="true"
 	                                requiredMessage="Bitte einen Account wählen"
-	                                value="#{DozentenController.accName}">
+	                                value="#{dozentenController.accName}">
 	                                <f:selectItem
 	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{DozentenController.accountListe}"/>
+	                                        value="#{dozentenController.accountListe}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
@@ -120,7 +121,7 @@
                                     styleClass="btn btn-primary" 
                                     value="Hinzufügen" 
                                     style="margin-top: 10px" 
-                                    action="#{DozentenController.createDoDozenten()}"/>
+                                    action="#{dozentenController.createDoDozenten()}"/>
                             </h:panelGrid> 
                             <h:message for="submit"/>
 	                    </h:form>

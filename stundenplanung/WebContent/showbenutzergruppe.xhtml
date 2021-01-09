@@ -7,17 +7,19 @@
       
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
+	<!-- einzeiliger Kommentar 	<ui:define name="menu"> <ui:include src="WEB-INF/template/eingeloggt.xhtml"/></ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="BenutzergruppeListe" var="list" value="#{BenutzergruppeController.bglist}" editable="true" rowKey="#{list.groupID}" selection="#{BenutzergruppeController.selectedbenutzergruppe}" selectionMode="single">
+		    <p:commandButton value="Create Benutzergruppe" id="ajax" update="msgs" action="/createbenutzergruppe.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />
+			<p:dataTable id="BenutzergruppeListe" var="list" value="#{benutzergruppeController.bglist}" editable="true" rowKey="#{list.groupID}" selection="#{benutzergruppeController.selectedbenutzergruppe}" selectionMode="single">
 		        <f:facet name="header">
 		            Cell Editing with Click and RightClick
 		        </f:facet>
 		 		<!-- editMode="cell" widgetVar="cellModul" -->
 		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{BenutzergruppeController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{BenutzergruppeController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowEdit" listener="#{benutzergruppeController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{benutzergruppeController.onRowCancel}" update=":form:msgs" />
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -58,7 +60,7 @@
 		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
 		    </p:contextMenu> -->
 		    <p:contextMenu for="BenutzergruppeListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="BenutzergruppeListe" icon="pi pi-times" action="#{BenutzergruppeController.deleteBenutzergruppe}"/>  
+		        <p:menuitem value="Delete" update="BenutzergruppeListe" icon="pi pi-times" action="#{benutzergruppeController.deleteBenutzergruppe}"/>  
 		    </p:contextMenu> 
 		 </h:form>
 		 </ui:define>

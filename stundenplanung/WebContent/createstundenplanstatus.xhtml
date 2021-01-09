@@ -7,6 +7,7 @@
 
 	<h:body>
 		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 			<ui:define name="content">
             <div>
                 <div class="row">
@@ -32,7 +33,7 @@
                                 <h:inputText                                     
                                     id="SPSTBezeichnung_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplanstatusController.SPSTBezeichnung}" 
+                                    value="#{stundenplanstatusController.SPSTBezeichnung}" 
                                     required = "true"  
                                     requiredMessage="Eine Stundenplanstatus Beteichnung muss eingegeben werden.">
                                 </h:inputText>
@@ -51,7 +52,7 @@
                                 <h:inputText                                     
                                     id="SPSTHint_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplanstatusController.SPSTHint}" 
+                                    value="#{stundenplanstatusController.SPSTHint}" 
                                     required = "true"  
                                     requiredMessage="Ein Stundenplanstatus Hinweis muss eingegeben werden.">
                                 </h:inputText>
@@ -70,7 +71,7 @@
                                 <h:inputText                                     
                                     id="PColor_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplanstatusController.PColor}" 
+                                    value="#{stundenplanstatusController.PColor}" 
                                     required = "true"  
                                     requiredMessage="Eine Farbe muss eingegeben werden.">
                                 </h:inputText>
@@ -86,7 +87,7 @@
                                     styleClass="btn btn-primary" 
                                     value="Hinzufügen" 
                                     style="margin-top: 10px" 
-                                    action="#{StundenplanstatusController.createDoStundenplanstatus()}"/>
+                                    action="#{stundenplanstatusController.createDoStundenplanstatus()}"/>
                             </h:panelGrid> 
                             <h:message for="submit"/>
                     	</h:form>

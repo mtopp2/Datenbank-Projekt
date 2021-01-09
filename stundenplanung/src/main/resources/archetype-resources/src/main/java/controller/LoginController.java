@@ -27,7 +27,7 @@ import javax.faces.bean.ManagedBean;
 
 /**
  *
- * @author Manuel
+ * @author Anil
  */
 
 @Named(value = "loginController")
@@ -69,7 +69,7 @@ public class LoginController implements Serializable {
     
 //Getter und Setter Methoden
     
-    public boolean IsAdm() {
+    public boolean isIsAdm() {
         return isAdm;
     }
 
@@ -77,7 +77,7 @@ public class LoginController implements Serializable {
         this.isAdm = isAdm;
     }
     
-    public boolean isNob() {
+    public boolean isIsNob() {
         return isNob;
     }
 
@@ -85,7 +85,7 @@ public class LoginController implements Serializable {
         this.isNob = isNob;
     }    
     
-    public boolean IsSgl() {
+    public boolean isIsSgl() {
         return isSgl;
     }
 
@@ -93,7 +93,7 @@ public class LoginController implements Serializable {
         this.isSgl = isSgl;
     }    
     
-    public boolean IsRzp() {
+    public boolean isIsRzp() {
         return isRzp;
     }
 

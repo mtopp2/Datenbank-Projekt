@@ -33,10 +33,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="StundenplansemesterController")
+//@ManagedBean(name="StundenplansemesterController")
+@Named(value="stundenplansemesterController")
 @SessionScoped
 public class StundenplansemesterController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -255,7 +256,7 @@ public class StundenplansemesterController implements Serializable {
 	        stundenplansemester.setSPJahr(newsps.getSPJahr());
 	        stundenplansemester.setSPKw(newsps.getSPKw());
 	        stundenplansemester.setStartDatum(newsps.getStartDatum());
-	        stundenplansemester.setStundenplanstatus(findSps(newsps.stundenplanstatus.getSPSTBezeichnung()));
+	        stundenplansemester.setStundenplanstatus(findSps(newsps.getStundenplanstatus().getSPSTBezeichnung()));
 	        em.merge(stundenplansemester);
 	        ut.commit(); 
 	    }

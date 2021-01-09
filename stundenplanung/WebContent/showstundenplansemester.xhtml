@@ -7,13 +7,15 @@
 
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
+	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->>
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="StundenplansemesterListe" var="list" value="#{StundenplansemesterController.spslist}" editable="true" rowKey="#{list.spsid}" selection="#{StundenplansemesterController.selectedsps}" selectionMode="single">
+		    <p:growl id="msgs" showDetail="true"/>
+		    <p:commandButton value="Create Stundenplansemester" id="ajax" update="msgs" action="/createstundenplansemesterxhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="StundenplansemesterListe" var="list" value="#{stundenplansemesterController.spslist}" editable="true" rowKey="#{list.spsid}" selection="#{stundenplansemesterController.selectedsps}" selectionMode="single">
 			
-		        <p:ajax event="rowEdit" listener="#{StundenplansemesterController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{StundenplansemesterController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowEdit" listener="#{stundenplansemesterController.onRowEdit}" update=":form:msgs" />
+        		<p:ajax event="rowEditCancel" listener="#{stundenplansemesterController.onRowCancel}" update=":form:msgs" />
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -45,7 +47,7 @@
 		        
 		        <p:column headerText="Startdatum">
 		            <p:cellEditor>
-		            	<!-- <p:datePicker value="#{StundenplansemesterController.startDatum}" locale="de" pattern="dd.MM.yyyy"/> -->
+		            	<!-- <p:datePicker value="#{stundenplansemesterController.startDatum}" locale="de" pattern="dd.MM.yyyy"/> -->
 		                <f:facet name="output"><h:outputText value="#{list.startDatum}" locale="de" pattern="yyyy-MM-dd"/></f:facet>
 		                <f:facet name="input"><p:datePicker value="#{list.startDatum}" locale="de" pattern="yyyy-MM-dd"/></f:facet>
 		            </p:cellEditor>
@@ -56,7 +58,7 @@
 		                <f:facet name="output"><h:outputText value="#{list.stundenplanstatus.SPSTBezeichnung}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.stundenplanstatus.SPSTBezeichnung}" style="width:100%">
-		                        <f:selectItems value="#{StundenplansemesterController.stundenplanstatusListe}" var="#{stundenplanstatus.SPSTBezeichnung}" itemLabel="#{stundenplanstatus.SPSTBezeichnung}" itemValue="#{stundenplanstatus.SPSTBezeichnung}" />
+		                        <f:selectItems value="#{stundenplansemesterController.stundenplanstatusListe}" var="#{stundenplanstatus.SPSTBezeichnung}" itemLabel="#{stundenplanstatus.SPSTBezeichnung}" itemValue="#{stundenplanstatus.SPSTBezeichnung}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -68,7 +70,7 @@
 		       
 		    </p:dataTable>
 		    <p:contextMenu for="StundenplansemesterListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="StundenplansemesterListe" icon="pi pi-times" action="#{StundenplansemesterController.deleteStundenplansemester}"/>  
+		        <p:menuitem value="Delete" update="StundenplansemesterListe" icon="pi pi-times" action="#{stundenplansemesterController.deleteStundenplansemester}"/>  
 		    </p:contextMenu> 
 		 </h:form>
 		 </ui:define>

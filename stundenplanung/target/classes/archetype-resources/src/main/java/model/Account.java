@@ -11,7 +11,7 @@ import javax.persistence.*;
  * 
  */
 @Entity
-@Table(name="accounts")
+@Table(name = "accounts")
 @NamedQueries({
 	@NamedQuery(name="Account.findAll", query="SELECT a FROM Account a"),
 	@NamedQuery(name="Account.findByAccName", query = "SELECT a FROM Account a WHERE a.accName = :accName"),
@@ -35,12 +35,12 @@ public class Account implements Serializable {
 	//bi-directional many-to-one association to Benutzergruppe
 	@ManyToOne
 	@JoinColumn(name="FK_GroupID")
-	public Benutzergruppe benutzergruppe;
+	private Benutzergruppe benutzergruppe;
 
 	//bi-directional many-to-one association to Faculty
 	@ManyToOne
 	@JoinColumn(name="FK_FBID")
-	public Faculty faculty;
+	private Faculty faculty;
 
 	//bi-directional many-to-one association to Dozenten
 	@OneToMany(mappedBy="account")

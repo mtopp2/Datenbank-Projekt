@@ -12,6 +12,7 @@ import java.util.List;
 @Entity
 @NamedQueries({
 @NamedQuery(name="Sgmodul.findAll", query="SELECT s FROM Sgmodul s"),
+@NamedQuery(name="Sgmodul.findAllOrderBy", query="SELECT s FROM Sgmodul s GROUP BY s.modSemester ORDER BY s.modSemester"),
 @NamedQuery(name = "Sgmodul.findBySgmid", query = "SELECT s FROM Sgmodul s WHERE s.sgmid = :sgmid"),
 @NamedQuery(name = "Sgmodul.findByModSemester", query = "SELECT s FROM Sgmodul s WHERE s.modSemester = :modSemester"),
 @NamedQuery(name = "Sgmodul.findBySGMNotiz", query = "SELECT s FROM Sgmodul s WHERE s.SGMNotiz = :SGMNotiz"),
@@ -31,17 +32,17 @@ public class Sgmodul implements Serializable {
 	//bi-directional many-to-one association to Dozenten
 	@ManyToOne
 	@JoinColumn(name="FK_DID")
-	public Dozenten dozenten;
+	private Dozenten dozenten;
 
 	//bi-directional many-to-one association to Modul
 	@ManyToOne
 	@JoinColumn(name="FK_ModID")
-	public Modul modul;
+	private Modul modul;
 
 	//bi-directional many-to-one association to Studiengang
 	@ManyToOne
 	@JoinColumn(name="FK_SGID")
-	public Studiengang studiengang;
+	private Studiengang studiengang;
 
 	//bi-directional many-to-one association to Stundenplaneintrag
 	@OneToMany(mappedBy="sgmodul")

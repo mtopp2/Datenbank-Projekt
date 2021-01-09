@@ -47,11 +47,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="AccountController")
-//@Named(value = "ModulController")
+//@ManagedBean(name="AccountController")
+@Named(value="accountController")
 //@SessionScoped
 @SessionScoped
 public class AccountController implements Serializable {
@@ -269,8 +269,8 @@ public class AccountController implements Serializable {
 	        account.setAccName(newacc.getAccName());
 	        account.setAccPwd(newacc.getAccPwd());
 	        account.setAccEmail(newacc.getAccEmail());
-	        account.setBenutzergruppe(findBG(newacc.benutzergruppe.getBGName()));
-            account.setFaculty(findFac(newacc.faculty.getFacName()));
+	        account.setBenutzergruppe(findBG(newacc.getBenutzergruppe().getBGName()));
+            account.setFaculty(findFac(newacc.getFaculty().getFacName()));
 	        
 	        
 	        em.merge(account);

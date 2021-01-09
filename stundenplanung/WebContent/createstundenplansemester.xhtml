@@ -7,6 +7,7 @@
 
 	<h:body>
 		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 			<ui:define name="content">
             <div>
                 <div class="row">
@@ -32,7 +33,7 @@
                                 <h:inputText                                     
                                     id="SPSemester_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplansemesterController.SPSemester}" 
+                                    value="#{stundenplansemesterController.SPSemester}" 
                                     required = "true"  
                                     requiredMessage="Ein Stundenplansemester muss eingegeben werden.">
                                 </h:inputText>
@@ -51,7 +52,7 @@
                                 <h:inputText                                     
                                     id="SPJahr_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplansemesterController.SPJahr}" 
+                                    value="#{stundenplansemesterController.SPJahr}" 
                                     required = "true"  
                                     requiredMessage="Ein Stundenplanjahr muss eingegeben werden.">
                                 </h:inputText>
@@ -70,7 +71,7 @@
                                 <h:inputText                                     
                                     id="SPKw_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplansemesterController.SPKw}" 
+                                    value="#{stundenplansemesterController.SPKw}" 
                                     required = "true"  
                                     requiredMessage="Eine Stundenplankalenderwoche muss eingegeben werden.">
                                 </h:inputText>
@@ -91,13 +92,13 @@
                                 	type = "date"                                     
                                     id="startDatum_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StundenplansemesterController.startDatum}" 
+                                    value="#{stundenplansemesterController.startDatum}" 
                                     required = "true"  
                                     requiredMessage="Ein Startdatum muss eingegeben werden.">
                                 </h:inputText>-->
                                 <p:datePicker 
 	                                id="startDatum_reg" 
-	                                value="#{StundenplansemesterController.startDatum}" 
+	                                value="#{stundenplansemesterController.startDatum}" 
 	                                locale="de" 
 	                                pattern="dd.MM.yyyy"
 	                                required = "true"  
@@ -120,12 +121,12 @@
 	                                id="spst_reg"
 	                                required="true"
 	                                requiredMessage="Bitte eine Straße zu dem Standort auswählen:"
-	                                value="#{StundenplansemesterController.SPSTBezeichnung}">
+	                                value="#{stundenplansemesterController.SPSTBezeichnung}">
 	                                <f:selectItem
 	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{StundenplansemesterController.stundenplanstatusListe}"/>
+	                                        value="#{stundenplansemesterController.stundenplanstatusListe}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
@@ -139,7 +140,7 @@
                                     styleClass="btn btn-primary" 
                                     value="Hinzufügen" 
                                     style="margin-top: 10px" 
-                                    action="#{StundenplansemesterController.createDoStundenplansemester()}"/>
+                                    action="#{stundenplansemesterController.createDoStundenplansemester()}"/>
                             </h:panelGrid> 
                             <h:message for="submit"/>
                     	</h:form>

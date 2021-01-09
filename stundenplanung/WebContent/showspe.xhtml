@@ -12,7 +12,7 @@
 		    <p:growl id="messages" showDetail="true" />
 		      
 		    <h:panelGrid columnClasses="value">
-		        <p:schedule id="schedule" value="#{scheduleController.lazyEventModel}" widgetVar="myschedule" allDaySlot="false" showWeekends="false" axisFormat="H:mm" slotMinutes="15" locale="de" timeZone="Europe/Berlin">
+		        <p:schedule id="schedule" value="#{scheduleController.lazyEventModel}" widgetVar="myschedule" allDaySlot="false" showWeekends="false" axisFormat="H:mm" slotMinutes="15" slotDuration="00:15:00" minTime="08:00:00" maxTime="20:00:00" locale="de" timeZone="Europe/Berlin">
 		 
 		            <p:ajax event="dateSelect" listener="#{scheduleController.onDateSelect}" update=":eventDetailsForm:eventDialog" oncomplete="PF('eventDialog').show();" />
 		            <p:ajax event="eventSelect" listener="#{scheduleController.onEventSelect}" update=":eventDetailsEditForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" />
@@ -25,19 +25,19 @@
 		    <h:panelGrid id="buttons" columns="4">
             <p:selectOneMenu
                         id="semid"
-                        value="#{scheduleController.semester_auswahl}"
+                        value="#{scheduleController.semesterSelection}"
                         required="true">
                         <f:selectItems value="#{scheduleController.semesterList}" />
             </p:selectOneMenu>
             <p:selectOneMenu
                         id="stgid"
-                        value="#{scheduleController.studiengang_auswahl}"
+                        value="#{scheduleController.studiengangSelection}"
                         required="true">
                         <f:selectItems value="#{scheduleController.studiengangList}" />
             </p:selectOneMenu>
             <p:selectOneMenu
                         id="fid"
-                        value="#{scheduleController.faculty_auswahl}"
+                        value="#{scheduleController.facultySelection}"
                         required="true">
                         <f:selectItems value="#{scheduleController.facultyList}" />
             </p:selectOneMenu>
@@ -65,18 +65,18 @@
                         <f:selectItems value="#{scheduleController.sgmodulListe}" />
                     </p:selectOneMenu>
 		        	
-			        <p:outputLabel for="lehrveranstaltungsart" value="Lehrveranstaltungsart:" />
-			        <p:selectOneMenu id="lehrveranstaltungsart" value="#{scheduleController.lvname}" style="width:100%">
+			        <p:outputLabel for="teachingEvent" value="Lehrveranstaltungsart:" />
+			        <p:selectOneMenu id="teachingEvent" value="#{scheduleController.lvname}" style="width:100%">
                         <f:selectItems value="#{scheduleController.lehrveranstaltungsListe}" />
                     </p:selectOneMenu>
 			        
-			        <p:outputLabel for="raum" value="Raum:" />
-			        <p:selectOneMenu id="raum" value="#{scheduleController.rid}" style="width:100%">
+			        <p:outputLabel for="room" value="Raum:" />
+			        <p:selectOneMenu id="room" value="#{scheduleController.rid}" style="width:100%">
                     	<f:selectItems value="#{scheduleController.raumListe}" />
 			        </p:selectOneMenu>
 			        
-			        <p:outputLabel for="anzahl" value="Studierendenanzahl:" />
-		            <p:inputText id="anzahl" value="#{scheduleController.studierendenzahl}" />
+			        <p:outputLabel for="studentNumber" value="Studierendenanzahl:" />
+		            <p:inputText id="studentNumber" value="#{scheduleController.studentNumber}" />
 		 			
 		 			<p:commandButton id="addButton" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventDialog').hide();" />
 		            <p:commandButton id="reset" type="reset" value="Reset" />
@@ -102,18 +102,18 @@
                         <f:selectItems value="#{scheduleController.sgmodulListe}" />
                     </p:selectOneMenu>
 		        	
-			        <p:outputLabel for="lehrveranstaltungsart1" value="Lehrveranstaltungsart:" />
-			        <p:selectOneMenu id="lehrveranstaltungsart1" value="#{scheduleController.lvname}" style="width:100%">
+			        <p:outputLabel for="teachingEvent1" value="Lehrveranstaltungsart:" />
+			        <p:selectOneMenu id="teachingEvent1" value="#{scheduleController.lvname}" style="width:100%">
                         <f:selectItems value="#{scheduleController.lehrveranstaltungsListe}" />
                     </p:selectOneMenu>
 			        
-			        <p:outputLabel for="raum1" value="Raum:" />
-			        <p:selectOneMenu id="raum1" value="#{scheduleController.rid}" style="width:100%">
+			        <p:outputLabel for="room1" value="Raum:" />
+			        <p:selectOneMenu id="room1" value="#{scheduleController.rid}" style="width:100%">
                     	<f:selectItems value="#{scheduleController.raumListe}" />
 			        </p:selectOneMenu>
 			        
-			        <p:outputLabel for="anzahl1" value="Studierendenanzahl:" />
-		            <p:inputText id="anzahl1" value="#{scheduleController.selectedEvent.studierendenzahl}" />
+			        <p:outputLabel for="studentNumber1" value="Studierendenanzahl:" />
+		            <p:inputText id="studentNumber1" value="#{scheduleController.selectedEvent.studierendenzahl}" />
 		 			
 		 			<p:commandButton id="addButton1" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventEditDialog').hide();" />
 		            <p:commandButton id="reset1" type="reset" value="Reset" />

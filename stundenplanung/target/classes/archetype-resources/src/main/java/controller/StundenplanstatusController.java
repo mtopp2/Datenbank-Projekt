@@ -32,10 +32,11 @@ import controller.MessageForPrimefaces;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 
-@ManagedBean(name="StundenplanstatusController")
+//@ManagedBean(name="StundenplanstatusController")
+@Named(value="stundenplanstatusController")
 @SessionScoped
 public class StundenplanstatusController implements Serializable {
 	private static final long serialVersionUID = 1L;

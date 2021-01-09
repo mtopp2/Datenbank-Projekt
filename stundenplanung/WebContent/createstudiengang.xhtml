@@ -7,6 +7,7 @@
 
 <h:body>
 		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->>
 			<ui:define name="content">
             <div>
                 <div class="row">
@@ -32,7 +33,7 @@
                                 <h:inputText                                     
                                     id="SGName_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StudiengangController.SGName}" 
+                                    value="#{studiengangController.SGName}" 
                                     required = "true"  
                                     requiredMessage="Ein Studiengang muss eingegeben werden.">
                                 </h:inputText>
@@ -51,7 +52,7 @@
                                 <h:inputText                                     
                                     id="SGKurz_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StudiengangController.SGKurz}" 
+                                    value="#{studiengangController.SGKurz}" 
                                     required = "true"  
                                     requiredMessage="Eine SGKurz muss eingegeben werden.">
                                 </h:inputText>
@@ -70,7 +71,7 @@
                                 <h:inputText                                     
                                     id="semester_reg"     
                                     styleClass="form-control"                                 
-                                    value="#{StudiengangController.semester}" 
+                                    value="#{studiengangController.semester}" 
                                     required = "true"  
                                     requiredMessage="Eine Semester anzahl muss eingegeben werden.">
                                 </h:inputText>
@@ -91,19 +92,19 @@
 	                                id="fac_reg"
 	                                required="true"
 	                                requiredMessage="Bitte eine Fakultät zu dem Studiengang auswählen:"
-	                                value="#{StudiengangController.facName}">
+	                                value="#{studiengangController.facName}">
 	                                <f:selectItem
 	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{StudiengangController.facultyListe}"/>
+	                                        value="#{studiengangController.facultyListe}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
 	                                style="margin: 10px;"/>
 	                            <h:message for="fac_reg" style="color: red"/>
 	                        </h:panelGrid>
-	                        <!-- <h:outputLabel     
+	                        <h:outputLabel     
 	                            styleClass="label" 
 	                            style="font-size:12pt; color:black;"
 	                            for="Ss_reg" 
@@ -115,44 +116,18 @@
 	                                id="Ss_reg"
 	                                required="true"
 	                                requiredMessage="Bitte ein Semester zu dem Studiengang auswählen:"
-	                                value="#{StudiengangController.semesterName}">
+	                                value="#{studiengangController.SPSemester}">
 	                                <f:selectItem
-	                                    itemLabel=""
+	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{StudiengangController.stundenplansemesterListe}"/>
+	                                        value="#{studiengangController.stundenplansemesterListe}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
 	                                style="margin: 10px;"/>
 	                            <h:message for="Ss_reg" style="color: red"/>
-	                        </h:panelGrid>-->
-	                        
-	                        <h:outputLabel     
-	                            styleClass="label" 
-	                            style="font-size:12pt; color:black;"
-	                            for="sps_reg" 
-	                            value="Stundenplansemesterid: "/>
-	                        <h:panelGrid        
-	                            columns="3">
-	                            <h:selectOneMenu
-	                                styleClass="form-control" 
-	                                id="sps_reg"
-	                                required="true"
-	                                requiredMessage="Bitte ein Stundenplansemester zu dem Studiengang auswählen:"
-	                                value="#{StudiengangController.spsid}">
-	                                <f:selectItem
-	                                    itemLabel="-----"
-	                                    noSelectionOption="true"/>
-	                                    <f:selectItems
-	                                        value="#{StudiengangController.stundenplansemesterListe}"/>
-	                               </h:selectOneMenu>
-	                            <h:outputLabel     
-	                                value="" 
-	                                style="margin: 10px;"/>
-	                            <h:message for="sps_reg" style="color: red"/>
 	                        </h:panelGrid>
-	                        
                             <h:panelGrid>
                                 <h:commandButton   
                                     id="submit"
@@ -160,7 +135,7 @@
                                     styleClass="btn btn-primary" 
                                     value="Hinzufügen" 
                                     style="margin-top: 10px" 
-                                    action="#{StudiengangController.createDoStudiengang()}"/>
+                                    action="#{studiengangController.createDoStudiengang()}"/>
                             </h:panelGrid> 
                             <h:message for="submit"/>
                     	</h:form>

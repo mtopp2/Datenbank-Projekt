@@ -52,7 +52,7 @@ import java.util.Calendar;
 
 /**
 *
-* @author Manuel
+* @author Anil
 */
 @Named(value="scheduleController")
 @SessionScoped
@@ -66,19 +66,19 @@ public class ScheduleController implements Serializable {
 	private UserTransaction ut;
 	
 	@Inject 
-	private Raum raum;
-	private Lehrveranstaltungsart lehrveranstaltungsart;
+	private Raum room;
+	private Lehrveranstaltungsart teachingEvent;
 	private Sgmodul sgmodul;
 	private Faculty faculty;
 	
 	@PostConstruct
     public void init() {
-        auswahl();
+        selection();
         lazyEventModel = new LazyScheduleModel() {
         	@Override
             public void loadEvents(LocalDateTime start, LocalDateTime end) { 
-                eventLaden();
-                moduleLaden();
+                eventLoader();
+                loadModule();
             }   
         };
     }
@@ -87,15 +87,15 @@ public class ScheduleController implements Serializable {
 	private Date SPEStartZeit;
 	private Date SPEEndZeit;
 	private int SPTermin;
-	private int studierendenzahl;
-	private Timestamp zeitStempel;
+	private int studentNumber;
+	private Timestamp timeStamp;
 	
 	TimeZone time_zone_default = TimeZone.getDefault(); 
 	
 	private ScheduleModel eventModel;
     private ScheduleModel lazyEventModel;
     private ScheduleEvent event = new DefaultScheduleEvent();
-    private Date wochenStart;
+    private Date weekstart;
     
     private List<Stundenplaneintrag> eintragListe;
     private Stundenplaneintrag selectedEvent;
@@ -112,13 +112,13 @@ public class ScheduleController implements Serializable {
     
     ArrayList<Integer> semesterList = new ArrayList<>();
     private int semester;
-    private int semester_auswahl;
+    private int semesterSelection;
     
     ArrayList<String> studiengangList = new ArrayList<>();
-    private String studiengang_auswahl;
+    private String studiengangSelection;
     
     ArrayList<String> facultyList = new ArrayList<>();
-    private String faculty_auswahl;
+    private String facultySelection;
     
     ArrayList<Sgmodul> sgsemModulList = new ArrayList<>();
     ArrayList<String> modulList = new ArrayList<>();
@@ -130,7 +130,7 @@ public class ScheduleController implements Serializable {
     LocalDateTime l2;
     
   //--------------------------------------------------------------
-    public void moduleLaden() {
+    public void loadModule() {
 		/*try{
 	         EntityManager em = emf.createEntityManager();
 	         Query q = em.createNamedQuery("Sgmodul.findBySemesterAndStudiengang",Sgmodul.class);
@@ -153,9 +153,9 @@ public class ScheduleController implements Serializable {
     	try{
 	        EntityManager em = emf.createEntityManager();
 	        Query q = em.createNamedQuery("Sgmodul.findBySemesterAndStudiengangAndFaculty",Sgmodul.class);
-	        q.setParameter("semester", semester_auswahl);
-	        q.setParameter("SGName", studiengang_auswahl);
-	        q.setParameter("facName", faculty_auswahl);
+	        q.setParameter("semester", semesterSelection);
+	        q.setParameter("SGName", studiengangSelection);
+	        q.setParameter("facName", facultySelection);
 	        
 	        List liste = q.getResultList();
 	        
@@ -171,17 +171,17 @@ public class ScheduleController implements Serializable {
 	    }
 	}
     
-	public void eventLaden() {
+	public void eventLoader() {
 		int dayOffset;
-        wochenStart = getWeekStartDate();
+        weekstart = getWeekStartDate();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(wochenStart);
+        cal.setTime(weekstart);
         
         try{/* Laden der Datenbank*/
             EntityManager em = emf.createEntityManager();
             Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlan", Stundenplaneintrag.class);
-            query.setParameter("semester", semester_auswahl);
-            query.setParameter("stgang", studiengang_auswahl);
+            query.setParameter("semester", semesterSelection);
+            query.setParameter("stgang", studiengangSelection);
             eintragListe = query.getResultList();
         }
         catch(Exception e){}
@@ -226,10 +226,10 @@ public class ScheduleController implements Serializable {
         
 	}
 	
-	public void auswahl() {
+	public void selection() {
 		try{
             EntityManager em = emf.createEntityManager();
-            Query q = em.createNamedQuery("Sgmodul.findAll",Sgmodul.class);
+            Query q = em.createNamedQuery("Sgmodul.findAllOrderBy",Sgmodul.class);
             List liste = q.getResultList();
             
             for(Object obj : liste){
@@ -301,10 +301,10 @@ public class ScheduleController implements Serializable {
             facultyList.add(f1.getFacName());
         }
         
-		faculty_auswahl = facultyList.get(8);
+		facultySelection = facultyList.get(8);
         semester = 6;
-        semester_auswahl = semester;
-        studiengang_auswahl = studiengangList.get(0);
+        semesterSelection = semester;
+        studiengangSelection = studiengangList.get(0);
 
 	}
 	
@@ -325,14 +325,14 @@ public class ScheduleController implements Serializable {
                 selectedEvent.setSgmodul(findSgm(sgmid));
                 selectedEvent.setLehrveranstaltungsart(findLva(lvname));
                 selectedEvent.setRaum(findRau(rid));
-                selectedEvent.setStudierendenzahl(studierendenzahl);
+                selectedEvent.setStudierendenzahl(studentNumber);
                 Date date= new Date();
                 long time = date.getTime();
-                zeitStempel = new Timestamp(time);
-                selectedEvent.setZeitStempel(zeitStempel);
+                timeStamp = new Timestamp(time);
+                selectedEvent.setZeitStempel(timeStamp);
                 
                 
-                eventLaden();
+                eventLoader();
 
                 
                 ut.begin();
@@ -357,9 +357,9 @@ public class ScheduleController implements Serializable {
                 //Zeitstempel
                 Date date= new Date();
                 long time = date.getTime();
-                zeitStempel = new Timestamp(time);
+                timeStamp = new Timestamp(time);
                 
-                selectedEvent.setZeitStempel(zeitStempel);
+                selectedEvent.setZeitStempel(timeStamp);
                 em.merge(selectedEvent);
                 ut.commit();
                 msg = "Ereignis wurde geändert!";
@@ -459,8 +459,8 @@ public class ScheduleController implements Serializable {
                 //Zeitstempel
                 Date date= new Date();
                 long time = date.getTime();
-                zeitStempel = new Timestamp(time);
-                selectedEvent.setZeitStempel(zeitStempel);
+                timeStamp = new Timestamp(time);
+                selectedEvent.setZeitStempel(timeStamp);
                 em.merge(selectedEvent);
                 ut.commit();
                 msg = "Ereignis wurde geändert!";
@@ -499,8 +499,8 @@ public class ScheduleController implements Serializable {
                 //Zeitstempel
                 Date date= new Date();
                 long time = date.getTime();
-                zeitStempel = new Timestamp(time);
-                selectedEvent.setZeitStempel(zeitStempel);
+                timeStamp = new Timestamp(time);
+                selectedEvent.setZeitStempel(timeStamp);
                 em.merge(selectedEvent);
                 ut.commit();
                 msg = "Ereignis wurde geändert!";
@@ -572,18 +572,18 @@ public class ScheduleController implements Serializable {
 	
 	//--------------------------------------------------------------
 	
-	public Raum getRaum() {
-		return raum;
+	public Raum getRoom() {
+		return room;
 	}
-	public void setRaum(Raum raum) {
-		this.raum = raum;
+	public void setRoom(Raum room) {
+		this.room = room;
 	}
 	
-	public Lehrveranstaltungsart getLehrveranstaltungsart() {
-		return lehrveranstaltungsart;
+	public Lehrveranstaltungsart getTeachingEvent() {
+		return teachingEvent;
 	}
-	public void setLehrveranstaltungsart(Lehrveranstaltungsart lehrveranstaltungsart) {
-		this.lehrveranstaltungsart = lehrveranstaltungsart;
+	public void setTeachingEvent(Lehrveranstaltungsart teachingEvent) {
+		this.teachingEvent = teachingEvent;
 	}
 	
 	public Sgmodul getSgmodul() {
@@ -621,18 +621,18 @@ public class ScheduleController implements Serializable {
 		this.SPTermin = SPTermin;
 	}
 	
-	public int getStudierendenzahl() {
-		return studierendenzahl;
+	public int getStudentNumber() {
+		return studentNumber;
 	}
-	public void setStudierendenzahl(int studierendenzahl) {
-		this.studierendenzahl = studierendenzahl;
+	public void setStudentNumber(int studentNumber) {
+		this.studentNumber = studentNumber;
 	}
 	
-	public Timestamp getZeitStempel() {
-		return zeitStempel;
+	public Timestamp getTimeStamp() {
+		return timeStamp;
 	}
-	public void setZeitStempel(Timestamp zeitStempel) {
-		this.zeitStempel = zeitStempel;
+	public void setTimeStamp(Timestamp timeStamp) {
+		this.timeStamp = timeStamp;
 	}	
 	
 	//--------------------------------------------------------------
@@ -684,12 +684,12 @@ public class ScheduleController implements Serializable {
 		this.semester = semester;
 	}
 
-	public int getSemester_auswahl() {
-		return semester_auswahl;
+	public int getSemesterSelection() {
+		return semesterSelection;
 	}
 
-	public void setSemester_auswahl(int semester_auswahl) {
-		this.semester_auswahl = semester_auswahl;
+	public void setSemesterSelection(int semesterSelection) {
+		this.semesterSelection = semesterSelection;
 	}
 
 	public ArrayList<String> getStudiengangList() {
@@ -700,12 +700,12 @@ public class ScheduleController implements Serializable {
 		this.studiengangList = studiengangList;
 	}
 
-	public String getStudiengang_auswahl() {
-		return studiengang_auswahl;
+	public String getStudiengangSelection() {
+		return studiengangSelection;
 	}
 
-	public void setStudiengang_auswahl(String studiengang_auswahl) {
-		this.studiengang_auswahl = studiengang_auswahl;
+	public void setStudiengangSelection(String studiengangSelection) {
+		this.studiengangSelection = studiengangSelection;
 	}
 	
 	public ArrayList<String> getFacultyList() {
@@ -716,12 +716,12 @@ public class ScheduleController implements Serializable {
 		this.facultyList = facultyList;
 	}
 
-	public String getFaculty_auswahl() {
-		return faculty_auswahl;
+	public String getFacultySelection() {
+		return facultySelection;
 	}
 
-	public void setFaculty_auswahl(String faculty_auswahl) {
-		this.faculty_auswahl = faculty_auswahl;
+	public void setFacultySelection(String facultySelection) {
+		this.facultySelection = facultySelection;
 	}
 	
 	
@@ -732,11 +732,11 @@ public class ScheduleController implements Serializable {
             TypedQuery<Raum> query
                 = em.createNamedQuery("Raum.findByRid",Raum.class);
             query.setParameter("rid", rid);
-            raum = (Raum)query.getSingleResult();
+            room = (Raum)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return raum;
+        return room;
     }
 
 	private Lehrveranstaltungsart findLva(String lvname) {
@@ -745,11 +745,11 @@ public class ScheduleController implements Serializable {
             TypedQuery<Lehrveranstaltungsart> query
                 = em.createNamedQuery("Lehrveranstaltungsart.findByLvname",Lehrveranstaltungsart.class);
             query.setParameter("lvname", lvname);
-            lehrveranstaltungsart = (Lehrveranstaltungsart)query.getSingleResult();
+            teachingEvent = (Lehrveranstaltungsart)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return lehrveranstaltungsart;
+        return teachingEvent;
     }
 	
 	private Sgmodul findSgm(int sgmid) {
@@ -775,13 +775,13 @@ public class ScheduleController implements Serializable {
 
 	//--------------------------------------------------------------
 	
-	public Date getWochenStart() {
-		return wochenStart;
+	public Date getWeekstart() {
+		return weekstart;
 	}
 
 
-	public void setWochenStart(Date wochenStart) {
-		this.wochenStart = wochenStart;
+	public void setWeekstart(Date weekstart) {
+		this.weekstart = weekstart;
 	}
 
 

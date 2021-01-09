@@ -3,6 +3,7 @@ package model;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
+import model.Account;
 
 
 /**
@@ -38,7 +39,7 @@ public class Dozenten implements Serializable {
 	//bi-directional many-to-one association to Account
 	@ManyToOne
 	@JoinColumn(name="FK_AccID")
-	public Account account;
+	private Account account;
 
 	//bi-directional many-to-one association to Sgmodul
 	@OneToMany(mappedBy="dozenten")

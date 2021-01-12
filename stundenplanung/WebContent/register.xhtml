@@ -23,7 +23,7 @@
 	                            <h:inputText                                     
 	                                id="idName_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{registerController.accName}"
+	                                value="#{registerController.accountName}"
 	                                required = "true"  
 	                                requiredMessage="Bitte einen Benutzernamen eingeben">
 	                            </h:inputText>
@@ -42,7 +42,7 @@
 	                            <h:inputSecret                                     
 	                                id="idPwd_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{registerController.accPwd}"
+	                                value="#{registerController.accountPassword}"
 	                                required = "true"  
 	                                requiredMessage="Bitte ein Passwort eingeben">
 	                            </h:inputSecret>
@@ -61,7 +61,7 @@
 	                            <h:inputText                                     
 	                                id="idMail_reg"     
 	                                styleClass="form-control"                                 
-	                                value="#{registerController.accEmail}"
+	                                value="#{registerController.accountEmail}"
 	                                required = "true"  
 	                                requiredMessage="Bitte eine Email Adresse angeben">
 	                            </h:inputText>
@@ -82,12 +82,12 @@
 	                                id="Gruppe"
 	                                required="true"
 	                                requiredMessage="Bitte eine Fakultät wählen"
-	                                value="#{registerController.facName}">
+	                                value="#{registerController.facultyName}">
 	                                <f:selectItem
 	                                    itemLabel="-----"
 	                                    noSelectionOption="true"/>
 	                                    <f:selectItems
-	                                        value="#{registerController.facultyListe}"/>
+	                                        value="#{registerController.facultyList}"/>
 	                               </h:selectOneMenu>
 	                            <h:outputLabel     
 	                                value="" 
@@ -111,7 +111,7 @@
 	                     style="background: whitesmoke">
 	                    <h:outputLabel      
 	                        style="color: whitesmoke"
-	                        value="Name: #{registerController.accName}"/>
+	                        value="Name: #{registerController.accountName}"/>
 	                </div>
 	            </div>
 	        </div>

@@ -7,15 +7,13 @@
 
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
-	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->>
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Stundenplansemester" id="ajax" update="msgs" action="/createstundenplansemesterxhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="StundenplansemesterListe" var="list" value="#{stundenplansemesterController.spslist}" editable="true" rowKey="#{list.spsid}" selection="#{stundenplansemesterController.selectedsps}" selectionMode="single">
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Stundenplansemester Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="StundenplansemesterList" var="list" value="#{stundenplansemesterController.scheduleSemesterList}" editable="true" selectionMode="single" selection="#{stundenplansemesterController.scheduleSemesterSelected}" rowKey="#{list.spsid}">
 			
-		        <p:ajax event="rowEdit" listener="#{stundenplansemesterController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{stundenplansemesterController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowSelect" listener="#{stundenplansemesterController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="StundenplansemesterList"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -47,7 +45,6 @@
 		        
 		        <p:column headerText="Startdatum">
 		            <p:cellEditor>
-		            	<!-- <p:datePicker value="#{stundenplansemesterController.startDatum}" locale="de" pattern="dd.MM.yyyy"/> -->
 		                <f:facet name="output"><h:outputText value="#{list.startDatum}" locale="de" pattern="yyyy-MM-dd"/></f:facet>
 		                <f:facet name="input"><p:datePicker value="#{list.startDatum}" locale="de" pattern="yyyy-MM-dd"/></f:facet>
 		            </p:cellEditor>
@@ -58,21 +55,64 @@
 		                <f:facet name="output"><h:outputText value="#{list.stundenplanstatus.SPSTBezeichnung}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.stundenplanstatus.SPSTBezeichnung}" style="width:100%">
-		                        <f:selectItems value="#{stundenplansemesterController.stundenplanstatusListe}" var="#{stundenplanstatus.SPSTBezeichnung}" itemLabel="#{stundenplanstatus.SPSTBezeichnung}" itemValue="#{stundenplanstatus.SPSTBezeichnung}" />
+		                        <f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" var="#{stundenplanstatus.SPSTBezeichnung}" itemLabel="#{stundenplanstatus.SPSTBezeichnung}" itemValue="#{stundenplanstatus.SPSTBezeichnung}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
-		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
 		    </p:dataTable>
-		    <p:contextMenu for="StundenplansemesterListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="StundenplansemesterListe" icon="pi pi-times" action="#{stundenplansemesterController.deleteStundenplansemester}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="400">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="stundenplansemester" value="Stundenplansemester: "/>
+                    <h:inputText id="stundenplansemester" value="#{stundenplansemesterController.scheduleSemesterSelected.SPSemester}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="stundenplansemesterjahr" value="StundenplanJahr: "/>
+                    <h:inputText id="stundenplansemesterjahr" value="#{stundenplansemesterController.scheduleSemesterSelected.SPJahr}" ></h:inputText>    
+                    
+                    <h:outputLabel for="stundenplansemesterkalenderwoche" value="Stundenplankalenderwoche: "/>
+                    <h:inputText id="stundenplansemesterkalenderwoche" value="#{stundenplansemesterController.scheduleSemesterSelected.SPKw}" ></h:inputText>    
+                    
+                    <h:outputLabel for="startdatum" value="Startdatum: "/>
+                    <p:datePicker id="startdatum" value="#{stundenplansemesterController.scheduleSemesterSelected.startDatum}" locale="de" pattern="yyyy-MM-dd" appendTo="@(body)" />     
+                    
+                    <p:outputLabel for="stundenplanstatus" value="Stundenplanstatus: " />
+			        <p:selectOneMenu id="stundenplanstatus" value="#{stundenplansemesterController.scheduleSemesterDescription}" style="width:100%">
+                    	<f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" />
+			        </p:selectOneMenu>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{stundenplansemesterController.addStundenPlanSemester()}" update=":form:StundenplansemesterList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:StundenplansemesterList" actionListener="#{stundenplansemesterController.deleteStundenplansemester()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
 		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="400">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel for="stundenplansemester1" value="Stundenplansemester: "/>
+                    <h:inputText id="stundenplansemester1" value="#{stundenplansemesterController.scheduleSemesterSection}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="stundenplansemesterjahr1" value="StundenplanJahr: "/>
+                    <h:inputText id="stundenplansemesterjahr1" value="#{stundenplansemesterController.scheduleYear}" ></h:inputText>    
+                    
+                    <h:outputLabel for="stundenplansemesterkalenderwoche1" value="Stundenplankalenderwoche: "/>
+                    <h:inputText id="stundenplansemesterkalenderwoche1" value="#{stundenplansemesterController.scheduleCalendarWeek}" ></h:inputText>    
+                    
+                    <h:outputLabel for="startdatum1" value="Startdatum: "/>
+                    <p:datePicker id="startdatum1" value="#{stundenplansemesterController.startDate}" locale="de" pattern="yyyy-MM-dd" appendTo="@(body)" />    
+                    
+                    <p:outputLabel for="stundenplanstatus1" value="Stundenplanstatus: " />
+			        <p:selectOneMenu id="stundenplanstatus1" value="#{stundenplansemesterController.scheduleSemesterDescription}" style="width:100%">
+                    	<f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" />
+			        </p:selectOneMenu>
+		            
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{stundenplansemesterController.createDoStundenplansemester}" update=":form:StundenplansemesterList" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

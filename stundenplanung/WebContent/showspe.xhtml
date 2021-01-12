@@ -58,21 +58,21 @@
 		            <p:datePicker id="bis" value="#{scheduleController.event.endDate}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)" />
 		 			
 		 			<p:outputLabel for="termin" value="Termin:" />
-		            <p:inputText id="termin" value="#{scheduleController.SPTermin}" />
+		            <p:inputText id="termin" value="#{scheduleController.spMeeting}" />
 		        	
 		        	<p:outputLabel for="Sgmodul" value="Sgmodul:" />
-		        	<p:selectOneMenu id="Sgmodul" value="#{scheduleController.sgmid}" style="width:100%">
-                        <f:selectItems value="#{scheduleController.sgmodulListe}" />
+		        	<p:selectOneMenu id="Sgmodul" value="#{scheduleController.sgmodulId}" style="width:100%">
+                        <f:selectItems value="#{scheduleController.sgmodulList}" />
                     </p:selectOneMenu>
 		        	
 			        <p:outputLabel for="teachingEvent" value="Lehrveranstaltungsart:" />
-			        <p:selectOneMenu id="teachingEvent" value="#{scheduleController.lvname}" style="width:100%">
-                        <f:selectItems value="#{scheduleController.lehrveranstaltungsListe}" />
+			        <p:selectOneMenu id="teachingEvent" value="#{scheduleController.teName}" style="width:100%">
+                        <f:selectItems value="#{scheduleController.teachingEventList}" />
                     </p:selectOneMenu>
 			        
 			        <p:outputLabel for="room" value="Raum:" />
-			        <p:selectOneMenu id="room" value="#{scheduleController.rid}" style="width:100%">
-                    	<f:selectItems value="#{scheduleController.raumListe}" />
+			        <p:selectOneMenu id="room" value="#{scheduleController.roomId}" style="width:100%">
+                    	<f:selectItems value="#{scheduleController.roomList}" />
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="studentNumber" value="Studierendenanzahl:" />
@@ -89,31 +89,31 @@
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <p:outputLabel for="von1" value="Von:" />
-		            <p:datePicker id="von1" value="#{scheduleController.selectedEvent.SPEStartZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)"  />
+		            <p:datePicker id="von1" value="#{scheduleController.eventSelected.SPEStartZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)"  />
 		 
 		            <p:outputLabel for="bis1" value="Bis:" />
-		            <p:datePicker id="bis1" value="#{scheduleController.selectedEvent.SPEEndZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)" />
+		            <p:datePicker id="bis1" value="#{scheduleController.eventSelected.SPEEndZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)" />
 		 			
 		 			<p:outputLabel for="termin1" value="Termin:" />
-		            <p:inputText id="termin1" value="#{scheduleController.selectedEvent.SPTermin}" />
+		            <p:inputText id="termin1" value="#{scheduleController.eventSelected.SPTermin}" />
 		        	
 		        	<p:outputLabel for="Sgmodul1" value="Sgmodul:" />
-		        	<p:selectOneMenu id="Sgmodul1" value="#{scheduleController.sgmid}" style="width:100%">
-                        <f:selectItems value="#{scheduleController.sgmodulListe}" />
+		        	<p:selectOneMenu id="Sgmodul1" value="#{scheduleController.sgmodulId}" style="width:100%">
+                        <f:selectItems value="#{scheduleController.sgmodulList}" />
                     </p:selectOneMenu>
 		        	
 			        <p:outputLabel for="teachingEvent1" value="Lehrveranstaltungsart:" />
-			        <p:selectOneMenu id="teachingEvent1" value="#{scheduleController.lvname}" style="width:100%">
-                        <f:selectItems value="#{scheduleController.lehrveranstaltungsListe}" />
+			        <p:selectOneMenu id="teachingEvent1" value="#{scheduleController.teName}" style="width:100%">
+                        <f:selectItems value="#{scheduleController.teachingEventList}" />
                     </p:selectOneMenu>
 			        
 			        <p:outputLabel for="room1" value="Raum:" />
-			        <p:selectOneMenu id="room1" value="#{scheduleController.rid}" style="width:100%">
-                    	<f:selectItems value="#{scheduleController.raumListe}" />
+			        <p:selectOneMenu id="room1" value="#{scheduleController.roomId}" style="width:100%">
+                    	<f:selectItems value="#{scheduleController.roomList}" />
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="studentNumber1" value="Studierendenanzahl:" />
-		            <p:inputText id="studentNumber1" value="#{scheduleController.selectedEvent.studierendenzahl}" />
+		            <p:inputText id="studentNumber1" value="#{scheduleController.eventSelected.studierendenzahl}" />
 		 			
 		 			<p:commandButton id="addButton1" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule').update();PF('eventEditDialog').hide();" />
 		            <p:commandButton id="reset1" type="reset" value="Reset" />

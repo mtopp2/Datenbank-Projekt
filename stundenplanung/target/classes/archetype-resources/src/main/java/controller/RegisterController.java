@@ -1,7 +1,7 @@
 package controller;
 
 import model.Account;
-//import model.Studiengang;
+
 import model.Benutzergruppe;
 import model.Faculty;
 import javax.inject.Named;
@@ -28,14 +28,12 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import javax.faces.bean.ManagedBean;
-//import javax.faces.bean.SessionScoped;
 
 /**
  *
  * @author Anil
  */
 @Named(value="registerController")
-//@ManagedBean(name="RegisterController")
 @SessionScoped
 public class RegisterController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -46,36 +44,35 @@ public class RegisterController implements Serializable {
     @Resource
     private UserTransaction ut;
     
-    //@Inject
-    private Account Account;
-    private Faculty Faculty;
-    //private ArrayList StudiengangNamensListe;
-    ArrayList<String> FacultyListe = new ArrayList<>();
+    @Inject
+    private Account account;
+    private Faculty faculty;
+    private Benutzergruppe userGroup;
+    ArrayList<String> facultyList = new ArrayList<>();
 
     
     @PostConstruct /* Initialisiere bei Anwendungsstart */
     public void init(){
-        //StudiengangNamensListe = new ArrayList();		?
         EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Faculty.findAll");
         List FList = q.getResultList();
         for (Object FListitem : FList)
         {
             Faculty fac =(Faculty)FListitem;
-            FacultyListe.add(fac.getFacName());
+            facultyList.add(fac.getFacName());
         }
     }
 
-    private String accPwd;
-    private String accName;
-    private String facName;
-    private String accEmail;
-    private boolean name_ok=false;
-    private boolean pw_ok = false;
-    private boolean email_ok = false;
-    private boolean register_ok = false;
+    private String accountPassword;
+    private String accountName;
+    private String facultyName;
+    private String accountEmail;
+    private boolean accountNameOk=false;
+    private boolean accountPasswordOk = false;
+    private boolean accountEmailOk = false;
+    private boolean registerOk = false;
     
-    private Benutzergruppe BGruppe;
+    
 
 
     public RegisterController() {
@@ -85,31 +82,31 @@ public class RegisterController implements Serializable {
     
     //getter und setter - Methoden 
     
-    public ArrayList<String> getFacultyListe() {
-        return FacultyListe;
+    public ArrayList<String> getFacultyList() {
+        return facultyList;
     }
 
-    public void setFacultyListe(ArrayList<String> FacultyListe) {
-        this.FacultyListe = FacultyListe;
+    public void setFacultyList(ArrayList<String> facultyList) {
+        this.facultyList = facultyList;
     }
     
-    public String getAccName() {
-        return accName;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public boolean isRegister_ok() {
-        return register_ok;
+    public boolean isRegisterOk() {
+        return registerOk;
     }
 
-    public void setRegister_ok(boolean register_ok) {
-        this.register_ok = register_ok;
+    public void setRegisterOk(boolean registerOk) {
+        this.registerOk = registerOk;
     }
 
-    public void setAccName(String name) {
-        if(name!=null){
-            if(checkName(name)==false){
-                this.accName = name;
-                name_ok=true;
+    public void setAccountName(String accountName) {
+        if(accountName!=null){
+            if(checkName(accountName)==false){
+                this.accountName = accountName;
+                accountNameOk=true;
             }
             else{
                 String msg = "Account bereits vorhanden";
@@ -118,14 +115,14 @@ public class RegisterController implements Serializable {
         }
     }
 
-    public String getAccPwd() {
-        return accPwd;
+    public String getAccountPassword() {
+        return accountPassword;
     }
 
-    public void setAccPwd(String accPwd) {
-        if(accPwd!=null){
-            this.accPwd = accPwd;
-            pw_ok=true;
+    public void setAccountPassword(String accountPassword) {
+        if(accountPassword!=null){
+            this.accountPassword = accountPassword;
+            accountPasswordOk=true;
         }
         else{
         	String msg="Bitte ein Passwort vergeben";
@@ -133,23 +130,23 @@ public class RegisterController implements Serializable {
         }
     }
 
-    public String getFacName() {
-        return facName;
+    public String getFacultyName() {
+        return facultyName;
     }
 
-    public void setFacName(String facName) {
-        this.facName = facName;
+    public void setFacultyName(String facultyName) {
+        this.facultyName = facultyName;
     }
     
 
-    public String getAccEmail() {
-        return accEmail;
+    public String getAccountEmail() {
+        return accountEmail;
     }
 
-    public void setAccEmail(String accEmail) {
-        if(accEmail!=null){
-            this.accEmail = accEmail;
-            email_ok=true;
+    public void setAccountEmail(String accountEmail) {
+        if(accountEmail!=null){
+            this.accountEmail = accountEmail;
+            accountEmailOk=true;
         }
         else{
         	String msg="Bitte eine Email Adresse Angeben";
@@ -166,48 +163,48 @@ public class RegisterController implements Serializable {
     }
 
     public Account getAccount() {
-        return Account;
+        return account;
     }
 
-    public void setAccount(Account Account) {
-        this.Account = Account;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
 
     public Faculty getFaculty() {
-        return Faculty;
+        return faculty;
     }
 
-    public void setFaculty(Faculty Faculty) {
-        this.Faculty = Faculty;
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
     
-    public Benutzergruppe getBGruppe() {
-        return BGruppe;
+    public Benutzergruppe getUserGroup() {
+        return userGroup;
     }
 
-    public void setBGruppe(Benutzergruppe BGruppe) {       
-        this.BGruppe = BGruppe;
+    public void setUserGroup(Benutzergruppe userGroup) {       
+        this.userGroup = userGroup;
     }
     
     //weitere Methoden
     
     //Beim drücken des Register Buttons auf registerUser leiten wenn alle Eingaben IO
    public String register_button() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-       if(name_ok==true && pw_ok==true && email_ok==true){
+       if(accountNameOk==true && accountPasswordOk==true && accountEmailOk==true){
            registerUser();
-           accName="";
-           accEmail="";
+           accountName="";
+           accountEmail="";
            return "login.xhtml";
        }
        else{
-            name_ok=false;
-            pw_ok = false;
-            email_ok = false;
+    	   accountNameOk=false;
+    	   accountPasswordOk = false;
+    	   accountEmailOk = false;
        }
-        name_ok=false;
-        pw_ok = false;
-        email_ok = false;
+       accountNameOk=false;
+       accountPasswordOk = false;
+       accountEmailOk = false;
         return"register.xhtml";
    }
 
@@ -217,20 +214,20 @@ public class RegisterController implements Serializable {
             EntityManager em = emf.createEntityManager();
             List<Account> user_temp = new ArrayList<>();   
             try {
-                TypedQuery<Account> queryGet = em.createNamedQuery("Account.findByAccName", Account.class).setParameter("accName", this.accName);   
+                TypedQuery<Account> queryGet = em.createNamedQuery("Account.findByAccName", Account.class).setParameter("accName", this.accountName);   
                 user_temp = queryGet.getResultList();  
             } 
             catch (Exception e) {
             }
             if (user_temp.isEmpty()) {  
                 Account newUser = new Account();  
-                newUser.setAccName(accName);    
-                newUser.setAccPwd(accPwd);      
-                newUser.setAccEmail(accEmail);
+                newUser.setAccName(accountName);    
+                newUser.setAccPwd(accountPassword);      
+                newUser.setAccEmail(accountEmail);
                 //Alle User sind als erstes Nobodys
                 newUser.setBenutzergruppe(findBGID());
                 //Dropdown Menü
-                newUser.setFaculty(findFac(facName));
+                newUser.setFaculty(findFac(facultyName));
                 try {
                     ut.begin();   
                     em.joinTransaction();  
@@ -252,7 +249,7 @@ public class RegisterController implements Serializable {
             em.close();
     }
     
-    //Überprüfen ob Name schon vergeben
+    //Überprüfen ob der Name schon vergeben ist.
     private boolean checkName(String uName) {
         boolean found = false;
         try{
@@ -260,7 +257,7 @@ public class RegisterController implements Serializable {
             TypedQuery<Account> query
                 = em.createNamedQuery("Account.findByBname",Account.class);
             query.setParameter("accName", uName);
-            Account = (Account)query.getSingleResult();
+            account = (Account)query.getSingleResult();
             found=true; //Account gefunden!
         }
         catch(Exception e){   
@@ -277,15 +274,11 @@ public class RegisterController implements Serializable {
             em = emf.createEntityManager();
             query = "SELECT b FROM Benutzergruppe b WHERE b.groupID = 2";
             q = em.createQuery(query);
-            BGruppe = (Benutzergruppe)q.getSingleResult();
-            /*TypedQuery<Benutzergruppe> query
-                = em.createNamedQuery("Benutzergruppe.findByID", Benutzergruppe.class);
-            query.setParameter("id", id);
-            BGruppe = (Benutzergruppe)query.getSingleResult();*/
+            userGroup = (Benutzergruppe)q.getSingleResult();
         }
         catch(Exception e){   
         }
-        return BGruppe;
+        return userGroup;
     }
     
     private Faculty findFac(String fac) {
@@ -294,11 +287,11 @@ public class RegisterController implements Serializable {
             TypedQuery<Faculty> query
                 = em.createNamedQuery("Faculty.findByFacName",Faculty.class);
             query.setParameter("facName", fac);
-            Faculty = (Faculty)query.getSingleResult();
+            faculty = (Faculty)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return Faculty;
+        return faculty;
     }
     
     //Nachrichten an die View senden

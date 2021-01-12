@@ -11,7 +11,7 @@
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>   
 		    <p:commandButton value="Standort Hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />
-			<p:dataTable id="LocationList" var="list" value="#{locationController.locList}" selectionMode="single" selection="#{locationController.selectedLocation}" rowKey="#{list.lid}">
+			<p:dataTable id="LocationList" var="list" value="#{locationController.locationList}" selectionMode="single" selection="#{locationController.locationSelected}" rowKey="#{list.lid}">
 			
         		<p:ajax event="rowSelect" listener="#{locationController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LocationList"/>
 		 
@@ -41,17 +41,15 @@
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="lCity_reg" value="Stadt: "/>
-                    <h:inputText id="lCity_reg" value="#{locationController.selectedLocation.LCity}" ></h:inputText>                                                  
+                    <h:inputText id="lCity_reg" value="#{locationController.locationSelected.LCity}" ></h:inputText>                                                  
                     
                     <h:outputLabel for="lStreet_reg" value="Straße: "/>
-                    <h:inputText id="lStreet_reg" value="#{locationController.selectedLocation.LStreet}" ></h:inputText>
+                    <h:inputText id="lStreet_reg" value="#{locationController.locationSelected.LStreet}" ></h:inputText>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{locationController.addLocation()}" update=":form:LocationList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
 		 			<p:commandButton value="Löschen" update=":form:LocationList" actionListener="#{locationController.deleteLocation()}" oncomplete="PF('eventEditDialog').hide();"/>
 		        </h:panelGrid>
 		    </p:dialog> 
-            <h:outputText id="lCity_reg3" value="#{locationController.selectedLocation.LCity}" ></h:outputText>   
-            <h:outputText id="lCity_reg4" value="#{locationController.selectedLocation.LStreet}" ></h:outputText>   
 		 </h:form>
 		 <h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip">
@@ -59,13 +57,13 @@
 		 
 		            <h:outputLabel styleClass="label" style="font-size:12pt; color:black;" for="lCity_reg" value="Stadt: "/>
                     <h:panelGrid columns="3">
-                    	<h:inputText id="lCity_reg" styleClass="form-control" value="#{locationController.LCity}" required = "true" requiredMessage="Eine Stadt muss eingegeben werden."></h:inputText>
+                    	<h:inputText id="lCity_reg" styleClass="form-control" value="#{locationController.locationCity}" required = "true" requiredMessage="Eine Stadt muss eingegeben werden."></h:inputText>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="modName_reg" style="color: red"/>
                     </h:panelGrid>                                                        
                     <h:outputLabel styleClass="label" style="font-size:12pt; color:black;" for="lStreet_reg" value="Straße: "/>
                     <h:panelGrid columns="3">
-                    	<h:inputText id="lStreet_reg" styleClass="form-control" value="#{locationController.LStreet}" required = "true" requiredMessage="Eine Straße muss eingegeben werden."></h:inputText>
+                    	<h:inputText id="lStreet_reg" styleClass="form-control" value="#{locationController.locationStreet}" required = "true" requiredMessage="Eine Straße muss eingegeben werden."></h:inputText>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="lStreet_reg" style="color: red"/>
                     </h:panelGrid>

@@ -1,6 +1,7 @@
 package controller;
 
 import model.Modul;
+import model.Raum;
 import model.Dozenten;
 import model.Studiengang;
 import model.Sgmodul;
@@ -29,6 +30,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
+
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
@@ -51,106 +54,106 @@ public class SgmodulController implements Serializable {
 	
 	@Inject 
 	private Sgmodul sgmodul;
-	private Studiengang studiengang;
-	private Modul modul;
-	private Dozenten dozenten;
+	private Studiengang course;
+	private Modul module;
+	private Dozenten professor;
 	
 	@PostConstruct
     public void init() {
-        sgmodullist = getSgmodulList();
+		sgmodulList = getSgmodulListAll();
         EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Modul.findAll");
 		List FList = q.getResultList();
         for (Object FListitem : FList)
         {
         	Modul mod =(Modul)FListitem;
-        	ModulListe.add(mod.getModName());
+        	moduleList.add(mod.getModID());
         }
         Query s = em.createNamedQuery("Studiengang.findAll");
         List SList = s.getResultList();
         for (Object SListitem : SList)
         {
         	Studiengang sg =(Studiengang)SListitem;
-        	StudiengangListe.add(sg.getSGName());
+        	courseList.add(sg.getSGName());
         }
         Query d = em.createNamedQuery("Dozenten.findAll");
         List DList = d.getResultList();
         for (Object DListitem : DList)
         {
         	Dozenten doz =(Dozenten)DListitem;
-        	DozentenListe.add(doz.getDName());
+        	professorList.add(doz.getDid());
         }
     }
  
-    ArrayList<String> DozentenListe = new ArrayList<>();
-    ArrayList<String> ModulListe = new ArrayList<>();
-    ArrayList<String> StudiengangListe = new ArrayList<>();
+    ArrayList<Integer> professorList = new ArrayList<>();
+    ArrayList<Integer> moduleList = new ArrayList<>();
+    ArrayList<String> courseList = new ArrayList<>();
     
-    private int modSemester;
-	private String SGMNotiz;
-    private String SGName;
-	private String DName;
-	private String modName;
+    private int moduleSemester;
+	private String sgmodulNote;
+    private String courseName;
+	private int professorId;
+	private int moduleId;
 	
 	
-	List<Sgmodul> sgmodullist;
+	List<Sgmodul> sgmodulList;
 	
-	private Sgmodul selectedsgmodul;
+	private Sgmodul sgmodulSelected;
 	
 	
-	public String getSGMNotiz() {
-		return SGMNotiz;
+	public String getSgmodulNote() {
+		return sgmodulNote;
 	}
 
-	public void setSGMNotiz(String SGMNotiz) {
-		this.SGMNotiz = SGMNotiz;
+	public void setSgmodulNote(String sgmodulNote) {
+		this.sgmodulNote = sgmodulNote;
 	}
 
-	public ArrayList<String> getDozentenListe() {
-		return DozentenListe;
+	public ArrayList<Integer> getProfessorList() {
+		return professorList;
 	}
 
-	public void setDozentenListe(ArrayList<String> dozentenListe) {
-		this.DozentenListe = dozentenListe;
-	}
-	
-	public ArrayList<String> getStudiengangListe() {
-		return StudiengangListe;
-	}
-
-	public void setStudiengangListe(ArrayList<String> studiengangListe) {
-		this.StudiengangListe = studiengangListe;
-	}
-	public ArrayList<String> getModulListe() {
-		return ModulListe;
-	}
-
-	public void setModulListe(ArrayList<String> modulListe) {
-		this.ModulListe = modulListe;
-	}
-
-	public Studiengang getStudiengang() {
-		return studiengang;
-	}
-
-	public void setStudiengang(Studiengang studiengang) {
-		this.studiengang = studiengang;
+	public void setProfessorList(ArrayList<Integer> professorList) {
+		this.professorList = professorList;
 	}
 	
-	public Modul getModul() {
-		return modul;
+	public ArrayList<String> getCourseList() {
+		return courseList;
 	}
 
-	public void setModul(Modul modul) {
-		this.modul = modul;
+	public void setCourseList(ArrayList<String> courseList) {
+		this.courseList = courseList;
+	}
+	public ArrayList<Integer> getModuleList() {
+		return moduleList;
+	}
+
+	public void setModuleList(ArrayList<Integer> moduleList) {
+		this.moduleList = moduleList;
+	}
+
+	public Studiengang getCourse() {
+		return course;
+	}
+
+	public void setCourse(Studiengang course) {
+		this.course = course;
 	}
 	
-	public Dozenten getDozenten() {
-		return dozenten;
+	public Modul getModule() {
+		return module;
 	}
 
-	public void setDozenten(Dozenten dozenten) {
-		this.dozenten = dozenten;
+	public void setModule(Modul module) {
+		this.module = module;
+	}
+	
+	public Dozenten getProfessor() {
+		return professor;
+	}
+
+	public void setProfessor(Dozenten professor) {
+		this.professor = professor;
 	}
 	
 	public Sgmodul getSgmodul() {
@@ -161,54 +164,54 @@ public class SgmodulController implements Serializable {
 		this.sgmodul = sgmodul;
 	}
 
-	public String getSGName() {
-		return SGName;
+	public String getCourseName() {
+		return courseName;
 	}
 
-	public void setSGName(String SGName) {
-			this.SGName = SGName;
+	public void setCourseName(String courseName) {
+			this.courseName = courseName;
 	}			
 
-	public String getDName() {
-		return DName;
+	public int getProfessorId() {
+		return professorId;
 	}
 
-	public void setDName(String DName) {
-			this.DName = DName;
+	public void setProfessorId(int professorId) {
+			this.professorId = professorId;
 	}
 	
-	public String getModName() {
-		return modName;
+	public int getModuleId() {
+		return moduleId;
 	}
 
-	public void setModName(String modName) {
-			this.modName = modName;
+	public void setModuleId(int moduleId) {
+			this.moduleId = moduleId;
 	}
 
-	public int getModSemester() {
-		return modSemester;
+	public int getModuleSemester() {
+		return moduleSemester;
 	}
 
-	public void setModSemester(int modSemester) {
-		this.modSemester = modSemester;
+	public void setModuleSemester(int moduleSemester) {
+		this.moduleSemester = moduleSemester;
 	}
 
-	public List<Sgmodul> getSgmodullist() {
-		return sgmodullist;
+	public List<Sgmodul> getSgmodulList() {
+		return sgmodulList;
 	}
 	
-	public void setSgmodullist(List<Sgmodul> sgmodullist) {
-		this.sgmodullist = sgmodullist;
+	public void setSgmodulList(List<Sgmodul> sgmodulList) {
+		this.sgmodulList = sgmodulList;
 		
 	}
 
 	
-	public Sgmodul getSelectedsgmodul() {
-		return selectedsgmodul;
+	public Sgmodul getSgmodulSelected() {
+		return sgmodulSelected;
 	}
 
-	public void setSelectedsgmodul(Sgmodul selectedsgmodul) {
-		this.selectedsgmodul = selectedsgmodul;
+	public void setSgmodulSelected(Sgmodul sgmodulSelected) {
+		this.sgmodulSelected = sgmodulSelected;
 	}
 	
 	public UIComponent getReg() {
@@ -223,11 +226,11 @@ public class SgmodulController implements Serializable {
 	public void createSgmodul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
 		Sgmodul sgm = new Sgmodul();  
-		sgm.setSGMNotiz(SGMNotiz);
-		sgm.setModSemester(modSemester);
-		sgm.setModul(findMod(modName));
-		sgm.setDozenten(findDoz(DName));
-		sgm.setStudiengang(findSg(SGName));
+		sgm.setSGMNotiz(sgmodulNote);
+		sgm.setModSemester(moduleSemester);
+		sgm.setModul(findMod(moduleId));
+		sgm.setDozenten(findDoz(professorId));
+		sgm.setStudiengang(findSg(courseName));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -244,65 +247,42 @@ public class SgmodulController implements Serializable {
 		em.close();
 	}
 	
-	public String createDoSgmodul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		
+	public void createDoSgmodul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 			createSgmodul();
-			return "showsgmodul.xhtml";
+			sgmodulList = getSgmodulListAll();
 	
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public List<Sgmodul> getSgmodulList(){
+	public List<Sgmodul> getSgmodulListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Sgmodul> query = em.createNamedQuery("Sgmodul.findAll", Sgmodul.class);
-		sgmodullist = query.getResultList();
+		sgmodulList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	
 	
-	public void onRowEdit(RowEditEvent<Sgmodul> event) {
-        FacesMessage msg = new FacesMessage("Sgmodul Edited");
+	public void onRowSelect(SelectEvent<Sgmodul> e) {
+    	FacesMessage msg = new FacesMessage("Studiengangmodul ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
-        Sgmodul newsgm = new Sgmodul();
-        newsgm = event.getObject();
+        sgmodulSelected = e.getObject();
         
-        try {
-	        ut.begin();
-	        EntityManager em = emf.createEntityManager();
-	        em.find(Sgmodul.class, newsgm.getSgmid());
-	        sgmodul.setSgmid(newsgm.getSgmid());
-	        sgmodul.setModSemester(newsgm.getModSemester());
-	        sgmodul.setSGMNotiz(newsgm.getSGMNotiz());
-	        sgmodul.setModul(findMod(newsgm.getModul().getModName()));
-	        sgmodul.setDozenten(findDoz(newsgm.getDozenten().getDName()));
-	        sgmodul.setStudiengang(findSg(newsgm.getStudiengang().getSGName()));
-	        em.merge(sgmodul);
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-    }
-     
-    public void onRowCancel(RowEditEvent<Sgmodul> event) {
-    	FacesMessage msg = new FacesMessage("Sgmodul Cancelled");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        professorId = sgmodulSelected.getDozenten().getDid();
+        moduleId = sgmodulSelected.getModul().getModID();
+        courseName = sgmodulSelected.getStudiengang().getSGName();
+        
     }
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void deleteSgmodul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        sgmodullist.remove(selectedsgmodul);        
+    	sgmodulList.remove(sgmodulSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Sgmodul> q = em.createNamedQuery("Sgmodul.findBySgmid",Sgmodul.class);
-        q.setParameter("sgmid", selectedsgmodul.getSgmid());
+        q.setParameter("sgmid", sgmodulSelected.getSgmid());
         sgmodul = (Sgmodul)q.getSingleResult();
         
         try {
@@ -318,21 +298,22 @@ public class SgmodulController implements Serializable {
 	        catch (IllegalStateException | SecurityException | SystemException ex) {
 	        }
 	    }
-        selectedsgmodul = null;
 		em.close();
     }
     
-    private Modul findMod(String mod) {
+   //----------------------------------------------------------------------------------------------------------------------------------------------
+    
+    private Modul findMod(int mod) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Modul> query
-                = em.createNamedQuery("Modul.findByModName",Modul.class);
-            query.setParameter("modName", mod);
-            modul = (Modul)query.getSingleResult();
+                = em.createNamedQuery("Modul.findByModID",Modul.class);
+            query.setParameter("modID", mod);
+            module = (Modul)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return modul;
+        return module;
     }
     
     private Studiengang findSg(String sg) {
@@ -341,23 +322,50 @@ public class SgmodulController implements Serializable {
             TypedQuery<Studiengang> query
                 = em.createNamedQuery("Studiengang.findBySGName",Studiengang.class);
             query.setParameter("SGName", sg);
-            studiengang = (Studiengang)query.getSingleResult();
+            course = (Studiengang)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return studiengang;
+        return course;
     }
     
-    private Dozenten findDoz(String doz) {
+    private Dozenten findDoz(int doz) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Dozenten> query
-                = em.createNamedQuery("Dozenten.findByDName",Dozenten.class);
-            query.setParameter("DName", doz);
-            dozenten = (Dozenten)query.getSingleResult();
+                = em.createNamedQuery("Dozenten.findByDid",Dozenten.class);
+            query.setParameter("did", doz);
+            professor = (Dozenten)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return dozenten;
+        return professor;
     }
+    
+   //----------------------------------------------------------------------------------------------------------------------------------------------
+    
+    public void addSgmodul(){
+      	 try {
+      		ut.begin();
+	        EntityManager em = emf.createEntityManager();
+	        em.find(Sgmodul.class, sgmodulSelected.getSgmid());
+	        sgmodul.setSgmid(sgmodulSelected.getSgmid());
+	        sgmodul.setModSemester(sgmodulSelected.getModSemester());
+	        sgmodul.setSGMNotiz(sgmodulSelected.getSGMNotiz());
+	        sgmodul.setModul(findMod(moduleId));
+	        sgmodul.setDozenten(findDoz(professorId));
+	        sgmodul.setStudiengang(findSg(courseName));
+	        em.merge(sgmodul);
+	        ut.commit();
+   	    }
+   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	        try {
+   	            ut.rollback();
+   	        } 
+   	        catch (IllegalStateException | SecurityException | SystemException ex) {
+   	        }
+   	    }
+      	sgmodulList = getSgmodulListAll();
+      }
+    
 }

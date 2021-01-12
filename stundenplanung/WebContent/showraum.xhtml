@@ -7,15 +7,13 @@
 
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
-	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Raum" id="ajax" update="msgs" action="/createraum.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="RaumListe" var="list" value="#{raumController.raumlist}" editable="true" rowKey="#{list.rid}" selection="#{raumController.selectedraum}" selectionMode="single">
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Raum Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="RoomList" var="list" value="#{raumController.roomList}" editable="true" selectionMode="single" selection="#{raumController.roomSelected}" rowKey="#{list.rid}">
 			
-		        <p:ajax event="rowEdit" listener="#{raumController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{raumController.onRowCancel}" update=":form:msgs" />
+				<p:ajax event="rowSelect" listener="#{raumController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="RoomList"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -45,26 +43,63 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Straße:">
+		        <p:column headerText="Straße">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.location.LStreet}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.location.LStreet}" style="width:100%">
-		                        <f:selectItems value="#{raumController.locationListe}" var="#{location.LStreet}" itemLabel="#{location.LStreet}" itemValue="#{location.LStreet}" />
+		                        <f:selectItems value="#{raumController.locationList}" var="#{location.LStreet}" itemLabel="#{location.LStreet}" itemValue="#{location.LStreet}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
-		        </p:column>
-		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
+		        </p:column>		       
 		    </p:dataTable>
-		    <p:contextMenu for="RaumListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="RaumListe" icon="pi pi-times" action="#{raumController.deleteRaum}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="roomname" value="Raumname: "/>
+                    <h:inputText id="roomname" value="#{raumController.roomSelected.RName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="capacity" value="Kapazität: "/>
+                    <h:inputText id="capacity" value="#{raumController.roomSelected.kapazitaet}" ></h:inputText>
+                    
+                    <h:outputLabel for="neighborroom" value="Nachbarraum: "/>
+                    <h:inputText id="neighborroom" value="#{raumController.roomSelected.nachbarRaum}" ></h:inputText>
+                    
+                    <p:outputLabel for="room" value="Straße zum Standort: " />
+			        <p:selectOneMenu id="room" value="#{raumController.LStreet}" style="width:100%">
+                    	<f:selectItems value="#{raumController.locationList}" />
+			        </p:selectOneMenu>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{raumController.addRoom()}" update=":form:RoomList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:RoomList" actionListener="#{raumController.deleteRoom()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog> 
 		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="350">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel for="roomname1" value="Raumname: "/>
+                    <h:inputText id="roomname1" value="#{raumController.roomName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="capacity1" value="Kapazität: "/>
+                    <h:inputText id="capacity1" value="#{raumController.capacity}" ></h:inputText>
+                    
+                    <h:outputLabel for="neighborroom1" value="Nachbarraum: "/>
+                    <h:inputText id="neighborroom1" value="#{raumController.neighborroom}" ></h:inputText>
+                    
+                    <p:outputLabel for="room1" value="Straße: " />
+			        <p:selectOneMenu id="room1" value="#{raumController.LStreet}" style="width:100%">
+                    	<f:selectItems value="#{raumController.locationList}" />
+			        </p:selectOneMenu>
+		            
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{raumController.createDoRoom}" update=":form:RoomList" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

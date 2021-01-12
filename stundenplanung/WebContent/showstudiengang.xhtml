@@ -7,20 +7,14 @@
       
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
-	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Studiengang" id="ajax" update="msgs" action="/createstudiengang.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="StudiengangListe" var="list" value="#{studiengangController.sglist}" editable="true" rowKey="#{list.sgid}" selection="#{studiengangController.selectedstudiengang}" selectionMode="single">
-		        <f:facet name="header">
-		            Cell Editing with Click and RightClick
-		        </f:facet>
-		 		<!-- editMode="cell" widgetVar="cellModul" -->
-		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{studiengangController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{studiengangController.onRowCancel}" update=":form:msgs" />
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Studiengang Hinzufügen" id="ajax" type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="DegreecourseList" var="list" value="#{studiengangController.courseList}" editable="true" selectionMode="single" selection="#{studiengangController.courseSelected}" rowKey="#{list.sgid}" >
 		 
+		 		<p:ajax event="rowSelect" listener="#{studiengangController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="DegreecourseList"/>
+		 		
 		        <p:column headerText="Id">
 	               <p:cellEditor>
 	                   <f:facet name="output"><h:outputText value="#{list.sgid}" /></f:facet>
@@ -42,21 +36,10 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="An. Semester">
+		        <p:column headerText="Anzahl Semester">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.semester}" /></f:facet>
 		                <f:facet name="input"><p:inputText value="#{list.semester}" style="width:96%" label="Anz. Semester"/></f:facet>
-		            </p:cellEditor>
-		        </p:column>
-		        
-		        <p:column headerText="Semester">
-		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.stundenplansemester.SPSemester}" /></f:facet>
-		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.stundenplansemester.SPSemester}" style="width:100%">
-		                        <f:selectItems value="#{studiengangController.stundenplansemesterListe}" var="#{stundenplansemester.SPSemester}" itemLabel="#{stundenplansemester.SPSemester}" itemValue="#{stundenplansemester.SPSemester}" />
-		                    </h:selectOneMenu>
-		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		        
@@ -65,28 +48,79 @@
 		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.faculty.facName}" style="width:100%">
-		                        <f:selectItems value="#{studiengangController.facultyListe}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
+		                        <f:selectItems value="#{studiengangController.facultyList}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
-		       
-		      		        
 		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
+		        <p:column headerText="Stundenplansemesterid">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.stundenplansemester.spsid}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.stundenplansemester.spsid}" style="width:100%">
+		                        <f:selectItems value="#{studiengangController.spsList}" var="#{stundenplansemester.spsId}" itemLabel="#{stundenplansemester.spsId}" itemValue="#{stundenplansemester.spsId}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>		       
 		    </p:dataTable>
-		     
-		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
-		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
-		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
-		    </p:contextMenu> -->
-		    <p:contextMenu for="StudiengangListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="StudiengangListe" icon="pi pi-times" action="#{studiengangController.deleteStudiengang}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="600">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="sgname" value="Studiengang: "/>
+                    <h:inputText id="sgname" value="#{studiengangController.courseSelected.SGName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="short" value="Kürzel: "/>
+                    <h:inputText id="short" value="#{studiengangController.courseSelected.SGKurz}" ></h:inputText>   
+                    
+                    <h:outputLabel for="semester" value="Anzahl Semester: "/>
+                    <h:inputText id="semester" value="#{studiengangController.courseSelected.semester}" ></h:inputText>   
+                    
+                    <p:outputLabel for="faculty" value="Facultät: " />
+			        <p:selectOneMenu id="faculty" value="#{studiengangController.facultyName}" style="width:100%">
+                    	<f:selectItems value="#{studiengangController.facultyList}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel for="spsid" value="Stundenplansemesterid: " />
+			        <p:selectOneMenu id="spsid" value="#{studiengangController.spsId}" style="width:100%">
+                    	<f:selectItems value="#{studiengangController.spsList}" />
+			        </p:selectOneMenu>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{studiengangController.addRoom()}" update=":form:DegreecourseList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:DegreecourseList" actionListener="#{studiengangController.deleteStudiengang()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
 		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="600">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel for="sgname1" value="Studiengang: "/>
+                    <h:inputText id="sgname1" value="#{studiengangController.courseName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="short1" value="Kürzel: "/>
+                    <h:inputText id="short1" value="#{studiengangController.courseShort}" ></h:inputText>   
+                    
+                    <h:outputLabel for="semester1" value="Anzahl Semester: "/>
+                    <h:inputText id="semeste1r" value="#{studiengangController.semester}" ></h:inputText>   
+                    
+                    <p:outputLabel for="faculty1" value="Facultät: " />
+			        <p:selectOneMenu id="faculty1" value="#{studiengangController.facultyName}" style="width:100%">
+                    	<f:selectItems value="#{studiengangController.facultyList}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel for="spsid1" value="Stundenplansemesterid: " />
+			        <p:selectOneMenu id="spsid1" value="#{studiengangController.spsId}" style="width:100%">
+                    	<f:selectItems value="#{studiengangController.spsList}" />
+			        </p:selectOneMenu>
+		            
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{studiengangController.createDoStudiengang}" update=":form:DegreecourseList" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

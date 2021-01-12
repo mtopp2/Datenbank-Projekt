@@ -27,6 +27,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
+
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
@@ -35,7 +37,6 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-//@ManagedBean(name="RaumController")
 @Named(value="raumController")
 @SessionScoped
 public class RaumController implements Serializable {
@@ -48,58 +49,58 @@ public class RaumController implements Serializable {
 	private UserTransaction ut;
 	
 	@Inject 
-	private Raum raum;
+	private Raum room;
 	private Location location;
 	
 	@PostConstruct
     public void init() {
-        raumlist = getRaumList();
+        roomList = getRaumList();
         EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Location.findAll");
         List LList = q.getResultList();
         for (Object LListitem : LList)
         {
             Location loc =(Location)LListitem;
-            LocationListe.add(loc.getLStreet());
+            locationList.add(loc.getLStreet());
         }
     }
  
-    ArrayList<String> LocationListe = new ArrayList<>();
-    private String LStreet;
+    ArrayList<String> locationList = new ArrayList<>();
+    private String locationStreet;
 
-	private Integer kapazitaet;
-	private String nachbarRaum;
-	private String RName;
-	private boolean kapazitaet_ok = false;
-	private boolean RName_ok = false;
+	private Integer capacity;
+	private String neighborroom;
+	private String roomName;
+	private boolean capacityOk = false;
+	private boolean roomNameOk = false;
 	
-	List<Raum> raumlist;
+	List<Raum> roomList;
 	
-	private Raum selectedraum;
+	private Raum roomSelected;
 	
 	
-	public String getLStreet() {
-		return LStreet;
+	public String getLocationStreet() {
+		return locationStreet;
 	}
 
-	public void setLStreet(String lStreet) {
-		LStreet = lStreet;
+	public void setLStreet(String locationStreet) {
+		this.locationStreet = locationStreet;
 	}
 
-	public ArrayList<String> getLocationListe() {
-		return LocationListe;
+	public ArrayList<String> getLocationList() {
+		return locationList;
 	}
 
-	public void setLocationListe(ArrayList<String> locationListe) {
-		LocationListe = locationListe;
+	public void setLocationList(ArrayList<String> locationList) {
+		this.locationList = locationList;
 	}
 
-	public Raum getRaum() {
-		return raum;
+	public Raum getRoom() {
+		return room;
 	}
 
-	public void setRaum(Raum raum) {
-		this.raum = raum;
+	public void setRoom(Raum room) {
+		this.room = room;
 	}
 
 	public Location getLocation() {
@@ -110,14 +111,14 @@ public class RaumController implements Serializable {
 		this.location = location;
 	}
 
-	public Integer getKapazitaet() {
-		return kapazitaet;
+	public Integer getCapacity() {
+		return capacity;
 	}
 
-	public void setKapazitaet(Integer kapazitaet) {
-		if(kapazitaet!=null){
-			this.kapazitaet = kapazitaet;
-			kapazitaet_ok=true;
+	public void setCapacity(Integer capacity) {
+		if(capacity!=null){
+			this.capacity = capacity;
+			capacityOk=true;
 	    }
 	    else{
 	    	FacesMessage message = new FacesMessage("Kapazitaet konnte nicht gesetzt werden.");
@@ -125,23 +126,23 @@ public class RaumController implements Serializable {
 	    }
 	}
 
-	public String getNachbarRaum() {
-		return nachbarRaum;
+	public String getNeighborroom() {
+		return neighborroom;
 	}
 
-	public void setNachbarRaum(String nachbarRaum) {
-			this.nachbarRaum = nachbarRaum;
+	public void setNeighborroom(String neighborroom) {
+			this.neighborroom = neighborroom;
 	}
 
-	public String getRName() {
-		return RName;
+	public String getRoomName() {
+		return roomName;
 	}
 
-	public void setRName(String rName) {
+	public void setRoomName(String roomName) {
 		
-		if(rName!=null){
-			RName = rName;
-	        RName_ok=true;
+		if(roomName!=null){
+			this.roomName = roomName;
+	        roomNameOk=true;
 	    }
 		else{
 	    	FacesMessage message = new FacesMessage("Raumname konnte nicht gesetzt werden.");
@@ -149,20 +150,20 @@ public class RaumController implements Serializable {
 	    }
 	}
 
-	public List<Raum> getRaumlist() {
-		return raumlist;
+	public List<Raum> getRoomList() {
+		return roomList;
 	}
 
-	public void setRaumlist(List<Raum> raumlist) {
-		this.raumlist = raumlist;
+	public void setRoomList(List<Raum> roomList) {
+		this.roomList = roomList;
 	}
 
-	public Raum getSelectedraum() {
-		return selectedraum;
+	public Raum getRoomSelected() {
+		return roomSelected;
 	}
 
-	public void setSelectedraum(Raum selectedraum) {
-		this.selectedraum = selectedraum;
+	public void setRoomSelected(Raum roomSelected) {
+		this.roomSelected = roomSelected;
 	}
 	
 	public UIComponent getReg() {
@@ -174,13 +175,13 @@ public class RaumController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createRaum() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createRoom() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
 		Raum rau = new Raum();  
-		rau.setRName(RName);
-		rau.setKapazitaet(kapazitaet);
-		rau.setNachbarRaum(nachbarRaum);
-		rau.setLocation(findLoc(LStreet));
+		rau.setRName(roomName);
+		rau.setKapazitaet(capacity);
+		rau.setNachbarRaum(neighborroom);
+		rau.setLocation(findLoc(locationStreet));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -197,13 +198,10 @@ public class RaumController implements Serializable {
 		em.close();
 	}
 	
-	public String createDoRaum() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(RName_ok == true && kapazitaet_ok == true) {
-			createRaum();
-			return "showraum.xhtml";
-		}
-		else{
-			return "createraum.xhtml";
+	public void createDoRoom() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
+		if(roomNameOk == true && capacityOk == true) {
+			createRoom();
+			roomList = getRaumList();
 		}
 	}
 	
@@ -212,58 +210,33 @@ public class RaumController implements Serializable {
 	public List<Raum> getRaumList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Raum> query = em.createNamedQuery("Raum.findAll", Raum.class);
-		raumlist = query.getResultList();
+		roomList = query.getResultList();
 		return query.getResultList();
 	}
 	
-	
-	
-	public void onRowEdit(RowEditEvent<Raum> event) {
-        FacesMessage msg = new FacesMessage("Raum Edited");
+	public void onRowSelect(SelectEvent<Raum> e) {
+    	FacesMessage msg = new FacesMessage("Raum ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
-        Raum newrau = new Raum();
-        newrau = event.getObject();
+        roomSelected = e.getObject();
         
-        try {
-	        ut.begin();
-	        EntityManager em = emf.createEntityManager();
-	        em.find(Raum.class, newrau.getRid());
-	        raum.setRid(newrau.getRid());
-	        raum.setRName(newrau.getRName());
-	        raum.setKapazitaet(newrau.getKapazitaet());
-	        raum.setNachbarRaum(newrau.getNachbarRaum());
-	        raum.setLocation(findLoc(newrau.getLocation().getLStreet()));
-	        em.merge(raum);
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-    }
-     
-    public void onRowCancel(RowEditEvent<Raum> event) {
-    	FacesMessage msg = new FacesMessage("Raum Cancelled");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
+        locationStreet = roomSelected.getLocation().getLStreet();
+        
     }
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteRaum() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        raumlist.remove(selectedraum);        
+    public void deleteRoom() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+        roomList.remove(roomSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Raum> q = em.createNamedQuery("Raum.findByRid",Raum.class);
-        q.setParameter("rid", selectedraum.getRid());
-        raum = (Raum)q.getSingleResult();
+        q.setParameter("rid", roomSelected.getRid());
+        room = (Raum)q.getSingleResult();
         
         try {
 	        ut.begin();   
 	        em.joinTransaction();  
-	        em.remove(raum);
+	        em.remove(room);
 	        ut.commit(); 
 	    }
 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
@@ -273,7 +246,6 @@ public class RaumController implements Serializable {
 	        catch (IllegalStateException | SecurityException | SystemException ex) {
 	        }
 	    }
-        selectedraum = null;
 		em.close();
     }
     
@@ -289,5 +261,28 @@ public class RaumController implements Serializable {
         }
         return location;
     }
+    
+    public void addRoom(){
+   	 try {
+   		ut.begin();
+        EntityManager em = emf.createEntityManager();
+        em.find(Raum.class, roomSelected.getRid());
+        room.setRid(roomSelected.getRid());
+        room.setRName(roomSelected.getRName());
+        room.setKapazitaet(roomSelected.getKapazitaet());
+        room.setNachbarRaum(roomSelected.getNachbarRaum());
+        room.setLocation(findLoc(locationStreet));
+        em.merge(room);
+        ut.commit(); 
+	    }
+	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+   	roomList = getRaumList();
+   }
   
 }

@@ -7,19 +7,13 @@
       
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
-<!-- einzeiliger Kommentar 	<ui:define name="menu"> <ui:include src="WEB-INF/template/eingeloggt.xhtml"/></ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Account" id="ajax" update="msgs" action="/register.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="AccountListe" var="list" value="#{accountController.acclist}" editable="true" rowKey="#{list.accID}" selection="#{accountController.selectedaccount}" selectionMode="single">
-		        <f:facet name="header">
-		            Cell Editing with Click and RightClick
-		        </f:facet>
-		 		<!-- editMode="cell" widgetVar="cellModul" -->
-		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{accountController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{accountController.onRowCancel}" update=":form:msgs" />
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Account Hinzufügen" id="ajax" update="msgs" action="/register.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="AccountList" var="list" value="#{accountController.accountList}" editable="true" selectionMode="single" selection="#{accountController.accountSelected}" rowKey="#{list.accID}">
+			
+				<p:ajax event="rowSelect" listener="#{accountController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="AccountList"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -35,7 +29,7 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="PWD">
+		        <p:column headerText="Passwort">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.accPwd}" /></f:facet>
 		                <f:facet name="input"><p:inputText value="#{list.accPwd}" style="width:96%" label="PWD"/></f:facet>
@@ -49,43 +43,54 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="BGruppe">
+		        <p:column headerText="Benutzergruppe">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.benutzergruppe.BGName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.benutzergruppe.BGName}" style="width:100%">
-		                        <f:selectItems value="#{accountController.benutzergruppeListe}" var="#{benutzergruppe.BGName}" itemLabel="#{benutzergruppe.BGName}" itemValue="#{benutzergruppe.BGName}" />
+		                        <f:selectItems value="#{accountController.userGroupList}" var="#{benutzergruppe.BGName}" itemLabel="#{benutzergruppe.BGName}" itemValue="#{benutzergruppe.BGName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Faculty">
+		        <p:column headerText="Fakultät">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.faculty.facName}" style="width:100%">
-		                        <f:selectItems value="#{accountController.facultyListe}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
+		                        <f:selectItems value="#{accountController.facultyList}" var="#{faculty.facName}" itemLabel="#{faculty.facName}" itemValue="#{faculty.facName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
-		       
-		      		        
-		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
 		    </p:dataTable>
-		     
-		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
-		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
-		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
-		    </p:contextMenu> -->
-		    <p:contextMenu for="AccountListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="AccountListe" icon="pi pi-times" action="#{accountController.deleteAccount}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="600">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="accountName" value="Accountname: "/>
+                    <h:inputText id="accountName" value="#{accountController.accountSelected.accName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="accountPassword" value="Accountpasswort: "/>
+                    <h:inputText id="accountPassword" value="#{accountController.accountSelected.accPwd}" ></h:inputText>   
+                    
+                    <h:outputLabel for="accountEmail" value="Accountemail: "/>
+                    <h:inputText id="accountEmail" value="#{accountController.accountSelected.accEmail}" ></h:inputText>   
+                    
+                    <p:outputLabel for="userGroup" value="Benutzergruppe: " />
+			        <p:selectOneMenu id="userGroup" value="#{accountController.userGroupName}" style="width:100%">
+                    	<f:selectItems value="#{accountController.userGroupList}" />
+			        </p:selectOneMenu>
+			        
+			        <p:outputLabel for="faculty" value="Fakultät: " />
+			        <p:selectOneMenu id="faculty" value="#{accountController.facultyName}" style="width:100%">
+                    	<f:selectItems value="#{accountController.facultyList}" />
+			        </p:selectOneMenu>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{accountController.addAccount()}" update=":form:AccountList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:AccountList" actionListener="#{accountController.deleteAccount()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
 		 </h:form>
 		 </ui:define>
 	</ui:composition>

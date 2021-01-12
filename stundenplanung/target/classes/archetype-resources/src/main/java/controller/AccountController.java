@@ -2,6 +2,7 @@ package controller;
 import model.Benutzergruppe;
 import model.Account;
 import model.Faculty;
+import model.Raum;
 import model.Sgmodul;
 
 import javax.inject.Named;
@@ -11,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import java.util.logging.Level;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -32,17 +32,11 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.primefaces.event.RowEditEvent;
-
+import org.primefaces.event.SelectEvent;
 import com.sun.javafx.logging.Logger;
-
 import org.primefaces.event.CellEditEvent;
-//import org.primefaces.event.
-
-
 import javax.faces.bean.ManagedBean;
-//import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
-
 import controller.MessageForPrimefaces;
 
 /**
@@ -50,9 +44,7 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-//@ManagedBean(name="AccountController")
 @Named(value="accountController")
-//@SessionScoped
 @SessionScoped
 public class AccountController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -62,75 +54,70 @@ public class AccountController implements Serializable {
   
 	@Resource
 	private UserTransaction ut;
-	
-	//@SuppressWarnings("cdi-ambiguous-dependency")
+
 	@Inject 
 	private Account account;
 	private Faculty faculty;
-	private Benutzergruppe benutzergruppe;
+	private Benutzergruppe userGroup;
 	
-    //private ArrayList StudiengangNamensListe;
-    ArrayList<String> FacultyListe = new ArrayList<>();
-    ArrayList<String> BenutzergruppeListe = new ArrayList<>();
+    ArrayList<String> facultyList = new ArrayList<>();
+    ArrayList<String> userGroupList = new ArrayList<>();
 	
 	@PostConstruct
     public void init() {
-        acclist = getAccountList();
+		accountList = getAccountListAll();
         EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Faculty.findAll");
         List FList = q.getResultList();
         for (Object FListitem : FList)
         {
             Faculty fac =(Faculty)FListitem;
-            FacultyListe.add(fac.getFacName());
+            facultyList.add(fac.getFacName());
         }
         Query b = em.createNamedQuery("Benutzergruppe.findAll");
         List BList = b.getResultList();
         for (Object BListitem : BList)
         {
             Benutzergruppe bg =(Benutzergruppe)BListitem;
-            BenutzergruppeListe.add(bg.getBGName());
+            userGroupList.add(bg.getBGName());
         }
     }
- 
 	
-	private String BGName;
-	private String accEmail;
-	private String accName;
-	private String accPwd;
-	private String facName;
-	private boolean accEmail_ok = false;
-	private boolean accName_ok = false;
-	private boolean accPwd_ok = false;
+	private String accountName;
+	private String accountPassword;
+	private String accountEmail;
+	private String userGroupName;
+	private String facultyName;
+	private boolean accountEmailOk = false;
+	private boolean accountNameOk = false;
+	private boolean accountPasswordOk = false;
 	
-	List<Account> acclist;
+	List<Account> accountList;
 	
-	//modlist.add(getModulList());
+	private Account accountSelected;
 	
-	private Account selectedaccount;
-	
-	public Account getSelectedaccount() {
-		return selectedaccount;
+	public Account getAccountSelected() {
+		return accountSelected;
 	}
 	  
-	public void setSelectedaccount(Account selectedaccount) {
-		this.selectedaccount = selectedaccount;
+	public void setAccountSelected(Account accountSelected) {
+		this.accountSelected = accountSelected;
 	}
 	
-	public String getBGName() {
-		return BGName;
+	public String getUserGroupName() {
+		return userGroupName;
 	}
 
-	public void setBGName(String bGName) {
-		this.BGName = bGName;
+	public void setUserGroupName(String userGroupName) {
+		this.userGroupName = userGroupName;
 	}
 	  
-    public List<Account> getAcclist() {
-        return acclist;
+    public List<Account> getAccountList() {
+        return accountList;
     }
     
-    public void setAcclist(List<Account> acclist) {
-		this.acclist = acclist;
+    public void setAccountList(List<Account> accountList) {
+		this.accountList = accountList;
 		
 	}
     
@@ -142,78 +129,72 @@ public class AccountController implements Serializable {
 		this.account = account;
 	}
 	
-	public ArrayList<String> getFacultyListe() {
-        return FacultyListe;
+	public ArrayList<String> getFacultyList() {
+        return facultyList;
     }
 
-    public void setFacultyListe(ArrayList<String> facultyListe) {
-        this.FacultyListe = facultyListe;
+    public void setFacultyList(ArrayList<String> facultyList) {
+        this.facultyList = facultyList;
     }
-    public ArrayList<String> getBenutzergruppeListe() {
-        return BenutzergruppeListe;
+    public ArrayList<String> getUserGroupList() {
+        return userGroupList;
     }
 
-    public void setBenutzergruppeListe(ArrayList<String> benutzergruppeListe) {
-        this.BenutzergruppeListe = benutzergruppeListe;
+    public void setUserGroupList(ArrayList<String> userGroupList) {
+        this.userGroupList = userGroupList;
     }
 	  
-	public String getAccEmail() {
-		return accEmail;
+	public String getAccountEmail() {
+		return accountEmail;
 	}
 	  
-	public void setAccEmail(String accEmail) {
-		if(accEmail!=null){
-			this.accEmail = accEmail;
-			accEmail_ok = true;
+	public void setAccountEmail(String accountEmail) {
+		if(accountEmail!=null){
+			this.accountEmail = accountEmail;
+			accountEmailOk = true;
 		}
 		else{
 			FacesMessage message = new FacesMessage("Accountemail bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("AccountForm:accEmail_reg", message);
-	        //String msg = "Modulkürzel bereits vorhanden.";
-	        //addMessage("modKuerzel_reg",msg);
 	    }
 	}
 	  
-	public String getAccName() {
-		return accName;
+	public String getAccountName() {
+		return accountName;
 	}
 	  
-	public void setAccName(String accName) {
-	    if(accName!=null){
-	        this.accName = accName;
-	        accName_ok=true;
+	public void setAccountName(String accountName) {
+	    if(accountName!=null){
+	        this.accountName = accountName;
+	        accountNameOk=true;
 	    }
 	    else{
 	    	FacesMessage message = new FacesMessage("Accountname bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("AccountForm:accName_reg", message);
-	        //String msg = "Modulname bereits vorhanden.";
-	        //addMessage("modName_reg",msg);
 	    }
 	}
 	  
-	public String getAccPwd() {
-		return accPwd;
+	public String getAccountPassword() {
+		return accountPassword;
 	}
 	  
-	public void setAccPwd(String accPwd) {
-		if(accPwd!=null){
-	        this.accPwd = accPwd;
-	        accPwd_ok=true;
+	public void setAccPwd(String accountPassword) {
+		if(accountPassword!=null){
+	        this.accountPassword = accountPassword;
+	        accountPasswordOk=true;
 	    }
 	    else{
 	    	FacesMessage message = new FacesMessage("PWD bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("AccountForm:accPwd_reg", message);
-	        //String msg = "Prüfcodeid bereits vorhanden.";
-	        //addMessage("pcid_reg",msg);
 	    }
 	}
 	
-	public String getFacName() {
-        return facName;
+	public String getFacultyName() {
+        return facultyName;
     }
 
-    public void setFacName(String facName) {
-        this.facName = facName;
+    public void setFacultyName(String facultyName) {
+        this.facultyName = facultyName;
     }
 	public UIComponent getReg() {
         return reg;
@@ -230,50 +211,30 @@ public class AccountController implements Serializable {
         this.faculty = faculty;
     }
     
-    public Benutzergruppe getBenutzergruppe() {
-        return benutzergruppe;
+    public Benutzergruppe getUserGroup() {
+        return userGroup;
     }
 
-    public void setBenutzergruppe(Benutzergruppe benutzergruppe) {       
-        this.benutzergruppe = benutzergruppe;
+    public void setUserGroup(Benutzergruppe userGroup) {       
+        this.userGroup = userGroup;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public List<Account> getAccountList(){
+	public void createAccount() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
-		TypedQuery<Account> query = em.createNamedQuery("Account.findAll", Account.class);
-		acclist = query.getResultList();
-		return query.getResultList();
-	}
-	
-	
-	
-	public void onRowEdit(RowEditEvent<Account> event) {
-        
-        FacesMessage msg = new FacesMessage("Account Edited");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-        Account newacc = new Account();
-        newacc = event.getObject();
-        
-        try {
-	        ut.begin();
-	        EntityManager em = emf.createEntityManager();
-	        //em.joinTransaction();
-	        em.find(Account.class, newacc.getAccID());
-	        //em.persist(q)
-	        account.setAccID(newacc.getAccID());
-	        account.setAccName(newacc.getAccName());
-	        account.setAccPwd(newacc.getAccPwd());
-	        account.setAccEmail(newacc.getAccEmail());
-	        account.setBenutzergruppe(findBG(newacc.getBenutzergruppe().getBGName()));
-            account.setFaculty(findFac(newacc.getFaculty().getFacName()));
-	        
-	        
-	        em.merge(account);
+		Account acc = new Account();  
+		acc.setAccName(accountName);
+		acc.setAccPwd(accountPassword);
+		acc.setAccEmail(accountEmail);
+		acc.setBenutzergruppe(findBG(userGroupName));
+		acc.setFaculty(findFac(facultyName));
+		try {
+	        ut.begin();   
+	        em.joinTransaction();  
+	        em.persist(acc);  
 	        ut.commit(); 
 	    }
 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
@@ -283,31 +244,48 @@ public class AccountController implements Serializable {
 	        catch (IllegalStateException | SecurityException | SystemException ex) {
 	        }
 	    }
-    }
-     
-    public void onRowCancel(RowEditEvent<Account> event) {
-        //MessageForPrimefaces msg = new MessageForPrimefaces("Modul Cancelled", event.getObject().getModID());
-        //FacesMessage msg = new FacesMessage("Modul Cancelled", event.getObject().getModID());
-    	FacesMessage msg = new FacesMessage("Account Cancelled");
+		em.close();
+	}
+	
+	public void createDoAccount() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
+		if(accountNameOk == true && accountPasswordOk == true && accountEmailOk) {
+			createAccount();
+			accountList = getAccountListAll();
+		}
+	}
+	
+	//----------------------------------------------------------------------------------------------------------------------------------------
+	
+	public List<Account> getAccountListAll(){
+		EntityManager em = emf.createEntityManager();
+		TypedQuery<Account> query = em.createNamedQuery("Account.findAll", Account.class);
+		accountList = query.getResultList();
+		return query.getResultList();
+	}
+	
+	public void onRowSelect(SelectEvent<Account> e) {
+    	FacesMessage msg = new FacesMessage("Account ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
+        
+        accountSelected = e.getObject();
+        
+        userGroupName = accountSelected.getBenutzergruppe().getBGName();
+        facultyName = accountSelected.getFaculty().getFacName();
+        
     }
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void deleteAccount() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        acclist.remove(selectedaccount);
-        //selectedmodul = null;
-        //updateModul(modlist);
-        
+    	accountList.remove(accountSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Account> q = em.createNamedQuery("Account.findByAccID",Account.class);
-        q.setParameter("accID", selectedaccount.getAccID());
+        q.setParameter("accID", accountSelected.getAccID());
         account = (Account)q.getSingleResult();
         
         try {
 	        ut.begin();   
 	        em.joinTransaction();  
-	        //em.persist(q);
 	        em.remove(account);
 	        ut.commit(); 
 	    }
@@ -318,7 +296,6 @@ public class AccountController implements Serializable {
 	        catch (IllegalStateException | SecurityException | SystemException ex) {
 	        }
 	    }
-        selectedaccount = null;
 		em.close();
     }
     
@@ -329,11 +306,11 @@ public class AccountController implements Serializable {
             TypedQuery<Benutzergruppe> query
                 = em.createNamedQuery("Benutzergruppe.findByBGName",Benutzergruppe.class);
             query.setParameter("BGName", bg);
-            benutzergruppe = (Benutzergruppe)query.getSingleResult();
+            userGroup = (Benutzergruppe)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return benutzergruppe;
+        return userGroup;
     }
     
     private Faculty findFac(String fac) {
@@ -348,9 +325,33 @@ public class AccountController implements Serializable {
         }
         return faculty;
     }
+    
+    public void addAccount(){
+      	 try {
+      		ut.begin();
+	        EntityManager em = emf.createEntityManager();
+	        em.find(Account.class, accountSelected.getAccID());
+	        account.setAccID(accountSelected.getAccID());
+	        account.setAccName(accountSelected.getAccName());
+	        account.setAccPwd(accountSelected.getAccPwd());
+	        account.setAccEmail(accountSelected.getAccEmail());
+	        account.setBenutzergruppe(findBG(userGroupName));
+            account.setFaculty(findFac(facultyName));
+	        em.merge(account);
+	        ut.commit(); 
+   	    }
+   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	        try {
+   	            ut.rollback();
+   	        } 
+   	        catch (IllegalStateException | SecurityException | SystemException ex) {
+   	        }
+   	    }
+      	accountList = getAccountListAll();
+      }
 	
 	  
-		//Nachrichten an die View senden
+	//Nachrichten an die View senden
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     

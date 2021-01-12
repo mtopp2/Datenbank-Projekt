@@ -9,15 +9,11 @@
 	<ui:composition template="WEB-INF/template/master.xhtml" >
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>   
-			<p:dataTable id="DozentenListe" var="list" value="#{dozentenController.dozlist}" editable="true" rowKey="#{list.did}" selection="#{dozentenController.selecteddozenten}" selectionMode="single">
-		        <f:facet name="header">
-		            Cell Editing with Click and RightClick
-		        </f:facet>
-		 		<!-- editMode="cell" widgetVar="cellModul" -->
-		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{dozentenController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{dozentenController.onRowCancel}" update=":form:msgs" />
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Dozent Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="ProfessorList" var="list" value="#{dozentenController.professorList}" editable="true" selectionMode="single" selection="#{dozentenController.professorSelected}" rowKey="#{list.did}" >
+		 
+		 		<p:ajax event="rowSelect" listener="#{dozentenController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ProfessorList"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -40,13 +36,6 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Dkurz">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.DKurz}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.DKurz}" style="width:96%" label="Dkurz"/></f:facet>
-		            </p:cellEditor>
-		        </p:column>
-		        
 		        <p:column headerText="Titel">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.DTitel}" /></f:facet>
@@ -54,33 +43,76 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Acc">
+		        <p:column headerText="Dozentenkürzel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.DKurz}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.DKurz}" style="width:96%" label="Dkurz"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Account">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.account.accName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.account.accName}" style="width:100%">
-		                        <f:selectItems value="#{dozentenController.accountListe}" var="#{account.accName}" itemLabel="#{account.accName}" itemValue="#{account.accName}" />
+		                        <f:selectItems value="#{dozentenController.accountList}" var="#{account.accName}" itemLabel="#{account.accName}" itemValue="#{account.accName}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
-		        
-		        
-		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
 		    </p:dataTable>
-		     
-		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
-		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
-		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
-		    </p:contextMenu> -->
-		    <p:contextMenu for="DozentenListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="DozentenListe" icon="pi pi-times" action="#{dozentenController.deleteDozenten}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="professorName" value="Dozenten Name: "/>
+                    <h:inputText id="professorName" value="#{dozentenController.professorSelected.DName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="professorFirstName" value="Dozenten Vorname: "/>
+                    <h:inputText id="professorFirstName" value="#{dozentenController.professorSelected.DVorname}" ></h:inputText>
+                    
+                    <h:outputLabel for="title" value="Titel: "/>
+                    <h:inputText id="title" value="#{dozentenController.professorSelected.DTitel}" ></h:inputText>
+                    
+                    <h:outputLabel for="professorShort" value="Kürzel: "/>
+                    <h:inputText id="professorShort" value="#{dozentenController.professorSelected.DKurz}" ></h:inputText>
+                    
+                    <p:outputLabel for="account" value="Account: " />
+			        <p:selectOneMenu id="account" value="#{dozentenController.accountName}" style="width:100%">
+                    	<f:selectItems value="#{dozentenController.accountList}" />
+			        </p:selectOneMenu>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{dozentenController.addDozent()}" update=":form:ProfessorList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:ProfessorList" actionListener="#{dozentenController.deleteDozent()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
 		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="350">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel for="professorName1" value="Dozenten Name: "/>
+                    <h:inputText id="professorName1" value="#{dozentenController.professorName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="professorFirstName1" value="Dozenten Vorname: "/>
+                    <h:inputText id="professorFirstName1" value="#{dozentenController.professorFirstName}" ></h:inputText>
+                    
+                    <h:outputLabel for="title1" value="Titel: "/>
+                    <h:inputText id="title1" value="#{dozentenController.professorTitle}" ></h:inputText>
+                    
+                    <h:outputLabel for="professorShort1" value="Kürzel: "/>
+                    <h:inputText id="professorShort1" value="#{dozentenController.professorShort}" ></h:inputText>
+                    
+                    <p:outputLabel for="account1" value="Account: " />
+			        <p:selectOneMenu id="account1" value="#{dozentenController.accountName}" style="width:100%">
+                    	<f:selectItems value="#{dozentenController.accountList}" />
+			        </p:selectOneMenu>
+		            
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{dozentenController.createDoDozent}" update=":form:ProfessorList" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

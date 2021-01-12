@@ -50,17 +50,17 @@ public class LocationController implements Serializable {
 	
 	@PostConstruct
     public void init() {
-        locList = getLocationList();
+        locationList = getLocationListAll();
     }
 	
-	private String lCity;
-	private String lStreet;
-	private boolean lCityOk = false;
-	private boolean lStreetOk = false;
+	private String locationCity;
+	private String locationStreet;
+	private boolean locationCityOk = false;
+	private boolean locationStreetOk = false;
 	
-	private Location selectedLocation;
+	private Location locationSelected;
 	
-	List<Location> locList;
+	List<Location> locationList;
 	
 	
     public Location getLocation() {
@@ -71,26 +71,26 @@ public class LocationController implements Serializable {
 		this.location = location;
 	}
 	
-	public List<Location> getLocList() {
-		return locList;
+	public List<Location> getLocationList() {
+		return locationList;
 	}
 
-	public Location getSelectedLocation() {
-		return selectedLocation;
+	public Location getLocationSelected() {
+		return locationSelected;
 	}
 
-	public void setSelectedLocation(Location selectedLocation) {
-		this.selectedLocation = selectedLocation;
+	public void setLocationSelected(Location locationSelected) {
+		this.locationSelected = locationSelected;
 	}
 
-	public String getLCity() {
-		return this.lCity;
+	public String getLocationCity() {
+		return this.locationCity;
 	}
 
-	public void setLCity(String lCity) {
-		if(lCity != null){
-			this.lCity = lCity;
-			lCityOk = true;
+	public void setLocationCity(String locationCity) {
+		if(locationCity != null){
+			this.locationCity = locationCity;
+			locationCityOk = true;
 		}
 		else{
 			FacesMessage message = new FacesMessage("Stadt bereits vorhanden.");
@@ -98,14 +98,14 @@ public class LocationController implements Serializable {
 	    }
 	}
 
-	public String getLStreet() {
-		return this.lStreet;
+	public String getLocationStreet() {
+		return this.locationStreet;
 	}
 
-	public void setLStreet(String lStreet) {
-		if(lStreet != null){
-			this.lStreet = lStreet;
-			lStreetOk = true;
+	public void setLocationStreet(String locationStreet) {
+		if(locationStreet != null){
+			this.locationStreet = locationStreet;
+			locationStreetOk = true;
 		}
 		else{
 			FacesMessage message = new FacesMessage("Straße bereits vorhanden.");
@@ -125,8 +125,8 @@ public class LocationController implements Serializable {
 	public void createLocation() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
 		Location loc = new Location();  
-		loc.setLCity(lCity);    
-		loc.setLStreet(lStreet);      
+		loc.setLCity(locationCity);    
+		loc.setLStreet(locationStreet);      
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -144,27 +144,27 @@ public class LocationController implements Serializable {
 	}
 	
 	public void createDoLocation() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(lCityOk == true && lStreetOk == true) {
+		if(locationCityOk == true && locationStreetOk == true) {
 			createLocation();
-			locList = getLocationList();
+			locationList = getLocationListAll();
 			
 		}
 	}
 	
-	public List<Location> getLocationList(){
+	public List<Location> getLocationListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Location> query = em.createNamedQuery("Location.findAll", Location.class);
-		locList = query.getResultList();
+		locationList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void deleteLocation() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        locList.remove(selectedLocation);        
+    	locationList.remove(locationSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Location> q = em.createNamedQuery("Location.findByLid",Location.class);
-        q.setParameter("lid", selectedLocation.getLid());
+        q.setParameter("lid", locationSelected.getLid());
         location = (Location)q.getSingleResult();
         
         try {
@@ -188,7 +188,7 @@ public class LocationController implements Serializable {
     	FacesMessage msg = new FacesMessage("Standort ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
-        selectedLocation = e.getObject();
+        locationSelected = e.getObject();
         
     }
     
@@ -196,10 +196,10 @@ public class LocationController implements Serializable {
     	 try {
  	        ut.begin();
  	        EntityManager em = emf.createEntityManager();
- 	        em.find(Location.class, selectedLocation.getLid());
- 	        location.setLid(selectedLocation.getLid());
- 	        location.setLCity(selectedLocation.getLCity());
- 	        location.setLStreet(selectedLocation.getLStreet());
+ 	        em.find(Location.class, locationSelected.getLid());
+ 	        location.setLid(locationSelected.getLid());
+ 	        location.setLCity(locationSelected.getLCity());
+ 	        location.setLStreet(locationSelected.getLStreet());
  	        em.merge(location);
  	        ut.commit(); 
  	    }

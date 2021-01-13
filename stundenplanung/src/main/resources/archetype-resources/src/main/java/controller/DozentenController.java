@@ -86,12 +86,12 @@ public class DozentenController implements Serializable {
  
 	
 	
-	private String professorShort;
+	private String professorShortName;
 	private String professorName;
 	private String professorTitle;
 	private String professorFirstName;
 	private String accountName;
-	private boolean professorShortOk = false;
+	private boolean professorShortNameOk = false;
 	private boolean professorNameOk = false;
 
 	
@@ -135,14 +135,14 @@ public class DozentenController implements Serializable {
         this.accountList = accountList;
     }
 	
-	public String getProfessorShort() {
-		return professorShort;
+	public String getProfessorShortName() {
+		return professorShortName;
 	}
 	  
-	public void setProfessorShort(String professorShort) {
-		if(professorShort!=null){
-			this.professorShort = professorShort;
-			professorShortOk = true;
+	public void setProfessorShortName(String professorShortName) {
+		if(professorShortName!=null){
+			this.professorShortName = professorShortName;
+			professorShortNameOk = true;
 		}
 		else{
 			FacesMessage message = new FacesMessage("Bitte Dozentenkürzel eingeben.");
@@ -211,7 +211,7 @@ public class DozentenController implements Serializable {
 		doz.setDName(professorName);
 		doz.setDVorname(professorFirstName);
 		doz.setDTitel(professorTitle);
-		doz.setDKurz(professorShort);   
+		doz.setDKurz(professorShortName);   
 		doz.setAccount(findAcc(accountName));
 		try {
 	        ut.begin();   
@@ -230,7 +230,7 @@ public class DozentenController implements Serializable {
 	}
 	
 	public void createDoDozent() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(professorShortOk == true && professorNameOk == true) {
+		if(professorShortNameOk == true && professorNameOk == true) {
 			createDozent();
 			professorList = getDozentenList();
 		}

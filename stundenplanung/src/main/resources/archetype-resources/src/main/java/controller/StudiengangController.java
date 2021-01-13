@@ -53,7 +53,7 @@ public class StudiengangController implements Serializable {
 	@Inject 
 	private Studiengang course;
 	private Faculty faculty;
-	private Stundenplansemester sps;
+	private Stundenplansemester spSemester;
 	
 	@PostConstruct
     public void init() {
@@ -137,12 +137,12 @@ public class StudiengangController implements Serializable {
 		this.faculty = faculty;
 	}
 	
-	public Stundenplansemester getSps() {
-		return sps;
+	public Stundenplansemester getSpSemester() {
+		return spSemester;
 	}
 
-	public void setSps(Stundenplansemester sps) {
-		this.sps = sps;
+	public void setSpSemester(Stundenplansemester spSemester) {
+		this.spSemester = spSemester;
 	}
 
 	public String getCourseName() {
@@ -308,11 +308,11 @@ public class StudiengangController implements Serializable {
             TypedQuery<Stundenplansemester> query
                 = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
             query.setParameter("spsid", sm);
-            sps = (Stundenplansemester)query.getSingleResult();
+            spSemester = (Stundenplansemester)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return sps;
+        return spSemester;
     }
     
     public void addRoom(){

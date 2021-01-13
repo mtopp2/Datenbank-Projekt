@@ -69,7 +69,7 @@ public class RaumController implements Serializable {
     private String locationStreet;
 
 	private Integer capacity;
-	private String neighborroom;
+	private String roomNeighbor;
 	private String roomName;
 	private boolean capacityOk = false;
 	private boolean roomNameOk = false;
@@ -126,12 +126,12 @@ public class RaumController implements Serializable {
 	    }
 	}
 
-	public String getNeighborroom() {
-		return neighborroom;
+	public String getRoomNeighbor() {
+		return roomNeighbor;
 	}
 
-	public void setNeighborroom(String neighborroom) {
-			this.neighborroom = neighborroom;
+	public void setRoomNeighbor(String roomNeighbor) {
+			this.roomNeighbor = roomNeighbor;
 	}
 
 	public String getRoomName() {
@@ -180,7 +180,7 @@ public class RaumController implements Serializable {
 		Raum rau = new Raum();  
 		rau.setRName(roomName);
 		rau.setKapazitaet(capacity);
-		rau.setNachbarRaum(neighborroom);
+		rau.setNachbarRaum(roomNeighbor);
 		rau.setLocation(findLoc(locationStreet));
 		try {
 	        ut.begin();   

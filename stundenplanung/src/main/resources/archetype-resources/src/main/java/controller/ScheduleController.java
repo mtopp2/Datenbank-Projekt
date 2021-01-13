@@ -114,8 +114,8 @@ public class ScheduleController implements Serializable {
     private int semester;
     private int semesterSelection;
     
-    ArrayList<String> studiengangList = new ArrayList<>();
-    private String studiengangSelection;
+    ArrayList<String> courseList = new ArrayList<>();
+    private String courseSelection;
     
     ArrayList<String> facultyList = new ArrayList<>();
     private String facultySelection;
@@ -154,7 +154,7 @@ public class ScheduleController implements Serializable {
 	        EntityManager em = emf.createEntityManager();
 	        Query q = em.createNamedQuery("Sgmodul.findBySemesterAndStudiengangAndFaculty",Sgmodul.class);
 	        q.setParameter("semester", semesterSelection);
-	        q.setParameter("SGName", studiengangSelection);
+	        q.setParameter("SGName", courseSelection);
 	        q.setParameter("facName", facultySelection);
 	        
 	        List liste = q.getResultList();
@@ -181,7 +181,7 @@ public class ScheduleController implements Serializable {
             EntityManager em = emf.createEntityManager();
             Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlan", Stundenplaneintrag.class);
             query.setParameter("semester", semesterSelection);
-            query.setParameter("stgang", studiengangSelection);
+            query.setParameter("stgang", courseSelection);
             scheduleEntryList = query.getResultList();
         }
         catch(Exception e){}
@@ -289,7 +289,7 @@ public class ScheduleController implements Serializable {
         for (Object S1Listitem : S1List)
         {
         	Studiengang sg1 =(Studiengang)S1Listitem;
-            studiengangList.add(sg1.getSGName());
+            courseList.add(sg1.getSGName());
         }
         
         EntityManager em5 = emf.createEntityManager();
@@ -304,7 +304,7 @@ public class ScheduleController implements Serializable {
 		facultySelection = facultyList.get(8);
         semester = 6;
         semesterSelection = semester;
-        studiengangSelection = studiengangList.get(0);
+        courseSelection = courseList.get(0);
 
 	}
 	
@@ -692,20 +692,20 @@ public class ScheduleController implements Serializable {
 		this.semesterSelection = semesterSelection;
 	}
 
-	public ArrayList<String> getStudiengangList() {
-		return studiengangList;
+	public ArrayList<String> getCourseList() {
+		return courseList;
 	}
 
-	public void setStudiengangList(ArrayList<String> studiengangList) {
-		this.studiengangList = studiengangList;
+	public void setCourseList(ArrayList<String> courseList) {
+		this.courseList = courseList;
 	}
 
-	public String getStudiengangSelection() {
-		return studiengangSelection;
+	public String getCourseSelection() {
+		return courseSelection;
 	}
 
-	public void setStudiengangSelection(String studiengangSelection) {
-		this.studiengangSelection = studiengangSelection;
+	public void setCourseSelection(String courseSelection) {
+		this.courseSelection = courseSelection;
 	}
 	
 	public ArrayList<String> getFacultyList() {

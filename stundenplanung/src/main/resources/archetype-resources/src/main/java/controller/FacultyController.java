@@ -2,6 +2,7 @@ package controller;
 
 import model.Account;
 import model.Faculty;
+import model.Location;
 import model.Modul;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -31,6 +32,7 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
 
 import com.sun.javafx.logging.Logger;
 
@@ -49,9 +51,7 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-//@ManagedBean(name="FacultyController")
 @Named(value="facultyController")
-//@SessionScoped
 @SessionScoped
 public class FacultyController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -62,42 +62,40 @@ public class FacultyController implements Serializable {
 	@Resource
 	private UserTransaction ut;
 	
-	//@SuppressWarnings("cdi-ambiguous-dependency")
 	@Inject 
 	private Faculty faculty;
 	
 	@PostConstruct
     public void init() {
-        faclist = getFacultyList();
+        facultyList = getFacultyListAll();
     }
  
 	
 	
-	private String facName;
-	private String facShortName;
+	private String facultyName;
+	private String facultyShortName;
 	
-	private boolean facName_ok = false;
-	private boolean facShortName_ok = false;
+	private boolean facultyNameOk = false;
+	private boolean facultyShortNameOk = false;
 	
 	
-	List<Faculty> faclist;
+	List<Faculty> facultyList;
 	
-	//modlist.add(getModulList());
 	
-	private Faculty selectedfaculty;
+	private Faculty facultySelected;
 	
-	public Faculty getSelectedfaculty() {
-		return selectedfaculty;
+	public Faculty getFacultySelected() {
+		return facultySelected;
 	}
 	  
-	public void setSelectedfaculty(Faculty selectedfaculty) {
-		this.selectedfaculty = selectedfaculty;
+	public void setFacultySelected(Faculty facultySelected) {
+		this.facultySelected = facultySelected;
 	}
 	
 	
 	  
-    public List<Faculty> getFacList() {
-        return faclist;
+    public List<Faculty> getFacultyList() {
+        return facultyList;
     }
     
 	public Faculty getFaculty() {
@@ -108,37 +106,33 @@ public class FacultyController implements Serializable {
 		this.faculty = faculty;
 	}
 	  
-	public String getFacName() {
-		return facName;
+	public String getFacultyName() {
+		return facultyName;
 	}
 	  
-	public void setFacName(String facName) {
-		if(facName!=null){
-			this.facName = facName;
-			facName_ok = true;
+	public void setFacultyName(String facultyName) {
+		if(facultyName!=null){
+			this.facultyName = facultyName;
+			facultyNameOk = true;
 		}
 		else{
 			FacesMessage message = new FacesMessage("Faculty bereits vorhanden.");
-            FacesContext.getCurrentInstance().addMessage("FacultyForm:facName_reg", message);
-	        //String msg = "Modulkürzel bereits vorhanden.";
-	        //addMessage("modKuerzel_reg",msg);
+            FacesContext.getCurrentInstance().addMessage("FacultyList:facName_reg", message);
 	    }
 	}
 	  
-	public String getFacShortName() {
-		return facShortName;
+	public String getFacultyShortName() {
+		return facultyShortName;
 	}
 	  
-	public void setFacShortName(String facShortName) {
-	    if(facShortName!=null){
-	        this.facShortName = facShortName;
-	        facShortName_ok=true;
+	public void setFacultyShortName(String facultyShortName) {
+	    if(facultyShortName!=null){
+	        this.facultyShortName = facultyShortName;
+	        facultyShortNameOk=true;
 	    }
 	    else{
 	    	FacesMessage message = new FacesMessage("Facultykürzel bereits vorhanden.");
-            FacesContext.getCurrentInstance().addMessage("FacultyForm:facShortName_reg", message);
-	        //String msg = "Modulname bereits vorhanden.";
-	        //addMessage("modName_reg",msg);
+            FacesContext.getCurrentInstance().addMessage("FacultyList:facShortName_reg", message);
 	    }
 	}
 	  
@@ -155,8 +149,8 @@ public class FacultyController implements Serializable {
 	public void createFaculty() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
 		Faculty fac = new Faculty();  
-		fac.setFacName(facName);    
-		fac.setFacShortName(facShortName);      
+		fac.setFacName(facultyName);    
+		fac.setFacShortName(facultyShortName);      
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -173,78 +167,33 @@ public class FacultyController implements Serializable {
 		em.close();
 	}
 	
-	public String createDoFaculty() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(facName_ok == true && facShortName_ok == true ) {
+	public void createDoFaculty() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
+		if(facultyNameOk == true && facultyShortNameOk == true ) {
 			createFaculty();
-			return "index.xhtml";
-		}
-		else{
-			return "index.xhtml";
+			facultyList = getFacultyListAll();
 		}
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public List<Faculty> getFacultyList(){
+	public List<Faculty> getFacultyListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Faculty> query = em.createNamedQuery("Faculty.findAll", Faculty.class);
-		faclist = query.getResultList();
+		facultyList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	
 	
-	public void onRowEdit(RowEditEvent<Faculty> event) {
-        //MessageForPrimefaces msg = new MessageForPrimefaces("Modul Edited", event.getObject().getModID());
-        //FacesMessage msg = new FacesMessage("Modul Edited", event.getObject().getModID());
-        FacesMessage msg = new FacesMessage("Faculty Edited");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-        Faculty newfac = new Faculty();
-        newfac = event.getObject();
-        
-        try {
-	        ut.begin();
-	        EntityManager em = emf.createEntityManager();
-	        //em.joinTransaction();
-	        em.find(Faculty.class, 279);
-	        //em.persist(q)
-	        
-	        faculty.setFbid(newfac.getFbid());
-	        faculty.setFacName(newfac.getFacName());
-	        faculty.setFacShortName(newfac.getFacShortName());
-	        
-	        
-	        
-	        em.merge(faculty);
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-    }
-     
-    public void onRowCancel(RowEditEvent<Faculty> event) {
-        //MessageForPrimefaces msg = new MessageForPrimefaces("Modul Cancelled", event.getObject().getModID());
-        //FacesMessage msg = new FacesMessage("Modul Cancelled", event.getObject().getModID());
-    	FacesMessage msg = new FacesMessage("FAculty Cancelled");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
+	
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void deleteFaculty() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        faclist.remove(selectedfaculty);
-        //selectedmodul = null;
-        //updateModul(modlist);
-        
+        facultyList.remove(facultySelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Faculty> q = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
-        q.setParameter("fbid", selectedfaculty.getFbid());
+        q.setParameter("fbid", facultySelected.getFbid());
         faculty = (Faculty)q.getSingleResult();
         
         try {
@@ -260,16 +209,46 @@ public class FacultyController implements Serializable {
 	        } 
 	        catch (IllegalStateException | SecurityException | SystemException ex) {
 	        }
-	    }
-        selectedfaculty = null;
+	    }       
 		em.close();
     }
+    
+    
+    public void onRowSelect(SelectEvent<Faculty> e) {
+    	FacesMessage msg = new FacesMessage("Fakultät ausgewählt");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        
+        facultySelected = e.getObject();
+        
+    }
+    
+    public void addFaculty(){
+    	 try {
+ 	        ut.begin();
+ 	        EntityManager em = emf.createEntityManager();
+ 	        em.find(Faculty.class, facultySelected.getFbid());
+ 	        faculty.setFbid(facultySelected.getFbid());
+ 	        faculty.setFacName(facultySelected.getFacName());
+ 	        faculty.setFacShortName(facultySelected.getFacShortName());
+ 	        em.merge(faculty);
+ 	        ut.commit(); 
+ 	    }
+ 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	        try {
+ 	            ut.rollback();
+ 	        } 
+ 	        catch (IllegalStateException | SecurityException | SystemException ex) {
+ 	        }
+ 	    }
+    }
+    
+    
     
    // ---------------------------------------------------------------------------------------------------------------------
     
 	
 	  
-		//Nachrichten an die View senden
+	//Nachrichten an die View senden
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     

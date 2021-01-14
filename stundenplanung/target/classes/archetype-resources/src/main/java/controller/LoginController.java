@@ -47,10 +47,10 @@ public class LoginController implements Serializable {
     //private Account Account;
     
     
-    private String accName;
-    private String accPwd;
-    private Benutzergruppe BGruppe;
-    private int FK_GroupID;
+    private String accountName;
+    private String accountPassword;
+    private Benutzergruppe userGroup;
+    
     private boolean isLoggedIn=false;
     private boolean logOutPerformed = false;
     private boolean nameFound = false;
@@ -60,10 +60,9 @@ public class LoginController implements Serializable {
     private boolean isRzp;
 
     private Account current;
-    private String componentID;
+    private String componentId;
     private String summery;
     
-    private Benutzergruppe bg;
     private int id;
  
     
@@ -101,13 +100,13 @@ public class LoginController implements Serializable {
         this.isRzp = isRzp;
     }    
     
-    public String getAccName() {
-        return accName;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setAccName(String accName) {
-        if(accName!=null){
-            if(findUser(accName)){
+    public void setAccountName(String accountName) {
+        if(accountName!=null){
+            if(findUser(accountName)){
                 nameFound=true;
                 if(nameFound==true && current.getBenutzergruppe().getGroupID() == 1){
                     isAdm = true;
@@ -125,7 +124,7 @@ public class LoginController implements Serializable {
                     isRzp = true;
                 
                 }
-                this.accName = accName;
+                this.accountName = accountName;
             }
             else{
                 FacesMessage message = new FacesMessage("Account nicht vorhanden");
@@ -136,14 +135,14 @@ public class LoginController implements Serializable {
         }
     }
     
-    public String getAccPwd() {
-        return accPwd;
+    public String getAccountPassword() {
+        return accountPassword;
     }
 
-    public void setAccPwd(String accPwd) {
-        if(accPwd!=null){
-            if(checkPwd(accPwd)){
-                this.accPwd = accPwd;
+    public void setAccountPassword(String accountPassword) {
+        if(accountPassword!=null){
+            if(checkPwd(accountPassword)){
+                this.accountPassword = accountPassword;
                 isLoggedIn = true;
             }
             else{
@@ -155,12 +154,12 @@ public class LoginController implements Serializable {
         }
     }
 
-    public Benutzergruppe getBGruppe() {
-        return BGruppe;
+    public Benutzergruppe getUserGroup() {
+        return userGroup;
     }
 
-    public void setBGruppe(Benutzergruppe BGruppe) {       
-        this.BGruppe = BGruppe;
+    public void setUserGroup(Benutzergruppe userGroup) {       
+        this.userGroup = userGroup;
     }
 
     public boolean getIsLoggedIn() {
@@ -172,12 +171,12 @@ public class LoginController implements Serializable {
     }
 
 
-    public String getComponentID() {
-        return componentID;
+    public String getComponentId() {
+        return componentId;
     }
 
-    public void setComponentID(String componentID) {
-        this.componentID = componentID;
+    public void setComponentId(String componentId) {
+        this.componentId = componentId;
     }
 
     public String getSummery() {
@@ -223,11 +222,11 @@ public class LoginController implements Serializable {
             TypedQuery<Benutzergruppe> query
                 = em.createNamedQuery("Benutzergruppe.findByID",Benutzergruppe.class);
             query.setParameter("id", id);
-            bg = (Benutzergruppe)query.getSingleResult();
+            userGroup = (Benutzergruppe)query.getSingleResult();
         }
         catch(Exception e){   
         }
-        return bg;
+        return userGroup;
     }
     
     //Überprüfen ob das eingebene Passwort zum einegeben Namen passt
@@ -238,7 +237,7 @@ public class LoginController implements Serializable {
         
             if(pwd.equalsIgnoreCase(password)&& nameFound==true){
                 found=true;
-                BGruppe = current.getBenutzergruppe();
+                userGroup = current.getBenutzergruppe();
             }
             else{
             return found;
@@ -266,15 +265,17 @@ public class LoginController implements Serializable {
     }
       
     //Beim drücken des Logout Buttons
-    public void logout(){
-        accName="";
+    public String logout(){
+        accountName="";
         if(isLoggedIn==true){
             FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
             FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             isLoggedIn=false;
             logOutPerformed =true;
             nameFound=false;
+            return "/login.xhtml";
         }
+		return "/index.xhtml";
     }
       
     //Message an die View senden

@@ -7,19 +7,13 @@
       
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
-	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
-		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Faculty" id="ajax" update="msgs" action="/createfaculty.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="FacultyListe" var="list" value="#{facultyController.facList}" editable="true" rowKey="#{list.fbid}" selection="#{facultyController.selectedfaculty}" selectionMode="single">
-		        <f:facet name="header">
-		            Cell Editing with Click and RightClick
-		        </f:facet>
-		 		<!-- editMode="cell" widgetVar="cellModul" -->
-		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{facultyController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{facultyController.onRowCancel}" update=":form:msgs" />
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Fakultät Hinzugügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="FacultyList" var="list" value="#{facultyController.facultyList}" selectionMode="single" selection="#{facultyController.facultySelected}"  rowKey="#{list.fbid}">
+			
+		        <p:ajax event="rowSelect" listener="#{facultyController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="FacultyList"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -28,36 +22,63 @@
 	               </p:cellEditor>
 	           </p:column>
 		 
-		        <p:column headerText="Facultyname">
+		        <p:column headerText="Fakultät">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.facName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.facName}" style="width:96%" label="Facultyname"/></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.facName}" style="width:96%" label="Fakultät"/></f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Facultykürzel">
+		        <p:column headerText="Fakultätkürzel">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.facShortName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.facShortName}" style="width:96%" label="Facultykürzel"/></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.facShortName}" style="width:96%" label="Fakultät kürzel"/></f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		        
 		        
 		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
+		        
 		    </p:dataTable>
 		     
-		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
-		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
-		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
-		    </p:contextMenu> -->
-		    <p:contextMenu for="FacultyListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="FacultyListe" icon="pi pi-times" action="#{facultyController.deleteFaculty}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="facName_reg" value="Fakultät: "/>
+                    <h:inputText id="facName_reg" value="#{facultyController.facultySelected.facName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="facShortName_reg" value="Kürzel: "/>
+                    <h:inputText id="facShortName_reg" value="#{facultyController.facultySelected.facShortName}" ></h:inputText>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{facultyController.addFaculty()}" update=":form:FacultyList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:FacultyList" actionListener="#{facultyController.deleteFaculty()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		     
 		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fakultät" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel styleClass="label" style="font-size:12pt" for="facName_reg" value="Fakultät: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="facName_reg" styleClass="form-control" value="#{facultyController.facultyName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="facName_reg" style="color: red"/>
+                    </h:panelGrid>                                                        
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="facShortName_reg" value="Kürzel: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="facShortName_reg" styleClass="form-control" value="#{facultyController.facultyShortName}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="facShortName_reg" style="color: red"/>
+                    </h:panelGrid>
+                    
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{facultyController.createDoFaculty}" update=":form:FacultyList" oncomplete="PF('eventDialog').hide();"/>		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

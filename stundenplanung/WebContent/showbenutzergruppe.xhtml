@@ -7,19 +7,14 @@
       
 <h:body>
 	<ui:composition template="WEB-INF/template/master.xhtml" >
-	<!-- einzeiliger Kommentar 	<ui:define name="menu"> <ui:include src="WEB-INF/template/eingeloggt.xhtml"/></ui:define> -->
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true"/>   
-		    <p:commandButton value="Create Benutzergruppe" id="ajax" update="msgs" action="/createbenutzergruppe.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />
-			<p:dataTable id="BenutzergruppeListe" var="list" value="#{benutzergruppeController.bglist}" editable="true" rowKey="#{list.groupID}" selection="#{benutzergruppeController.selectedbenutzergruppe}" selectionMode="single">
-		        <f:facet name="header">
-		            Cell Editing with Click and RightClick
-		        </f:facet>
-		 		<!-- editMode="cell" widgetVar="cellModul" -->
-		        <!-- <p:ajax event="cellEdit" listener="#{ModulController.onCellEdit}" update=":form:msgs" /> -->
-		        <p:ajax event="rowEdit" listener="#{benutzergruppeController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{benutzergruppeController.onRowCancel}" update=":form:msgs" />
+		    <p:commandButton value="Benutzergruppe Hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" /> 
+			<p:dataTable id="BenutzergruppeListe" var="list" value="#{benutzergruppeController.userGroupList}" selection="#{benutzergruppeController.userGroupSelected}" selectionMode="single" rowKey="#{list.groupID}" >
+		       
+		       <p:ajax event="rowSelect" listener="#{benutzergruppeController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="BenutzergruppeListe"/>
+		 
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -49,20 +44,58 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
+		       	 
 		       
 		    </p:dataTable>
-		     
-		   <!-- <p:contextMenu for="ModulListe" widgetVar="cMenu">   
-		        <p:menuitem value="Edit Cell" icon="pi pi-search" onclick="PF('cellModul').showCellEditor();return false;"/>  
-		        <p:menuitem value="Hide Menu" icon="pi pi-times" onclick="PF('cMenu').hide()"/>
-		    </p:contextMenu> -->
-		    <p:contextMenu for="BenutzergruppeListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="BenutzergruppeListe" icon="pi pi-times" action="#{benutzergruppeController.deleteBenutzergruppe}"/>  
-		    </p:contextMenu> 
+
+		    
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Benutzergruppe Editiert Details" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="userGroupName_reg" value="Benutzergruppe: "/>
+                    <h:inputText id="userGroupName_reg" value="#{benutzergruppeController.userGroupSelected.BGName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="userGroupShortName_reg" value="Kürzel: "/>
+                    <h:inputText id="userGroupShortName_reg" value="#{benutzergruppeController.userGroupSelected.BGShortName}" ></h:inputText>
+                    
+                    <h:outputLabel for="userGroupRights_reg" value="Rechte: "/>
+                    <h:inputText id="userGroupRights_reg" value="#{benutzergruppeController.userGroupSelected.BGRechte}" ></h:inputText>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{benutzergruppeController.addBenutzergruppe()}" update=":form:BenutzergruppeListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:BenutzergruppeListe" actionListener="#{benutzergruppeController.deleteBenutzergruppe()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		    
 		 </h:form>
+		 
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Benutzergruppe" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel styleClass="label" style="font-size:12pt" for="userGroupName_reg" value="Benutzergruppe: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="userGroupName_reg" styleClass="form-control" value="#{benutzergruppeController.userGroupName}" required = "true" requiredMessage="Eine Benutzergruppe muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="userGroupName_reg" style="color: red"/>
+                    </h:panelGrid>                                                        
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="userGroupShortName_reg" value="Kürzel: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="userGroupShortName_reg" styleClass="form-control" value="#{benutzergruppeController.userGroupShortName}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="userGroupShortName_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="userGroupRights_reg" value="Rechte: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="userGroupRights_reg" styleClass="form-control" value="#{benutzergruppeController.userGroupRights}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="userGroupRights_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{benutzergruppeController.createDoBenutzergruppe}" oncomplete="PF('eventDialog').hide();" update=":form:BenutzergruppeListe"/>		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

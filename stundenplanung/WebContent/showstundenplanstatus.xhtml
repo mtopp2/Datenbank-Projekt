@@ -11,11 +11,10 @@
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Stundenplanstatus" id="ajax" update="msgs" action="/createstundenplanstatus.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="StundenplanstatusListe" var="list" value="#{stundenplanstatusController.spslist}" editable="true" rowKey="#{list.spstid}" selection="#{stundenplanstatusController.selectedsps}" selectionMode="single">
+		    <p:commandButton value="Stundenplanstatus hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />  
+			<p:dataTable id="StundenplanstatusListe" var="list" value="#{stundenplanstatusController.scheduleStatusList}" selection="#{stundenplanstatusController.statusSelected}" selectionMode="single" rowKey="#{list.spstid}" >
 			
-		        <p:ajax event="rowEdit" listener="#{stundenplanstatusController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{stundenplanstatusController.onRowCancel}" update=":form:msgs" />
+		        <p:ajax event="rowSelect" listener="#{stundenplanstatusController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="StundenplanstatusListe"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -45,14 +44,57 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
+		        		 
 		       
 		    </p:dataTable>
-		    <p:contextMenu for="StundenplanstatusListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="StundenplanstatusListe" icon="pi pi-times" action="#{stundenplanstatusController.deleteStundenplanstatus}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Status Editiert Details" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            
+                    <h:outputLabel for="statusDescription_reg" value="Bezeichnung: "/>
+                    <h:inputText id="statusDescription_reg" value="#{stundenplanstatusController.statusSelected.SPSTBezeichnung}" ></h:inputText>
+                    
+                    <h:outputLabel for="statusHint_reg" value="Hinweis: "/>
+                    <h:inputText id="statusHint_reg" value="#{stundenplanstatusController.statusSelected.SPSTHint}" ></h:inputText>
+                    
+                    <h:outputLabel for="statusColor_reg" value="Farbe: "/>
+                    <h:inputText id="statusColor_reg" value="#{stundenplanstatusController.statusSelected.PColor}" ></h:inputText>                                                  
+                    
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{stundenplanstatusController.addStundenplanstatus()}" update=":form:StundenplanstatusListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:StundenplanstatusListe" actionListener="#{stundenplanstatusController.deleteStundenplanstatus()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		     
+		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Stundenplanstatus" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		                                                                    
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="statusDescription_reg" value="Bezeichnung: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="statusDescription_reg" styleClass="form-control" value="#{stundenplanstatusController.statusDescription}" required = "true" requiredMessage="Eine Bezeichnung muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="statusDescription_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="statusHint_reg" value="Hinweis: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="statusHint_reg" styleClass="form-control" value="#{stundenplanstatusController.statusHint}" required = "true" requiredMessage="Ein Hinweis muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="statusHint_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="statusColor_reg" value="Farbe: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="statusColor_reg" styleClass="form-control" value="#{stundenplanstatusController.statusColor}" required = "true" requiredMessage="Eine Farbe muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="statusColor_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{stundenplanstatusController.createDoStundenplanstatus}" oncomplete="PF('eventDialog').hide();" update=":form:StundenplanstatusListe"/>		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>
 		 </h:form>
 		 </ui:define>
 	</ui:composition>

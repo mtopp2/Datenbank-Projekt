@@ -38,7 +38,7 @@ public class Benutzergruppe implements Serializable {
 		return this.groupID;
 	}
 
-	public void setGroupID(Integer groupID) {
+	public void setGroupID(int groupID) {
 		this.groupID = groupID;
 	}
 
@@ -54,7 +54,7 @@ public class Benutzergruppe implements Serializable {
 		return this.BGRechte;
 	}
 
-	public void setBGRechte(Integer BGRechte) {
+	public void setBGRechte(int BGRechte) {
 		this.BGRechte = BGRechte;
 	}
 

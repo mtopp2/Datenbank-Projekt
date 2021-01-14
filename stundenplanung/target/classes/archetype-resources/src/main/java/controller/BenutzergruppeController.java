@@ -1,8 +1,5 @@
 package controller;
 
-import model.Account;
-import model.Faculty;
-import model.Modul;
 import model.Benutzergruppe;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -32,15 +29,14 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.SelectEvent;
 
 import com.sun.javafx.logging.Logger;
 
 import org.primefaces.event.CellEditEvent;
-//import org.primefaces.event.
-
 
 import javax.faces.bean.ManagedBean;
-//import javax.faces.bean.SessionScoped;
+
 import javax.faces.bean.ViewScoped;
 
 import controller.MessageForPrimefaces;
@@ -50,9 +46,7 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-//@ManagedBean(name="BenutzergruppeController")
 @Named(value="benutzergruppeController")
-//@SessionScoped
 @SessionScoped
 public class BenutzergruppeController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -63,100 +57,92 @@ public class BenutzergruppeController implements Serializable {
 	@Resource
 	private UserTransaction ut;
 	
-	//@SuppressWarnings("cdi-ambiguous-dependency")
 	@Inject 
-	private Benutzergruppe benutzergruppe;
+	private Benutzergruppe userGroup;
 	
 	@PostConstruct
     public void init() {
-        bglist = getBenutzergruppeList();
+        userGroupList = getBenutzergruppeList();
     }
  
 	
 	
-	private String BGName;
-	private String BGShortName;
-	private Integer BGRechte;
-	private boolean BGName_ok = false;
-	private boolean BGShortName_ok = false;
-	private boolean BGRechte_ok = false;
+	private String userGroupName;
+	private String userGroupShortName;
+	private Integer userGroupRights;
+	private boolean userGroupNameOk = false;
+	private boolean userGroupShortNameOk = false;
+	private boolean userGroupRightsOk = false;
 	
-	List<Benutzergruppe> bglist;
+	List<Benutzergruppe> userGroupList;
 	
-	//modlist.add(getModulList());
 	
-	private Benutzergruppe selectedbenutzergruppe;
+	private Benutzergruppe userGroupSelected;
 	
-	public Benutzergruppe getSelectedbenutzergruppe() {
-		return selectedbenutzergruppe;
+	public Benutzergruppe getUserGroupSelected() {
+		return userGroupSelected;
 	}
 	  
-	public void setSelectedbenutzergruppe(Benutzergruppe selectedbenutzergruppe) {
-		this.selectedbenutzergruppe = selectedbenutzergruppe;
+	public void setUserGroupSelected(Benutzergruppe userGroupSelected) {
+		this.userGroupSelected = userGroupSelected;
 	}
 	
 	
 	  
-    public List<Benutzergruppe> getBglist() {
-        return bglist;
+    public List<Benutzergruppe> getUserGroupList() {
+        return userGroupList;
     }
     
-	public Benutzergruppe getBenutzergruppe() {
-		return benutzergruppe;
+	public Benutzergruppe getUserGroup() {
+		return userGroup;
 	}
 	  
-	public void setBenutzergruppe(Benutzergruppe benutzergruppe) {
-		this.benutzergruppe = benutzergruppe;
+	public void setUserGroup(Benutzergruppe userGroup) {
+		this.userGroup = userGroup;
 	}
 	  
-	public String getBGName() {
-		return BGName;
+	public String getUserGroupName() {
+		return userGroupName;
 	}
 	  
-	public void setBGName(String BGName) {
-		if(BGName!=null){
-			this.BGName = BGName;
-			BGName_ok = true;
+	public void setUserGroupName(String userGroupName) {
+		if(userGroupName!=null){
+			this.userGroupName = userGroupName;
+			userGroupNameOk = true;
 		}
 		else{
 			FacesMessage message = new FacesMessage("Benutzergruppekürzel bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("BenutzergruppeForm:BGName_reg", message);
-	        //String msg = "Modulkürzel bereits vorhanden.";
-	        //addMessage("modKuerzel_reg",msg);
 	    }
 	}
 	  
-	public String getBGShortName() {
-		return BGShortName;
+	public String getUserGroupShortName() {
+		return userGroupShortName;
 	}
 	  
-	public void setBGShortName(String BGShortName) {
-	    if(BGShortName!=null){
-	        this.BGShortName = BGShortName;
-	        BGShortName_ok=true;
+	public void setUserGroupShortName(String userGroupShortName) {
+	    if(userGroupShortName!=null){
+	        this.userGroupShortName = userGroupShortName;
+	        userGroupShortNameOk=true;
 	    }
 	    else{
 	    	FacesMessage message = new FacesMessage("Benutzergruppe bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("BenutzergruppeForm:BGShortName_reg", message);
-	        //String msg = "Modulname bereits vorhanden.";
-	        //addMessage("modName_reg",msg);
 	    }
 	}
 	  
-	public Integer getBGRechte() {
-		return BGRechte;
+	public Integer getUserGroupRights() {
+		return userGroupRights;
 	}
 	  
-	public void setBGRechte(Integer BGRechte) {
-		if(BGRechte!=null){
-	        this.BGRechte = BGRechte;
-	        BGRechte_ok=true;
+	public void setUserGroupRights(Integer userGroupRights) {
+		if(userGroupRights!=null){
+	        this.userGroupRights = userGroupRights;
+	        userGroupRightsOk=true;
 	    }
 	    else{
 	    	FacesMessage message = new FacesMessage("BGRechte bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("BenutzergruppeForm:BGRechte_reg", message);
-	        //String msg = "Prüfcodeid bereits vorhanden.";
-	        //addMessage("pcid_reg",msg);
 	    }
 	}
 	
@@ -172,9 +158,9 @@ public class BenutzergruppeController implements Serializable {
 	public void createBenutzergruppe() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
 		EntityManager em = emf.createEntityManager();
 		Benutzergruppe bg = new Benutzergruppe();  
-		bg.setBGName(BGName);    
-		bg.setBGShortName(BGShortName);      
-		bg.setBGRechte(BGRechte);
+		bg.setBGName(userGroupName);    
+		bg.setBGShortName(userGroupShortName);      
+		bg.setBGRechte(userGroupRights);
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -191,14 +177,12 @@ public class BenutzergruppeController implements Serializable {
 		em.close();
 	}
 	
-	public String createDoBenutzergruppe() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(BGName_ok == true && BGShortName_ok == true && BGRechte_ok == true) {
+	public void createDoBenutzergruppe() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
+		if(userGroupNameOk == true && userGroupShortNameOk == true && userGroupRightsOk == true) {
 			createBenutzergruppe();
-			return "index.xhtml";
+			userGroupList = getBenutzergruppeList();
 		}
-		else{
-			return "index.xhtml";
-		}
+		
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
@@ -206,70 +190,27 @@ public class BenutzergruppeController implements Serializable {
 	public List<Benutzergruppe> getBenutzergruppeList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Benutzergruppe> query = em.createNamedQuery("Benutzergruppe.findAll", Benutzergruppe.class);
-		bglist = query.getResultList();
+		userGroupList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	
 	
-	public void onRowEdit(RowEditEvent<Benutzergruppe> event) {
-        //MessageForPrimefaces msg = new MessageForPrimefaces("Modul Edited", event.getObject().getModID());
-        //FacesMessage msg = new FacesMessage("Modul Edited", event.getObject().getModID());
-        FacesMessage msg = new FacesMessage("Benutzergruppe Edited");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-        
-        Benutzergruppe newbg = new Benutzergruppe();
-        newbg = event.getObject();
-        
-        try {
-	        ut.begin();
-	        EntityManager em = emf.createEntityManager();
-	        //em.joinTransaction();
-	        em.find(Benutzergruppe.class, 279);
-	        //em.persist(q)
-	        
-	        benutzergruppe.setGroupID(newbg.getGroupID());
-	        benutzergruppe.setBGName(newbg.getBGName());
-	        benutzergruppe.setBGShortName(newbg.getBGShortName());
-	        benutzergruppe.setBGRechte(newbg.getBGRechte());
-	        
-	        
-	        em.merge(benutzergruppe);
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-    }
-     
-    public void onRowCancel(RowEditEvent<Benutzergruppe> event) {
-        //MessageForPrimefaces msg = new MessageForPrimefaces("Modul Cancelled", event.getObject().getModID());
-        //FacesMessage msg = new FacesMessage("Modul Cancelled", event.getObject().getModID());
-    	FacesMessage msg = new FacesMessage("Benutzergruppe Cancelled");
-        FacesContext.getCurrentInstance().addMessage(null, msg);
-    }
+	
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void deleteBenutzergruppe() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        bglist.remove(selectedbenutzergruppe);
-        //selectedmodul = null;
-        //updateModul(modlist);
-        
+        userGroupList.remove(userGroupSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Benutzergruppe> q = em.createNamedQuery("Benutzergruppe.findByID",Benutzergruppe.class);
-        q.setParameter("groupID", selectedbenutzergruppe.getGroupID());
-        benutzergruppe = (Benutzergruppe)q.getSingleResult();
+        q.setParameter("groupID", userGroupSelected.getGroupID());
+        userGroup = (Benutzergruppe)q.getSingleResult();
         
         try {
 	        ut.begin();   
 	        em.joinTransaction();  
-	        //em.persist(q);
-	        em.remove(benutzergruppe);
+	        em.remove(userGroup);
 	        ut.commit(); 
 	    }
 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
@@ -279,10 +220,37 @@ public class BenutzergruppeController implements Serializable {
 	        catch (IllegalStateException | SecurityException | SystemException ex) {
 	        }
 	    }
-        selectedbenutzergruppe = null;
 		em.close();
     }
     
+    public void onRowSelect(SelectEvent<Benutzergruppe> e) {
+    	FacesMessage msg = new FacesMessage("Benutzergruppe ausgewählt");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+        
+        userGroupSelected = e.getObject();
+        
+    }
+    
+    public void addBenutzergruppe(){
+    	 try {
+ 	        ut.begin();
+ 	        EntityManager em = emf.createEntityManager();
+ 	        em.find(Benutzergruppe.class, userGroupSelected.getGroupID());
+ 	        userGroup.setGroupID(userGroupSelected.getGroupID());
+ 	        userGroup.setBGName(userGroupSelected.getBGName());
+ 	        userGroup.setBGShortName(userGroupSelected.getBGShortName());
+ 	        userGroup.setBGRechte(userGroupSelected.getBGRechte());
+ 	        em.merge(userGroup);
+ 	        ut.commit(); 
+ 	    }
+ 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	        try {
+ 	            ut.rollback();
+ 	        } 
+ 	        catch (IllegalStateException | SecurityException | SystemException ex) {
+ 	        }
+ 	    }
+    }
    // ---------------------------------------------------------------------------------------------------------------------
     
 	

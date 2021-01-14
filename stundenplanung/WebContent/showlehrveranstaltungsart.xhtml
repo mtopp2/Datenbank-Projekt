@@ -11,11 +11,10 @@
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true"/>
-		    <p:commandButton value="Create Lehrveranstaltungsart" id="ajax" update="msgs" action="/createlehrveranstaltungsart.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
-			<p:dataTable id="LehrveranstaltungsartListe" var="list" value="#{lehrveranstaltungsartController.lvalist}" editable="true" rowKey="#{list.lvid}" selection="#{lehrveranstaltungsartController.selectedlva}" selectionMode="single">
+		    <p:commandButton value="Lehrveranstaltungsart Hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="LehrveranstaltungsartListe" var="list" value="#{lehrveranstaltungsartController.teachingEventList}" selection="#{lehrveranstaltungsartController.teachingEventSelected}" selectionMode="single" rowKey="#{list.lvid}" >
 			
-		        <p:ajax event="rowEdit" listener="#{lehrveranstaltungsartController.onRowEdit}" update=":form:msgs" />
-        		<p:ajax event="rowEditCancel" listener="#{lehrveranstaltungsartController.onRowCancel}" update=":form:msgs" />
+		         <p:ajax event="rowSelect" listener="#{lehrveranstaltungsartController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LehrveranstaltungsartListe"/>
 		 
 		        <p:column headerText="Id">
 	               <p:cellEditor>
@@ -31,13 +30,6 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Lehrveranstaltungsdauer">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.lvdauer}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.lvdauer}" style="width:96%" label="Lehrveranstaltungsdauer"/></f:facet>
-		            </p:cellEditor>
-		        </p:column>
-		        
 		        <p:column headerText="Lehrveranstaltungskurzform">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.lvkurz}" /></f:facet>
@@ -45,14 +37,62 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column>
-		            <p:rowEditor />
-		        </p:column>		 
-		       
+		        <p:column headerText="Lehrveranstaltungsdauer">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.lvdauer}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.lvdauer}" style="width:96%" label="Lehrveranstaltungsdauer"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
 		    </p:dataTable>
-		    <p:contextMenu for="LehrveranstaltungsartListe" widgetVar="cMenu">   
-		        <p:menuitem value="Delete" update="LehrveranstaltungsartListe" icon="pi pi-times" action="#{lehrveranstaltungsartController.deleteLehrveranstaltungsart}"/>  
-		    </p:contextMenu> 
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Lehrveranstaltungsart Editiert Details" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            
+                    <h:outputLabel for="teachingEventName_reg" value="Lehrveranstaltungsart: "/>
+                    <h:inputText id="teachingEventName_reg" value="#{lehrveranstaltungsartController.teachingEventSelected.lvname}" ></h:inputText>
+                    
+                    <h:outputLabel for="teachingEventShort_reg" value="Kürzel: "/>
+                    <h:inputText id="teachingEventShort_reg" value="#{lehrveranstaltungsartController.teachingEventSelected.lvkurz}" ></h:inputText>
+                    
+                    <h:outputLabel for="teachingEventLength_reg" value="Dauer: "/>
+                    <h:inputText id="teachingEventLength_reg" value="#{lehrveranstaltungsartController.teachingEventSelected.lvdauer}" ></h:inputText>                                                  
+                    
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{lehrveranstaltungsartController.addLehrveranstaltungsart()}" update=":form:LehrveranstaltungsartListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:LehrveranstaltungsartListe" actionListener="#{lehrveranstaltungsartController.deleteLehrveranstaltungsart()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		     
+		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Lehrveranstaltungsart" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		                                                                    
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="teachingEventName_reg" value="Bezeichnung: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="teachingEventName_reg" styleClass="form-control" value="#{lehrveranstaltungsartController.teachingEventName}" required = "true" requiredMessage="Eine Bezeichnung muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="teachingEventName_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="teachingEventShort_reg" value="Kurzform: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="teachingEventShort_reg" styleClass="form-control" value="#{lehrveranstaltungsartController.teachingEventShort}" required = "true" requiredMessage="Ein Hinweis muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="teachingEventShort_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="teachingEventLength_reg" value="Dauer: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="teachingEventLength_reg" styleClass="form-control" value="#{lehrveranstaltungsartController.teachingEventLength}" required = "true" requiredMessage="Eine Farbe muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="teachingEventLength_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{lehrveranstaltungsartController.createDoLehrveranstaltungsart}" oncomplete="PF('eventDialog').hide();" update=":form:LehrveranstaltungsartListe"/>		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>
 		 </h:form>
 		 </ui:define>
 	</ui:composition>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 09. Jan 2021 um 18:32
+-- Erstellungszeit: 29. Jan 2021 um 14:05
 -- Server-Version: 10.4.11-MariaDB
 -- PHP-Version: 7.4.2
 
@@ -51,7 +51,7 @@ INSERT INTO `accounts` (`AccID`, `AccName`, `AccPwd`, `AccEmail`, `FK_GroupID`, 
 (53, 'User7', '1234', 'user7@fh-bielefeld.de', NULL, 3),
 (54, 'User8', '1234', 'user8@fh-bielefeld.de', NULL, 1),
 (55, 'User9', '1234', 'user9@fh-bielefeld.de', 2, 1),
-(56, 'Manu', 'Manu', 'manu.topp@online.de', 1, 9);
+(56, 'Manu', 'Manu', 'manu.topp@online.de', 1, 8);
 
 -- --------------------------------------------------------
 
@@ -677,17 +677,24 @@ CREATE TABLE `stundenplaneintrag` (
 --
 
 INSERT INTO `stundenplaneintrag` (`SPID`, `SPEStartZeit`, `SPEEndZeit`, `SPTermin`, `FK_SGMID`, `FK_LVID`, `FK_RID`, `Studierendenzahl`, `ZeitStempel`) VALUES
-(3, '2020-12-15 08:00:00', '2020-12-15 09:30:00', 1, 49, 2, 24, 30, '2021-01-04 12:45:08'),
-(7, '2020-12-21 08:00:00', '2020-12-21 08:45:00', 1, 49, 2, 24, 30, '2021-01-04 12:45:23'),
-(8, '2020-12-24 08:00:00', '2020-12-24 08:45:00', 1, 49, 2, 24, 30, '2021-01-04 12:45:37'),
-(9, '2020-12-23 08:00:00', '2020-12-23 09:30:00', 2, 49, 1, 26, 20, '2021-01-04 12:45:50'),
-(11, '2020-12-15 08:00:00', '2020-12-15 08:45:00', 1, 54, 2, 24, 30, '2021-01-04 12:46:03'),
-(12, '2020-12-15 08:00:00', '2020-12-15 08:45:00', 1, 56, 2, 24, 30, '2021-01-04 12:46:36'),
-(13, '2020-12-15 08:00:00', '2020-12-15 09:15:00', 1, 252, 2, 24, 30, '2021-01-04 12:46:50'),
-(29, '2020-12-30 10:00:00', '2020-12-30 11:30:00', 1, 49, 2, 24, 30, '2021-01-04 12:47:06'),
-(96, '2021-01-07 12:00:00', '2021-01-07 13:00:00', 6, 49, 2, 26, 6, '2021-01-04 13:37:45'),
-(97, '2021-01-07 14:00:00', '2021-01-07 15:00:00', 2, 49, 2, 27, 2, '2021-01-07 15:55:41'),
-(101, '2021-01-06 14:00:00', '2021-01-06 15:00:00', 3, 49, 1, 25, 3, '2021-01-07 16:07:27');
+(3, '2021-01-26 08:00:00', '2021-01-26 09:30:00', 1, 49, 2, 24, 30, '2021-01-28 13:38:20'),
+(8, '2021-01-28 08:00:00', '2021-01-28 08:45:00', 1, 49, 2, 24, 30, '2021-01-28 13:38:21'),
+(9, '2021-01-27 08:00:00', '2021-01-27 09:30:00', 2, 49, 1, 27, 20, '2021-01-28 13:38:21'),
+(11, '2021-01-26 08:00:00', '2021-01-26 08:45:00', 1, 54, 2, 24, 30, '2021-01-28 13:38:21'),
+(12, '2021-01-26 08:00:00', '2021-01-26 08:45:00', 1, 56, 2, 24, 30, '2021-01-28 13:38:21'),
+(13, '2021-01-26 08:00:00', '2021-01-26 09:15:00', 1, 252, 2, 24, 30, '2021-01-28 13:38:21'),
+(29, '2021-01-27 10:15:00', '2021-01-27 11:45:00', 1, 49, 1, 24, 30, '2021-01-28 13:38:21'),
+(96, '2021-01-28 12:00:00', '2021-01-28 13:00:00', 6, 49, 2, 26, 6, '2021-01-28 13:38:21'),
+(97, '2021-01-28 14:00:00', '2021-01-28 15:00:00', 2, 49, 2, 27, 2, '2021-01-28 13:38:21'),
+(101, '2021-01-27 14:00:00', '2021-01-27 15:00:00', 3, 49, 1, 25, 3, '2021-01-28 13:38:21'),
+(104, '2021-01-27 14:00:00', '2021-01-27 15:00:00', 3, 55, 1, 25, 3, '2021-01-28 13:38:21'),
+(106, '2021-01-25 08:00:00', '2021-01-25 09:15:00', 3, 49, 1, 26, 3, '2021-01-28 13:38:21'),
+(111, '2021-01-25 10:30:00', '2021-01-25 11:30:00', 6, 49, 2, 27, 2, '2021-01-28 13:38:21'),
+(112, '2021-01-26 09:15:00', '2021-01-26 10:15:00', 2, 55, 1, 24, 2, '2021-01-28 13:38:22'),
+(113, '2021-01-26 12:30:00', '2021-01-26 13:30:00', 3, 49, 1, 24, 2, '2021-01-28 13:38:22'),
+(114, '2021-01-27 09:00:00', '2021-01-27 10:00:00', 4, 55, 1, 24, 2, '2021-01-28 13:38:22'),
+(115, '2021-01-27 15:30:00', '2021-01-27 16:30:00', 3, 49, 1, 24, 2, '2021-01-28 13:38:22'),
+(116, '2021-01-26 10:30:00', '2021-01-26 12:00:00', 4, 55, 2, 28, 1, '2021-01-28 13:38:22');
 
 -- --------------------------------------------------------
 
@@ -852,19 +859,19 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT für Tabelle `benutzergruppe`
 --
 ALTER TABLE `benutzergruppe`
-  MODIFY `GroupID` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `GroupID` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT für Tabelle `faculty`
 --
 ALTER TABLE `faculty`
-  MODIFY `FBID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `FBID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT für Tabelle `lehrveranstaltungsart`
 --
 ALTER TABLE `lehrveranstaltungsart`
-  MODIFY `LVID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `LVID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT für Tabelle `location`
@@ -882,37 +889,37 @@ ALTER TABLE `modul`
 -- AUTO_INCREMENT für Tabelle `raum`
 --
 ALTER TABLE `raum`
-  MODIFY `RID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `RID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT für Tabelle `sgmodul`
 --
 ALTER TABLE `sgmodul`
-  MODIFY `SGMID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
+  MODIFY `SGMID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=261;
 
 --
 -- AUTO_INCREMENT für Tabelle `studiengang`
 --
 ALTER TABLE `studiengang`
-  MODIFY `SGID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `SGID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplaneintrag`
 --
 ALTER TABLE `stundenplaneintrag`
-  MODIFY `SPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `SPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplansemester`
 --
 ALTER TABLE `stundenplansemester`
-  MODIFY `SPSID` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
+  MODIFY `SPSID` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplanstatus`
 --
 ALTER TABLE `stundenplanstatus`
-  MODIFY `SPSTID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `SPSTID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints der exportierten Tabellen

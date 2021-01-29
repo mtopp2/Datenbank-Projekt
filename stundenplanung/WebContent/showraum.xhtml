@@ -45,9 +45,9 @@
 		        
 		        <p:column headerText="Straße">
 		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.location.LStreet}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.location.LCity}, #{list.location.LStreet}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.location.LStreet}" style="width:100%">
+		                    <h:selectOneMenu value="#{list.location.LCity}, #{list.location.LStreet}" style="width:100%">
 		                        <f:selectItems value="#{raumController.locationList}" var="#{location.LStreet}" itemLabel="#{location.LStreet}" itemValue="#{location.LStreet}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
@@ -67,8 +67,8 @@
                     <h:inputText id="neighborroom" value="#{raumController.roomSelected.nachbarRaum}" ></h:inputText>
                     
                     <p:outputLabel for="room" value="Straße zum Standort: " />
-			        <p:selectOneMenu id="room" value="#{raumController.LStreet}" style="width:100%">
-                    	<f:selectItems value="#{raumController.locationList}" />
+			        <p:selectOneMenu id="room" value="#{raumController.locationId}" style="width:100%">
+                    	<f:selectItems value="#{raumController.locationList}" var="loc" itemLabel="#{loc.LCity}, #{loc.LStreet}" itemValue="#{loc.lid}"/>
 			        </p:selectOneMenu>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{raumController.addRoom()}" update=":form:RoomList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
@@ -90,8 +90,8 @@
                     <h:inputText id="neighborroom1" value="#{raumController.roomNeighbor}" ></h:inputText>
                     
                     <p:outputLabel for="room1" value="Straße: " />
-			        <p:selectOneMenu id="room1" value="#{raumController.LStreet}" style="width:100%">
-                    	<f:selectItems value="#{raumController.locationList}" />
+			        <p:selectOneMenu id="room1" value="#{raumController.locationId}" style="width:100%">
+                    	<f:selectItems value="#{raumController.locationList}" var="loc" itemLabel="#{loc.LCity}, #{loc.LStreet}" itemValue="#{loc.lid}"/>
 			        </p:selectOneMenu>
 		            
                     <p:commandButton id="submit" value="Hinzufügen" actionListener="#{raumController.createDoRoom}" update=":form:RoomList" oncomplete="PF('eventDialog').hide();" />		 			

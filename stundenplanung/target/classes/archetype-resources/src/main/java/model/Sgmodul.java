@@ -18,6 +18,7 @@ import java.util.List;
 @NamedQuery(name = "Sgmodul.findBySGMNotiz", query = "SELECT s FROM Sgmodul s WHERE s.SGMNotiz = :SGMNotiz"),
 @NamedQuery(name = "Sgmodul.findBySemesterAndStudiengang", query = "SELECT s FROM Sgmodul s JOIN s.studiengang g WHERE s.modSemester = :semester AND g.SGName = :SGName"),
 @NamedQuery(name = "Sgmodul.findBySemesterAndStudiengangAndFaculty", query = "SELECT s FROM Sgmodul s JOIN s.studiengang g JOIN s.studiengang.faculty f WHERE s.modSemester = :semester AND g.SGName = :SGName AND f.facName = :facName"),
+@NamedQuery(name = "Sgmodul.findByStudiengangAndFaculty", query = "SELECT s FROM Sgmodul s JOIN s.studiengang g JOIN s.studiengang.faculty f WHERE g.SGName = :SGName AND f.facName = :facName"),
 @NamedQuery(name="Sgmodul.updateSgmodul", query="UPDATE Sgmodul s SET s.sgmid=:sgmid, s.modSemester=:modSemester, s.SGMNotiz=:SGMNotiz WHERE s.sgmid=:sgmid")})
 public class Sgmodul implements Serializable {
 	private static final long serialVersionUID = 1L;

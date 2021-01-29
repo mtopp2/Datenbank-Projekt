@@ -50,9 +50,7 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-//@ManagedBean(name="ModulController")
 @Named(value="modulController")
-//@SessionScoped
 @SessionScoped
 public class ModulController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -63,7 +61,6 @@ public class ModulController implements Serializable {
 	@Resource
 	private UserTransaction ut;
 	
-	//@SuppressWarnings("cdi-ambiguous-dependency")
 	@Inject 
 	private Modul modul;
 	
@@ -83,7 +80,6 @@ public class ModulController implements Serializable {
 	
 	List<Modul> modulList;
 	
-	//modlist.add(getModulList());
 	
 	private Modul modulSelected;
 	
@@ -121,8 +117,6 @@ public class ModulController implements Serializable {
 		else{
 			FacesMessage message = new FacesMessage("Modulkürzel bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("ModulForm:modKuerzel_reg", message);
-	        //String msg = "Modulkürzel bereits vorhanden.";
-	        //addMessage("modKuerzel_reg",msg);
 	    }
 	}
 	  
@@ -138,8 +132,6 @@ public class ModulController implements Serializable {
 	    else{
 	    	FacesMessage message = new FacesMessage("Modulname bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("ModulForm:modName_reg", message);
-	        //String msg = "Modulname bereits vorhanden.";
-	        //addMessage("modName_reg",msg);
 	    }
 	}
 	  
@@ -155,8 +147,6 @@ public class ModulController implements Serializable {
 	    else{
 	    	FacesMessage message = new FacesMessage("Prüfcodeid bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("ModulForm:pcid_reg", message);
-	        //String msg = "Prüfcodeid bereits vorhanden.";
-	        //addMessage("pcid_reg",msg);
 	    }
 	}
 	
@@ -215,9 +205,6 @@ public class ModulController implements Serializable {
     
     public void deleteModul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
         modulList.remove(modulSelected);
-        //selectedmodul = null;
-        //updateModul(modlist);
-        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Modul> q = em.createNamedQuery("Modul.findByModID",Modul.class);
         q.setParameter("modID", modulSelected.getModID());
@@ -275,7 +262,7 @@ public class ModulController implements Serializable {
     
 	
 	  
-		//Nachrichten an die View senden
+	//Nachrichten an die View senden
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     

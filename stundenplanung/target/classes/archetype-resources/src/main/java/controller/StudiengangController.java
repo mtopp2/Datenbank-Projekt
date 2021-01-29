@@ -58,28 +58,15 @@ public class StudiengangController implements Serializable {
 	@PostConstruct
     public void init() {
 		courseList = getStudiengangList();
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createNamedQuery("Faculty.findAll");
-		List FList = q.getResultList();
-        for (Object FListitem : FList)
-        {
-            Faculty fac =(Faculty)FListitem;
-            facultyList.add(fac.getFacName());
-        }
-        Query s = em.createNamedQuery("Stundenplansemester.findAll");
-        List SList = s.getResultList();
-        for (Object SListitem : SList)
-        {
-        	Stundenplansemester sm =(Stundenplansemester)SListitem;
-        	spsList.add(sm.getSpsid());
-        }
+        facultyList = getFacultyList();
+        spsList = getSpsList();
     }
  
-    ArrayList<String> facultyList = new ArrayList<>();
-    ArrayList<Integer> spsList = new ArrayList<>();
+    List<Faculty> facultyList ;
+    List<Stundenplansemester> spsList ;
     
     private int spsId;
-    private String facultyName;
+    private int facultyID;
     private int semester;
 	private String courseShort;
 	private String courseName;
@@ -90,12 +77,12 @@ public class StudiengangController implements Serializable {
 	
 	private Studiengang courseSelected;
 	
-	public String getFacultyName() {
-		return facultyName;
+	public int getFacultyID() {
+		return facultyID;
 	}
 
-	public void setFacultyName(String facultyName) {
-		this.facultyName = facultyName;
+	public void setFacultyID(int facultyID) {
+		this.facultyID = facultyID;
 	}
 	public int getSpsId() {
 		return spsId;
@@ -105,21 +92,7 @@ public class StudiengangController implements Serializable {
 		this.spsId = spsId;
 	}
 
-	public ArrayList<String> getFacultyList() {
-		return facultyList;
-	}
-
-	public void setFacultyList(ArrayList<String> facultyList) {
-		this.facultyList = facultyList;
-	}
 	
-	public ArrayList<Integer> getSpsList() {
-		return spsList;
-	}
-
-	public void setSpsList(ArrayList<Integer> spsList) {
-		this.spsList = spsList;
-	}
 
 	public Studiengang getCourse() {
 		return course;
@@ -216,7 +189,7 @@ public class StudiengangController implements Serializable {
 		bg.setSGName(courseName);
 		bg.setSGKurz(courseShort);
 		bg.setSemester(semester);
-		bg.setFaculty(findFac(facultyName));
+		bg.setFaculty(findFac(facultyID));
 		bg.setStundenplansemester(findSP(spsId));
 		try {
 	        ut.begin();   
@@ -250,6 +223,20 @@ public class StudiengangController implements Serializable {
 		return query.getResultList();
 	}
 	
+	public List<Faculty> getFacultyList(){
+		EntityManager em = emf.createEntityManager();
+		TypedQuery<Faculty> query = em.createNamedQuery("Faculty.findAll", Faculty.class);
+		facultyList = query.getResultList();
+		return query.getResultList();
+	}
+	
+	public List<Stundenplansemester> getSpsList(){
+		EntityManager em = emf.createEntityManager();
+		TypedQuery<Stundenplansemester> query = em.createNamedQuery("Stundenplansemester.findAll", Stundenplansemester.class);
+		spsList = query.getResultList();
+		return query.getResultList();
+	}
+	
 	
 	
 	public void onRowSelect(SelectEvent<Studiengang> e) {
@@ -258,7 +245,7 @@ public class StudiengangController implements Serializable {
         
         courseSelected = e.getObject();
         
-        facultyName = courseSelected.getFaculty().getFacName();
+        facultyID = courseSelected.getFaculty().getFbid();
         spsId = courseSelected.getStundenplansemester().getSpsid();
          
         
@@ -289,12 +276,12 @@ public class StudiengangController implements Serializable {
 		em.close();
     }
     
-    private Faculty findFac(String fac) {
+    private Faculty findFac(int facultyID) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Faculty> query
-                = em.createNamedQuery("Faculty.findByFacName",Faculty.class);
-            query.setParameter("facName", fac);
+                = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
+            query.setParameter("fbid", facultyID);
             faculty = (Faculty)query.getSingleResult();
         }
         catch(Exception e){   
@@ -324,7 +311,7 @@ public class StudiengangController implements Serializable {
 	        course.setSGName(courseSelected.getSGName());
 	        course.setSGKurz(courseSelected.getSGKurz());
 	        course.setSemester(courseSelected.getSemester());
-	        course.setFaculty(findFac(facultyName));
+	        course.setFaculty(findFac(facultyID));
 	        course.setStundenplansemester(findSP(spsId));
 	        em.merge(course);
 	        ut.commit(); 

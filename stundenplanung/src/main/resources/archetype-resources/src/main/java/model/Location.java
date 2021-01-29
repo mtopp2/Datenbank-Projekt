@@ -12,8 +12,10 @@ import java.util.List;
 @Entity
 @NamedQueries({
 	@NamedQuery(name="Location.findAll", query="SELECT l FROM Location l"),
+	@NamedQuery(name="Location.findAllB", query="SELECT l.lid, l.LCity, l.LStreet FROM Location l"),
 	@NamedQuery(name="Location.findByLid", query = "SELECT l FROM Location l WHERE l.lid = :lid"),
-	@NamedQuery(name="Location.findByLStreet", query = "SELECT l FROM Location l WHERE l.LStreet = :LStreet")})
+	@NamedQuery(name="Location.findByLStreet", query = "SELECT l FROM Location l WHERE l.LStreet = :LStreet"),
+	@NamedQuery(name="Location.findByLCityLStreet", query = "SELECT l FROM Location l WHERE l.LCity = :LCity AND l.LStreet = :LStreet")})
 public class Location implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -29,6 +31,13 @@ public class Location implements Serializable {
 	private List<Raum> raums;
 
 	public Location() {
+	}
+	
+	public Location(int lid, String LCity, String LStreet) {
+		this.lid = lid;
+		this.LCity = LCity;
+		this.LStreet = LStreet;
+		
 	}
 
 	public int getLid() {

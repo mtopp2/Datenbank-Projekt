@@ -24,9 +24,9 @@
 	           
 	           <p:column headerText="Modul">
 		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.modul.modID}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.modul.modID}, #{list.modul.modName}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.modul.modID}" style="width:100%">
+		                    <h:selectOneMenu value="#{list.modul.modID}, #{list.modul.modName}" style="width:100%">
 		                        <f:selectItems value="#{sgmodulController.moduleList}" var="#{modul.modID}" itemLabel="#{modul.modID}" itemValue="#{modul.modID}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
@@ -35,10 +35,10 @@
 	           
 	           <p:column headerText="Studiengang">
 		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.studiengang.SGName}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.studiengang.faculty.facName}, #{list.studiengang.SGName}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.studiengang.SGName}" style="width:100%">
-		                        <f:selectItems value="#{sgmodulController.courseList}" var="#{studiengang.SGName}" itemLabel="#{studiengang.SGName}" itemValue="#{studiengang.SGName}" />
+		                    <h:selectOneMenu value="#{list.studiengang.faculty.facName}, #{list.studiengang.SGName}" style="width:100%">
+		                        <f:selectItems value="#{sgmodulController.courseList}" var="#{studiengang.sgid}" itemLabel="#{studiengang.sgid}" itemValue="#{studiengang.sgid}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -46,9 +46,9 @@
 		        
 		        <p:column headerText="Dozenten">
 		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.dozenten.did}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.dozenten.DVorname}, #{list.dozenten.DName}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.dozenten.did}" style="width:100%">
+		                    <h:selectOneMenu value="#{list.dozenten.DVorname}, #{list.dozenten.DName}" style="width:100%">
 		                        <f:selectItems value="#{sgmodulController.professorList}" var="#{dozenten.did}" itemLabel="#{dozenten.did}" itemValue="#{dozenten.did}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
@@ -69,22 +69,22 @@
 		            </p:cellEditor>
 		        </p:column>
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="800">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 			
 		 			<p:outputLabel for="modul" value="Modul: " />
 			        <p:selectOneMenu id="modul" value="#{sgmodulController.moduleId}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.moduleList}" />
+                    	<f:selectItems value="#{sgmodulController.moduleList}" var="modul" itemLabel="#{modul.modID}, #{modul.modName}" itemValue="#{modul.modID}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="studiengang" value="Studiengang: " />
-			        <p:selectOneMenu id="studiengang" value="#{sgmodulController.courseName}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.courseList}" />
+			        <p:selectOneMenu id="studiengang" value="#{sgmodulController.courseId}" style="width:100%">
+                    	<f:selectItems value="#{sgmodulController.courseList}" var="course" itemLabel="#{course.faculty.facName}, #{course.SGName}" itemValue="#{course.sgid}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="dozent" value="Dozent: " />
 			        <p:selectOneMenu id="dozent" value="#{sgmodulController.professorId}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.professorList}" />
+                    	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DVorname}, #{prof.DName}" itemValue="#{prof.did}"/>
 			        </p:selectOneMenu>
 		 			
 		            <h:outputLabel for="modulSemester" value="Modul Semester: "/>
@@ -99,22 +99,22 @@
 		    </p:dialog>
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="350">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="800">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <p:outputLabel for="modul1" value="Modul: " />
 			        <p:selectOneMenu id="modul1" value="#{sgmodulController.moduleId}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.moduleList}" />
+                    	<f:selectItems value="#{sgmodulController.moduleList}" var="modul" itemLabel="#{modul.modID}, #{modul.modName}" itemValue="#{modul.modID}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="studiengang1" value="Studiengang: " />
-			        <p:selectOneMenu id="studiengang1" value="#{sgmodulController.courseName}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.courseList}" />
+			        <p:selectOneMenu id="studiengang1" value="#{sgmodulController.courseId}" style="width:100%">
+                    	<f:selectItems value="#{sgmodulController.courseList}" var="course" itemLabel="#{course.faculty.facName}, #{course.SGName}" itemValue="#{course.sgid}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="dozent1" value="Dozent: " />
 			        <p:selectOneMenu id="dozent1" value="#{sgmodulController.professorId}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.professorList}" />
+                    	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DVorname}, #{prof.DName}" itemValue="#{prof.did}"/>
 			        </p:selectOneMenu>
 		 			
 		            <h:outputLabel for="modulSemester1" value="Modul Semester: "/>

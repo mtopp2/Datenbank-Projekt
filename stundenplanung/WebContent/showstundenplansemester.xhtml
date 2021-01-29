@@ -77,8 +77,8 @@
                     <p:datePicker id="startdatum" value="#{stundenplansemesterController.scheduleSemesterSelected.startDatum}" locale="de" pattern="yyyy-MM-dd" appendTo="@(body)" />     
                     
                     <p:outputLabel for="stundenplanstatus" value="Stundenplanstatus: " />
-			        <p:selectOneMenu id="stundenplanstatus" value="#{stundenplansemesterController.scheduleSemesterDescription}" style="width:100%">
-                    	<f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" />
+			        <p:selectOneMenu id="stundenplanstatus" value="#{stundenplansemesterController.scheduleSemesterId}" style="width:100%">
+                    	<f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" var="sps" itemLabel="#{sps.spstid}, #{sps.SPSTBezeichnung}" itemValue="#{sps.spstid}"/>
 			        </p:selectOneMenu>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{stundenplansemesterController.addStundenPlanSemester()}" update=":form:StundenplansemesterList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
@@ -103,8 +103,8 @@
                     <p:datePicker id="startdatum1" value="#{stundenplansemesterController.startDate}" locale="de" pattern="yyyy-MM-dd" appendTo="@(body)" />    
                     
                     <p:outputLabel for="stundenplanstatus1" value="Stundenplanstatus: " />
-			        <p:selectOneMenu id="stundenplanstatus1" value="#{stundenplansemesterController.scheduleSemesterDescription}" style="width:100%">
-                    	<f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" />
+			        <p:selectOneMenu id="stundenplanstatus1" value="#{stundenplansemesterController.scheduleSemesterId}" style="width:100%">
+                    	<f:selectItems value="#{stundenplansemesterController.scheduleStatusList}" var="sps" itemLabel="#{sps.spstid}, #{sps.SPSTBezeichnung}" itemValue="#{sps.spstid}"/>
 			        </p:selectOneMenu>
 		            
                     <p:commandButton id="submit" value="Hinzufügen" actionListener="#{stundenplansemesterController.createDoStundenplansemester}" update=":form:StundenplansemesterList" oncomplete="PF('eventDialog').hide();" />		 			

@@ -58,17 +58,10 @@ public class StundenplansemesterController implements Serializable {
 	@PostConstruct
     public void init() {
 		scheduleSemesterList = getStundenplansemesterList();
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createNamedQuery("Stundenplanstatus.findAll");
-        List SList = q.getResultList();
-        for (Object SListitem : SList)
-        {
-            Stundenplanstatus sps =(Stundenplanstatus)SListitem;
-            scheduleStatusList.add(sps.getSPSTBezeichnung());
-        }
+		scheduleStatusList = getScheduleStatusList();
     }
  
-    ArrayList<String> scheduleStatusList = new ArrayList<>();
+    List<Stundenplanstatus> scheduleStatusList ;
 
     private int scheduleYear;
 	private Integer scheduleCalendarWeek;
@@ -79,26 +72,20 @@ public class StundenplansemesterController implements Serializable {
 	private boolean startDateOk = false;
 	
 	List<Stundenplansemester> scheduleSemesterList;
-	private String scheduleSemesterDescription;
+	private int scheduleSemesterId;
 	
 	private Stundenplansemester scheduleSemesterSelected;
 	
 	
 
-	public ArrayList<String> getScheduleStatusList() {
-		return scheduleStatusList;
+	
+
+	public int getScheduleSemesterId() {
+		return scheduleSemesterId;
 	}
 
-	public void setScheduleStatusList(ArrayList<String> scheduleStatusList) {
-		this.scheduleStatusList = scheduleStatusList;
-	}
-
-	public String getScheduleSemesterDescription() {
-		return scheduleSemesterDescription;
-	}
-
-	public void setScheduleSemesterDescription(String scheduleSemesterDescription) {
-		this.scheduleSemesterDescription = scheduleSemesterDescription;
+	public void setScheduleSemesterId(int scheduleSemesterId) {
+		this.scheduleSemesterId = scheduleSemesterId;
 	}
 
 	public Stundenplansemester getScheduleSemester() {
@@ -203,7 +190,7 @@ public class StundenplansemesterController implements Serializable {
 		sps.setSPJahr(scheduleYear);
 		sps.setSPKw(scheduleCalendarWeek);
 		sps.setStartDatum(startDate);
-		sps.setStundenplanstatus(findSps(scheduleSemesterDescription));
+		sps.setStundenplanstatus(findSps(scheduleSemesterId));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -236,6 +223,12 @@ public class StundenplansemesterController implements Serializable {
 		return query.getResultList();
 	}
 	
+	public List<Stundenplanstatus> getScheduleStatusList(){
+		EntityManager em = emf.createEntityManager();
+		TypedQuery<Stundenplanstatus> query = em.createNamedQuery("Stundenplanstatus.findAll", Stundenplanstatus.class);
+		scheduleStatusList = query.getResultList();
+		return query.getResultList();
+	}
 	
 	
 	public void onRowSelect(SelectEvent<Stundenplansemester> e) {
@@ -244,7 +237,7 @@ public class StundenplansemesterController implements Serializable {
         
         scheduleSemesterSelected = e.getObject();
         
-        scheduleSemesterDescription = scheduleSemesterSelected.getStundenplanstatus().getSPSTBezeichnung();
+        scheduleSemesterId = scheduleSemesterSelected.getStundenplanstatus().getSpstid();
         
     }
 	
@@ -273,12 +266,12 @@ public class StundenplansemesterController implements Serializable {
 		em.close();
     }
     
-    private Stundenplanstatus findSps(String SPSTBezeichnung) {
+    private Stundenplanstatus findSps(int spsId) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Stundenplanstatus> query
-                = em.createNamedQuery("Stundenplanstatus.findBySPSTBezeichnung",Stundenplanstatus.class);
-            query.setParameter("SPSTBezeichnung", SPSTBezeichnung);
+                = em.createNamedQuery("Stundenplanstatus.findBySpsid",Stundenplanstatus.class);
+            query.setParameter("spstid", spsId);
             scheduleStatus = (Stundenplanstatus)query.getSingleResult();
         }
         catch(Exception e){   
@@ -296,7 +289,7 @@ public class StundenplansemesterController implements Serializable {
 	        scheduleSemester.setSPJahr(scheduleSemesterSelected.getSPJahr());
 	        scheduleSemester.setSPKw(scheduleSemesterSelected.getSPKw());
 	        scheduleSemester.setStartDatum(scheduleSemesterSelected.getStartDatum());
-	        scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterDescription));
+	        scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterId));
 	        em.merge(scheduleSemester);
 	        ut.commit();  
    	    }

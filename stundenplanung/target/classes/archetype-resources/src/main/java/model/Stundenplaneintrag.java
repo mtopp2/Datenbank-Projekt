@@ -14,7 +14,10 @@ import java.sql.Timestamp;
 @NamedQueries ({
 		@NamedQuery(name="Stundenplaneintrag.findAll", query="SELECT s FROM Stundenplaneintrag s"),
 		@NamedQuery(name="Stundenplaneintrag.findById", query="SELECT s FROM Stundenplaneintrag s WHERE s.spid = :spid"),
-		@NamedQuery(name="Stundenplaneintrag.findAllPlan", query = "SELECT a FROM Stundenplaneintrag a JOIN a.sgmodul b JOIN b.studiengang c WHERE b.modSemester = :semester AND c.SGName = :stgang")})
+		@NamedQuery(name="Stundenplaneintrag.findAllPlan", query = "SELECT a FROM Stundenplaneintrag a JOIN a.sgmodul b JOIN b.studiengang c WHERE b.modSemester = :semester AND c.SGName = :stgang"),
+		@NamedQuery(name="Stundenplaneintrag.findAllPlanB", query = "SELECT a FROM Stundenplaneintrag a JOIN a.sgmodul b JOIN b.studiengang c JOIN c.faculty f WHERE b.modSemester = :semester AND c.SGName = :stgang AND f.facName = :facName"),
+		@NamedQuery(name="Stundenplaneintrag.findAllPlanC", query = "SELECT a FROM Stundenplaneintrag a JOIN a.sgmodul b JOIN b.studiengang c JOIN c.faculty f WHERE c.SGName = :stgang AND f.facName = :facName"),
+		})
 public class Stundenplaneintrag implements Serializable {
 	private static final long serialVersionUID = 1L;
 

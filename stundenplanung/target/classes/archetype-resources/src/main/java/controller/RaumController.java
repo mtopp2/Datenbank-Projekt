@@ -55,18 +55,11 @@ public class RaumController implements Serializable {
 	@PostConstruct
     public void init() {
         roomList = getRaumList();
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createNamedQuery("Location.findAll");
-        List LList = q.getResultList();
-        for (Object LListitem : LList)
-        {
-            Location loc =(Location)LListitem;
-            locationList.add(loc.getLStreet());
-        }
+        locationList = getLocationList();
     }
  
-    ArrayList<String> locationList = new ArrayList<>();
-    private String locationStreet;
+    List<Location> locationList;
+    private int locationId;
 
 	private Integer capacity;
 	private String roomNeighbor;
@@ -79,20 +72,15 @@ public class RaumController implements Serializable {
 	private Raum roomSelected;
 	
 	
-	public String getLocationStreet() {
-		return locationStreet;
+	
+	
+	
+	public int getLocationId() {
+		return locationId;
 	}
 
-	public void setLStreet(String locationStreet) {
-		this.locationStreet = locationStreet;
-	}
-
-	public ArrayList<String> getLocationList() {
-		return locationList;
-	}
-
-	public void setLocationList(ArrayList<String> locationList) {
-		this.locationList = locationList;
+	public void setLocationId(int locationId) {
+		this.locationId = locationId;
 	}
 
 	public Raum getRoom() {
@@ -181,7 +169,7 @@ public class RaumController implements Serializable {
 		rau.setRName(roomName);
 		rau.setKapazitaet(capacity);
 		rau.setNachbarRaum(roomNeighbor);
-		rau.setLocation(findLoc(locationStreet));
+		rau.setLocation(findLoc(locationId));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -214,13 +202,20 @@ public class RaumController implements Serializable {
 		return query.getResultList();
 	}
 	
+	public List<Location> getLocationList(){
+		EntityManager em = emf.createEntityManager();
+		TypedQuery<Location> query = em.createNamedQuery("Location.findAll", Location.class);
+		locationList = query.getResultList();
+		return locationList;
+	}
+	
 	public void onRowSelect(SelectEvent<Raum> e) {
     	FacesMessage msg = new FacesMessage("Raum ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
         roomSelected = e.getObject();
         
-        locationStreet = roomSelected.getLocation().getLStreet();
+        locationId = roomSelected.getLocation().getLid();
         
     }
 	
@@ -249,12 +244,12 @@ public class RaumController implements Serializable {
 		em.close();
     }
     
-    private Location findLoc(String LStreet) {
+    private Location findLoc(int locationId) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Location> query
-                = em.createNamedQuery("Location.findByLStreet",Location.class);
-            query.setParameter("LStreet", LStreet);
+                = em.createNamedQuery("Location.findByLid",Location.class);
+            query.setParameter("lid", locationId);
             location = (Location)query.getSingleResult();
         }
         catch(Exception e){   
@@ -271,7 +266,7 @@ public class RaumController implements Serializable {
         room.setRName(roomSelected.getRName());
         room.setKapazitaet(roomSelected.getKapazitaet());
         room.setNachbarRaum(roomSelected.getNachbarRaum());
-        room.setLocation(findLoc(locationStreet));
+        room.setLocation(findLoc(locationId));
         em.merge(room);
         ut.commit(); 
 	    }

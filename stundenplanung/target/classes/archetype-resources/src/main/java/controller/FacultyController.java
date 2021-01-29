@@ -51,9 +51,7 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-
 @Named(value="facultyController")
-
 @SessionScoped
 public class FacultyController implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -64,7 +62,6 @@ public class FacultyController implements Serializable {
 	@Resource
 	private UserTransaction ut;
 	
-	//@SuppressWarnings("cdi-ambiguous-dependency")
 	@Inject 
 	private Faculty faculty;
 	
@@ -84,7 +81,6 @@ public class FacultyController implements Serializable {
 	
 	List<Faculty> facultyList;
 	
-	//modlist.add(getModulList());
 	
 	private Faculty facultySelected;
 	
@@ -122,8 +118,6 @@ public class FacultyController implements Serializable {
 		else{
 			FacesMessage message = new FacesMessage("Faculty bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("FacultyList:facName_reg", message);
-	        //String msg = "Modulkürzel bereits vorhanden.";
-	        //addMessage("modKuerzel_reg",msg);
 	    }
 	}
 	  
@@ -139,8 +133,6 @@ public class FacultyController implements Serializable {
 	    else{
 	    	FacesMessage message = new FacesMessage("Facultykürzel bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("FacultyList:facShortName_reg", message);
-	        //String msg = "Modulname bereits vorhanden.";
-	        //addMessage("modName_reg",msg);
 	    }
 	}
 	  
@@ -198,10 +190,7 @@ public class FacultyController implements Serializable {
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void deleteFaculty() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
-        facultyList.remove(facultySelected);
-        //selectedmodul = null;
-        //updateModul(modlist);
-        
+        facultyList.remove(facultySelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Faculty> q = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
         q.setParameter("fbid", facultySelected.getFbid());
@@ -259,7 +248,7 @@ public class FacultyController implements Serializable {
     
 	
 	  
-		//Nachrichten an die View senden
+	//Nachrichten an die View senden
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     

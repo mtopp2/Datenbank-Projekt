@@ -6,6 +6,8 @@ import model.Lehrveranstaltungsart;
 import model.Raum;
 import model.Sgmodul;
 import model.Stundenplaneintrag;
+import EJB.ScheduleControllerBeanRemote;
+
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -52,7 +54,7 @@ import java.util.Calendar;
 
 /**
 *
-* @author Anil
+* @author Manuel
 */
 @Named(value="scheduleController")
 @SessionScoped
@@ -72,17 +74,15 @@ public class ScheduleController implements Serializable {
 	private Faculty faculty;
 	
 	@PostConstruct
-    public void init() {
+	public void init() {
+		updateDb();
         selection();
-        lazyEventModel = new LazyScheduleModel() {
-        	@Override
-            public void loadEvents(LocalDateTime start, LocalDateTime end) { 
-                eventLoader();
-                loadModule();
-            }   
-        };
-    }
-	
+        events = new ScheduleModel[7];
+        for(int j = 0; j < 7; j++) { 	
+        	events[j] = new DefaultScheduleModel();
+        }
+        eventLoader();
+    }	
 	
 	private Date startTime;
 	private Date endTime;
@@ -92,10 +92,11 @@ public class ScheduleController implements Serializable {
 	
 	TimeZone timeZoneDefault = TimeZone.getDefault(); 
 	
-	private ScheduleModel eventModel;
-    private ScheduleModel lazyEventModel;
+	private ScheduleModel events[] = new ScheduleModel[7];
     private ScheduleEvent event = new DefaultScheduleEvent();
     private Date weekstart;
+    
+    private List<Stundenplaneintrag> loadDb;
     
     private List<Stundenplaneintrag> scheduleEntryList;
     private Stundenplaneintrag eventSelected;
@@ -104,15 +105,14 @@ public class ScheduleController implements Serializable {
 	ArrayList<String> teachingEventList = new ArrayList<>();
     private String teName;
     
-    ArrayList<Integer> roomList = new ArrayList<>();
+    ArrayList<Raum> roomList = new ArrayList<>();
     private int roomId;
     
-    ArrayList<Integer> sgmodulList = new ArrayList<>();
+    ArrayList<Sgmodul> sgmodulList = new ArrayList<>();
     private int sgmodulId;
     
     ArrayList<Integer> semesterList = new ArrayList<>();
-    private int semester;
-    private int semesterSelection;
+    private int semesterSelection = 6;
     
     ArrayList<String> courseList = new ArrayList<>();
     private String courseSelection;
@@ -120,108 +120,125 @@ public class ScheduleController implements Serializable {
     ArrayList<String> facultyList = new ArrayList<>();
     private String facultySelection;
     
-    ArrayList<Sgmodul> sgsemModulList = new ArrayList<>();
-    ArrayList<String> modulList = new ArrayList<>();
-    
     Calendar calendar;
     Calendar calendarStart;
     Calendar calendarEnd;
     LocalDateTime localTime;
     LocalDateTime localTime2;
     
-  //--------------------------------------------------------------
-    public void loadModule() {
-		/*try{
-	         EntityManager em = emf.createEntityManager();
-	         Query q = em.createNamedQuery("Sgmodul.findBySemesterAndStudiengang",Sgmodul.class);
-	         q.setParameter("semester", semester_auswahl);
-	         q.setParameter("SGName", studiengang_auswahl);
-	         
-	         List liste = q.getResultList();
-	         
-	         
-	         for(Object obj : liste){
-	             Sgmodul r = (Sgmodul) obj;
-	             modulList.add(r.getModul().getModName());                        
-	             sgsemModulList.add(r);
-	                             
-	         }
-	     }
-	     catch(Exception e){
-	     }*/
-    	
-    	try{
-	        EntityManager em = emf.createEntityManager();
-	        Query q = em.createNamedQuery("Sgmodul.findBySemesterAndStudiengangAndFaculty",Sgmodul.class);
-	        q.setParameter("semester", semesterSelection);
-	        q.setParameter("SGName", courseSelection);
-	        q.setParameter("facName", facultySelection);
-	        
-	        List liste = q.getResultList();
-	        
-	        
-	        for(Object obj : liste){
-	            Sgmodul r = (Sgmodul) obj;
-	            modulList.add(r.getModul().getModName());                        
-	            sgsemModulList.add(r);
-	                            
-	        }
-	    }
-	    catch(Exception e){
-	    }
-	}
+    private boolean showWeekends = false;
     
-	public void eventLoader() {
-		int dayOffset;
+    //--------------------------------------------------------------
+    
+    public void updateDb() {
+    	int dayOffset;
         weekstart = getWeekStartDate();
         Calendar cal = Calendar.getInstance();
         cal.setTime(weekstart);
-        
+        EntityManager em = emf.createEntityManager();
+    	try{// Laden der Datenbank
+            Query query = em.createNamedQuery("Stundenplaneintrag.findAll", Stundenplaneintrag.class);
+            loadDb = query.getResultList();
+        }
+        catch(Exception e){
+        	
+        }
+    	
+    	try {
+    		for(int i = 0; i < loadDb.size(); i++){            	
+            	this.spe = new Stundenplaneintrag();
+            	spe = loadDb.get(i);
+                dayOffset = spe.getSPEStartZeit().getDay()-1;
+                
+                calendarStart = (Calendar) cal.clone();
+                //Zeiten
+                calendarStart.add(Calendar.DATE, dayOffset);
+                calendarStart.set(Calendar.HOUR_OF_DAY, spe.getSPEStartZeit().getHours());
+                calendarStart.set(Calendar.MINUTE, spe.getSPEStartZeit().getMinutes());
+                calendarStart.set(Calendar.SECOND, spe.getSPEStartZeit().getSeconds());
+
+                
+                calendarEnd = (Calendar) calendarStart.clone();
+                calendarEnd.set(Calendar.HOUR_OF_DAY, spe.getSPEEndZeit().getHours());
+                calendarEnd.set(Calendar.MINUTE, spe.getSPEEndZeit().getMinutes());
+                calendarEnd.set(Calendar.SECOND, spe.getSPEEndZeit().getSeconds());
+
+                ut.begin();
+                em.find(Stundenplaneintrag.class, spe.getSpid());
+                spe.setSPEStartZeit(calendarStart.getTime());
+                spe.setSPEEndZeit(calendarEnd.getTime());
+                //Zeitstempel
+                Date date= new Date();
+                long time = date.getTime();
+                timeStamp = new Timestamp(time);
+                
+                spe.setZeitStempel(timeStamp);
+                em.merge(spe);
+                ut.commit();
+                
+            }
+    	}
+    	catch(Exception e){
+			
+		}
+
+    }
+    
+    //--------------------------------------------------------------
+    
+    public void weekendChange() {
+    	if (showWeekends == false) {
+    		showWeekends = true;
+    	}else {
+    		showWeekends = false;
+    	}
+    }
+    
+    //--------------------------------------------------------------
+    public void loadModule() {
+    	
+    	
+    	for(int j = 0; j < 7; j++) {
+        	events[j].clear();
+        }
+        eventLoader();
+    	
+	}
+    
+	public void eventLoader() {        
         try{/* Laden der Datenbank*/
             EntityManager em = emf.createEntityManager();
-            Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlan", Stundenplaneintrag.class);
-            query.setParameter("semester", semesterSelection);
+            Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlanC", Stundenplaneintrag.class);
             query.setParameter("stgang", courseSelection);
+            query.setParameter("facName", facultySelection);
             scheduleEntryList = query.getResultList();
         }
         catch(Exception e){}
         
-        for(int i = 0; i < scheduleEntryList.size(); i++){
-        	this.spe = new Stundenplaneintrag();
-        	spe = scheduleEntryList.get(i);
-            //Eventeinträge
-            dayOffset = spe.getSPEStartZeit().getDay()-1;
-            
-            calendarStart = (Calendar) cal.clone();
-            //Zeiten
-            calendarStart.add(Calendar.DATE, dayOffset);
-            calendarStart.set(Calendar.HOUR_OF_DAY, spe.getSPEStartZeit().getHours());
-            calendarStart.set(Calendar.MINUTE, spe.getSPEStartZeit().getMinutes());
-            calendarStart.set(Calendar.SECOND, spe.getSPEStartZeit().getSeconds());
-            LocalDateTime ltime = convertToLocalDateTimeViaInstant(calendarStart.getTime());
-            
-            calendarEnd = (Calendar) calendarStart.clone();
-            calendarEnd.set(Calendar.HOUR_OF_DAY, spe.getSPEEndZeit().getHours());
-            calendarEnd.set(Calendar.MINUTE, spe.getSPEEndZeit().getMinutes());
-            calendarEnd.set(Calendar.SECOND, spe.getSPEEndZeit().getSeconds());
-            LocalDateTime ltime2 = convertToLocalDateTimeViaInstant(calendarEnd.getTime());
-        	
-            
-            String eintragString = (String) (spe.getSgmodul().getModul().getModKuerzel() +" / "+
-                                             spe.getLehrveranstaltungsart().getLvkurz()+ " / " +
-                                             spe.getSPTermin() + " \n " +
-                                             spe.getRaum().getRName()
-                                             );
-            
-            //Ereignis hinzufügen            
-            DefaultScheduleEvent event = DefaultScheduleEvent.builder()
-                    .title(eintragString)
-                    .startDate(ltime)
-                    .endDate(ltime2)
-                    .data(spe)
-                    .build();
-            lazyEventModel.addEvent(event);
-            
+        for(int j = 0; j < 7; j++) {
+	        for(int i = 0; i < scheduleEntryList.size(); i++){
+	        	this.spe = new Stundenplaneintrag();
+	        	spe = scheduleEntryList.get(i);
+	        	if(spe.getSgmodul().getModSemester() == j) {
+	        	LocalDateTime ltime = convertToLocalDateTimeViaInstant(spe.getSPEStartZeit());
+	        	LocalDateTime ltime2 = convertToLocalDateTimeViaInstant(spe.getSPEEndZeit());
+	            
+	            String eintragString = (String) (spe.getSgmodul().getModul().getModKuerzel() +" / "+
+	                                             spe.getLehrveranstaltungsart().getLvkurz()+ " / " +
+	                                             spe.getSPTermin() + " \n " +
+	                                             spe.getRaum().getRName()
+	                                             );
+	            
+	            //Ereignis hinzufügen            
+	            DefaultScheduleEvent event = DefaultScheduleEvent.builder()
+	                    .title(eintragString)
+	                    .startDate(ltime)
+	                    .endDate(ltime2)
+	                    .data(spe)
+	                    .build();
+	            events[j].addEvent(event);
+	        	}
+	        }
         }
         
 	}
@@ -271,7 +288,7 @@ public class ScheduleController implements Serializable {
         for (Object RListitem : RList)
         {
         	Raum ra =(Raum)RListitem;
-            roomList.add(ra.getRid());
+            roomList.add(ra);
         }
         
         EntityManager em3 = emf.createEntityManager();
@@ -280,7 +297,7 @@ public class ScheduleController implements Serializable {
         for (Object SListitem : SList)
         {
         	Sgmodul sg =(Sgmodul)SListitem;
-            sgmodulList.add(sg.getSgmid());
+            sgmodulList.add(sg);
         }
 		
 		EntityManager em4 = emf.createEntityManager();
@@ -302,13 +319,11 @@ public class ScheduleController implements Serializable {
         }
         
 		facultySelection = facultyList.get(8);
-        semester = 6;
-        semesterSelection = semester;
         courseSelection = courseList.get(0);
 
 	}
 	
-	/* Bearbeiten oder Einfügen der Events*/
+	//Einfügen der Events
     public void addEvent() throws NotSupportedException, 
             SystemException, RollbackException, HeuristicMixedException, 
             HeuristicRollbackException, javax.transaction.RollbackException {
@@ -318,62 +333,91 @@ public class ScheduleController implements Serializable {
         em = emf.createEntityManager();
         
         try{
-            if(getEvent().getId() == null){             
-            	eventSelected.setSPEStartZeit(asDate(event.getStartDate()));
-            	eventSelected.setSPEEndZeit(asDate(event.getEndDate()));
-            	eventSelected.setSPTermin(spMeeting);
-            	eventSelected.setSgmodul(findSgm(sgmodulId));
-            	eventSelected.setLehrveranstaltungsart(findLva(teName));
-            	eventSelected.setRaum(findRau(roomId));
-            	eventSelected.setStudierendenzahl(studentNumber);
-                Date date= new Date();
-                long time = date.getTime();
-                timeStamp = new Timestamp(time);
-                eventSelected.setZeitStempel(timeStamp);
-                
-                
-                eventLoader();
-
-                
-                ut.begin();
-            	em.joinTransaction();
-                em.persist(eventSelected);
-                ut.commit();
-                msg = "Ereignis wurde hinzugefügt!";                
-                
-            }
-            else{/* ID schon vorhanden*/
-                lazyEventModel.updateEvent(getEvent());
-                ut.begin();
-                em.find(Stundenplaneintrag.class, eventSelected.getSpid());
-                
-                eventSelected.setSPEStartZeit(eventSelected.getSPEStartZeit());
-                eventSelected.setSPEEndZeit(eventSelected.getSPEEndZeit());
-                eventSelected.setSPTermin(eventSelected.getSPTermin());
-                eventSelected.setSgmodul(findSgm(sgmodulId));
-                eventSelected.setLehrveranstaltungsart(findLva(teName));
-                eventSelected.setRaum(findRau(roomId));
-                eventSelected.setStudierendenzahl(eventSelected.getStudierendenzahl());
-                //Zeitstempel
-                Date date= new Date();
-                long time = date.getTime();
-                timeStamp = new Timestamp(time);
-                
-                eventSelected.setZeitStempel(timeStamp);
-                em.merge(eventSelected);
-                ut.commit();
-                msg = "Ereignis wurde geändert!";
-                
-            }
-            event = new DefaultScheduleEvent();
+        	
+            eventSelected.setSPEStartZeit(asDate(event.getStartDate()));
+        	eventSelected.setSPEEndZeit(asDate(event.getEndDate()));
+        	eventSelected.setSPTermin(spMeeting);
+        	eventSelected.setSgmodul(findSgm(sgmodulId));
+        	eventSelected.setLehrveranstaltungsart(findLva(teName));
+        	eventSelected.setRaum(findRau(roomId));
+        	eventSelected.setStudierendenzahl(studentNumber);
+            Date date= new Date();
+            long time = date.getTime();
+            timeStamp = new Timestamp(time);
+            eventSelected.setZeitStempel(timeStamp);
+            
+            ut.begin();
+        	em.joinTransaction();
+            em.persist(eventSelected);
+            ut.commit();
+            
+            for(int j = 0; j < 7; j++) {
+	        	events[j].clear();
+	        }
+            eventLoader();
+            
+            msg = "Ereignis wurde hinzugefügt!";         
             addMessage("messages", msg);
+            
+            event = new DefaultScheduleEvent();
         }
         catch(NotSupportedException | SystemException | RollbackException | 
                 HeuristicMixedException | HeuristicRollbackException | 
                 SecurityException | IllegalStateException e){
             msg = "Ereignis-Daten sind noch nicht vorhanden!";
             addMessage("messages", msg);
+            
         }
+        
+    }
+    
+    //Bearbeiten der Events
+    public void editEvent() throws NotSupportedException, 
+    		SystemException, RollbackException, HeuristicMixedException, 
+    		HeuristicRollbackException, javax.transaction.RollbackException {
+
+    	String msg;
+    	EntityManager em;
+    	em = emf.createEntityManager();
+
+    	try{
+            ut.begin();
+            em.find(Stundenplaneintrag.class, eventSelected.getSpid());
+            eventSelected.setSPEStartZeit(eventSelected.getSPEStartZeit());
+            eventSelected.setSPEEndZeit(eventSelected.getSPEEndZeit());
+            eventSelected.setSPTermin(eventSelected.getSPTermin());
+            eventSelected.setSgmodul(findSgm(sgmodulId));
+            eventSelected.setLehrveranstaltungsart(findLva(teName));
+            eventSelected.setRaum(findRau(roomId));
+            eventSelected.setStudierendenzahl(eventSelected.getStudierendenzahl());
+            //Zeitstempel
+            Date date= new Date();
+            long time = date.getTime();
+            timeStamp = new Timestamp(time);
+            
+            eventSelected.setZeitStempel(timeStamp);
+            em.merge(eventSelected);
+            ut.commit();
+            
+            msg = "Ereignis wurde geändert!";
+            addMessage("messages", msg);
+            
+            for(int j = 0; j < 7; j++) {
+	        	events[j].clear();
+	        }
+	        eventLoader();
+            
+            event = new DefaultScheduleEvent();
+       
+		}
+		catch(NotSupportedException | SystemException | RollbackException | 
+		        HeuristicMixedException | HeuristicRollbackException | 
+		        SecurityException | IllegalStateException e){
+		    msg = "Ereignis-Daten sind noch nicht vorhanden!";
+		    addMessage("messages", msg);
+		    
+		}
+		
     }
     
     //Löschen von Events
@@ -401,19 +445,21 @@ public class ScheduleController implements Serializable {
             msg = "Ereignis konnte nicht gelöscht werden!";    
         }
         addMessage("messages", msg);
-        lazyEventModel.deleteEvent(event);
+        events[semesterSelection].deleteEvent(event);
     }
     
     //Auswahl der Events
     public void onEventSelect(SelectEvent<ScheduleEvent> e) {
-        event = (ScheduleEvent) e.getObject();
+        event = e.getObject();
         eventSelected = (Stundenplaneintrag) event.getData();
+        semesterSelection = eventSelected.getSgmodul().getModSemester();
         
         sgmodulId = eventSelected.getSgmodul().getSgmid();
         teName = eventSelected.getLehrveranstaltungsart().getLvname();
         roomId = eventSelected.getRaum().getRid();
     }
     
+    //Neue Events hinzufügen
     public void onDateSelect(SelectEvent<LocalDateTime> selectEvent) {
         this.eventSelected = new Stundenplaneintrag();
         
@@ -430,9 +476,7 @@ public class ScheduleController implements Serializable {
     }
     
     public void onEventMove(ScheduleEntryMoveEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event moved", "Delta:" + event.getDeltaAsDuration());
-        String msg1 = "Event moved."; 
-        addMessage("messages", msg1);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event wurde verschoben.", "Delta:" + event.getDeltaAsDuration());
         
         eventSelected = (Stundenplaneintrag) event.getScheduleEvent().getData();
         startTime = eventSelected.getSPEStartZeit();
@@ -475,9 +519,7 @@ public class ScheduleController implements Serializable {
     }
     
     public void onEventResize(ScheduleEntryResizeEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event resized", "Start-Delta:" + event.getDeltaStartAsDuration() + ", End-Delta: " + event.getDeltaEndAsDuration());
-        String msg1 = "Event resized"; 
-        addMessage("message", msg1);
+        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Zeit des Events wurde verändert.", "Start-Delta:" + event.getDeltaStartAsDuration() + ", End-Delta: " + event.getDeltaEndAsDuration());
         eventSelected = (Stundenplaneintrag) event.getScheduleEvent().getData();
         startTime = eventSelected.getSPEStartZeit();
         endTime = eventSelected.getSPEEndZeit();
@@ -541,10 +583,10 @@ public class ScheduleController implements Serializable {
 	
 	//--------------------------------------------------------------
 	
-	public ArrayList<Integer> getRoomList() {
+	public ArrayList<Raum> getRoomList() {
 		return roomList;
 	}
-	public void setRoomList(ArrayList<Integer> roomList) {
+	public void setRoomList(ArrayList<Raum> roomList) {
 		this.roomList = roomList;
 	}
 	public int getRoomId() {
@@ -556,10 +598,10 @@ public class ScheduleController implements Serializable {
 	
 	//--------------------------------------------------------------
     
-	public ArrayList<Integer> getSgmodulList() {
+	public ArrayList<Sgmodul> getSgmodulList() {
 		return sgmodulList;
 	}
-	public void setSgmodulListe(ArrayList<Integer> sgmodulList) {
+	public void setSgmodulListe(ArrayList<Sgmodul> sgmodulList) {
 		this.sgmodulList = sgmodulList;
 	}
 	
@@ -636,13 +678,6 @@ public class ScheduleController implements Serializable {
 	}	
 	
 	//--------------------------------------------------------------
-	
-	public ScheduleModel getLazyEventModel() {
-        return lazyEventModel;
-    }
-    public void setLazyEventModel(ScheduleModel lazyEventModel) {
-        this.lazyEventModel = lazyEventModel;
-    }
     
     public ScheduleEvent getEvent() { 
     	return event; 
@@ -674,14 +709,6 @@ public class ScheduleController implements Serializable {
 
 	public void setSemesterList(ArrayList<Integer> semesterList) {
 		this.semesterList = semesterList;
-	}
-
-	public int getSemester() {
-		return semester;
-	}
-
-	public void setSemester(int semester) {
-		this.semester = semester;
 	}
 
 	public int getSemesterSelection() {
@@ -794,32 +821,12 @@ public class ScheduleController implements Serializable {
 		this.scheduleEntryList = scheduleEntryList;
 	}
 
-
-	public ArrayList<Sgmodul> getSgsemModulList() {
-		return sgsemModulList;
+	public ScheduleModel[] getEvents() {
+		return events;
 	}
 
-
-	public void setSgsemModulList(ArrayList<Sgmodul> sgsemModulList) {
-		this.sgsemModulList = sgsemModulList;
-	}
-
-
-	public ArrayList<String> getModulList() {
-		return modulList;
-	}
-
-
-	public void setModulList(ArrayList<String> modulList) {
-		this.modulList = modulList;
-	}
-
-	public ScheduleModel getEventModel() {
-		return eventModel;
-	}
-
-	public void setEventModel(ScheduleModel eventModel) {
-		this.eventModel = eventModel;
+	public void setEvents(ScheduleModel[] events) {
+		this.events = events;
 	}
 
 	public static String formatDuration(Duration duration) {
@@ -911,6 +918,22 @@ public class ScheduleController implements Serializable {
 
 	public void setTimeZoneDefault(TimeZone timeZoneDefault) {
 		this.timeZoneDefault = timeZoneDefault;
+	}
+
+	public boolean isShowWeekends() {
+		return showWeekends;
+	}
+
+	public void setShowWeekends(boolean showWeekends) {
+		this.showWeekends = showWeekends;
+	}
+	
+	public List<Stundenplaneintrag> getLoadDb() {
+		return loadDb;
+	}
+	
+	public void setLoadDb(List<Stundenplaneintrag> loadDb) {
+		this.loadDb = loadDb;
 	}
 
 }

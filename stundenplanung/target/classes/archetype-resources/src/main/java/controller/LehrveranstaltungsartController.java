@@ -38,7 +38,6 @@ import controller.MessageForPrimefaces;
 * @author Anil
 */
 
-//@ManagedBean(name="LehrveranstaltungsartController")
 @Named(value="lehrveranstaltungsartController")
 @SessionScoped
 public class LehrveranstaltungsartController implements Serializable {

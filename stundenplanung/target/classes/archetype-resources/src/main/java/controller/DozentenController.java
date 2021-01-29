@@ -3,6 +3,7 @@ package controller;
 import model.Account;
 
 import model.Dozenten;
+import model.Location;
 import model.Raum;
 import model.Sgmodul;
 
@@ -68,24 +69,16 @@ public class DozentenController implements Serializable {
 	private Dozenten professor;
 	private Account account;
 	
-	ArrayList<String> accountList = new ArrayList<>();
+	List<Account> accountList ;
 	
 	@PostConstruct
     public void init() {
 		professorList = getDozentenList();
-		//professorList.add(null);
-        EntityManager em = emf.createEntityManager();
-        Query q = em.createNamedQuery("Account.findAll");
-        List AList = q.getResultList();
-        for (Object AListitem : AList)
-        {
-            Account acc =(Account)AListitem;
-            accountList.add(acc.getAccName());
-        }
+		accountList = getAccountList();
     }
  
 	
-	
+	private int accountId;
 	private String professorShortName;
 	private String professorName;
 	private String professorTitle;
@@ -100,6 +93,13 @@ public class DozentenController implements Serializable {
 	
 	private Dozenten professorSelected;
 	
+	public int getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(int accountId) {
+		this.accountId = accountId;
+	}
 	
 	public Dozenten getProfessorSelected() {
 		return professorSelected;
@@ -127,13 +127,7 @@ public class DozentenController implements Serializable {
 		this.professor = professor;
 	}
 	  
-	public ArrayList<String> getAccountList() {
-        return accountList;
-    }
-
-    public void setAccountList(ArrayList<String> accountList) {
-        this.accountList = accountList;
-    }
+	
 	
 	public String getProfessorShortName() {
 		return professorShortName;
@@ -212,7 +206,7 @@ public class DozentenController implements Serializable {
 		doz.setDVorname(professorFirstName);
 		doz.setDTitel(professorTitle);
 		doz.setDKurz(professorShortName);   
-		doz.setAccount(findAcc(accountName));
+		doz.setAccount(findAcc(accountId));
 		try {
 	        ut.begin();   
 	        em.joinTransaction();  
@@ -283,12 +277,19 @@ public class DozentenController implements Serializable {
 		em.close();
     }
     
-    private Account findAcc(String acc) {
+    public List<Account> getAccountList(){
+		EntityManager em = emf.createEntityManager();
+		TypedQuery<Account> query = em.createNamedQuery("Account.findAll", Account.class);
+		accountList = query.getResultList();
+		return accountList;
+	}
+    
+    private Account findAcc(int accountId) {
         try{
             EntityManager em = emf.createEntityManager(); 
             TypedQuery<Account> query
-                = em.createNamedQuery("Account.findByAccName",Account.class);
-            query.setParameter("accName", acc);
+                = em.createNamedQuery("Account.findByAccID",Account.class);
+            query.setParameter("accID", accountId);
             account = (Account)query.getSingleResult();
         }
         catch(Exception e){   
@@ -306,7 +307,7 @@ public class DozentenController implements Serializable {
 		        professor.setDName(professorSelected.getDName());
 		        professor.setDVorname(professorSelected.getDVorname());
 		        professor.setDTitel(professorSelected.getDTitel());
-		        professor.setAccount(findAcc(accountName));
+		        professor.setAccount(findAcc(accountId));
 		        em.merge(professor);
 		        ut.commit();
    	    }

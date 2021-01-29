@@ -77,8 +77,8 @@
                     <h:inputText id="professorShort" value="#{dozentenController.professorSelected.DKurz}" ></h:inputText>
                     
                     <p:outputLabel for="account" value="Account: " />
-			        <p:selectOneMenu id="account" value="#{dozentenController.accountName}" style="width:100%">
-                    	<f:selectItems value="#{dozentenController.accountList}" />
+			        <p:selectOneMenu id="account" value="#{dozentenController.accountId}" style="width:100%">
+                    	<f:selectItems value="#{dozentenController.accountList}" var="acc" itemLabel="#{acc.accID}, #{acc.accName}" itemValue="#{acc.accID}"/>
 			        </p:selectOneMenu>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{dozentenController.addDozent()}" update=":form:ProfessorList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
@@ -103,8 +103,8 @@
                     <h:inputText id="professorShort1" value="#{dozentenController.professorShortName}" ></h:inputText>
                     
                     <p:outputLabel for="account1" value="Account: " />
-			        <p:selectOneMenu id="account1" value="#{dozentenController.accountName}" style="width:100%">
-                    	<f:selectItems value="#{dozentenController.accountList}" />
+			        <p:selectOneMenu id="account1" value="#{dozentenController.accountId}" style="width:100%">
+                    	<f:selectItems value="#{dozentenController.accountList}" var="acc" itemLabel="#{acc.accID}, #{acc.accName}" itemValue="#{acc.accID}"/>
 			        </p:selectOneMenu>
 		            
                     <p:commandButton id="submit" value="Hinzufügen" actionListener="#{dozentenController.createDoDozent}" update=":form:ProfessorList" oncomplete="PF('eventDialog').hide();" />		 			

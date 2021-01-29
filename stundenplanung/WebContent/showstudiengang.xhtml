@@ -56,10 +56,10 @@
 		        
 		        <p:column headerText="Stundenplansemesterid">
 		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.stundenplansemester.spsid}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.stundenplansemester.spsid}, #{list.stundenplansemester.SPSemester}, #{list.stundenplansemester.SPJahr}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.stundenplansemester.spsid}" style="width:100%">
-		                        <f:selectItems value="#{studiengangController.spsList}" var="#{stundenplansemester.spsId}" itemLabel="#{stundenplansemester.spsId}" itemValue="#{stundenplansemester.spsId}" />
+		                    <h:selectOneMenu value="#{list.stundenplansemester.spsid}, #{list.stundenplansemester.SPSemester}, #{list.stundenplansemester.SPJahr}" style="width:100%">
+		                        <f:selectItems value="#{studiengangController.spsList}" var="stundenplansemester" itemLabel="#{stundenplansemester.SPSemester}, #{list.stundenplansemester.SPJahr}" itemValue="#{stundenplansemester.SPSemester}, #{list.stundenplansemester.SPJahr}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
@@ -78,13 +78,13 @@
                     <h:inputText id="semester" value="#{studiengangController.courseSelected.semester}" ></h:inputText>   
                     
                     <p:outputLabel for="faculty" value="Facultät: " />
-			        <p:selectOneMenu id="faculty" value="#{studiengangController.facultyName}" style="width:100%">
-                    	<f:selectItems value="#{studiengangController.facultyList}" />
+			        <p:selectOneMenu id="faculty" value="#{studiengangController.facultyID}" style="width:100%">
+                    	<f:selectItems value="#{studiengangController.facultyList}" var="fac" itemLabel="#{fac.facName}" itemValue="#{fac.fbid}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="spsid" value="Stundenplansemesterid: " />
 			        <p:selectOneMenu id="spsid" value="#{studiengangController.spsId}" style="width:100%">
-                    	<f:selectItems value="#{studiengangController.spsList}" />
+                    	<f:selectItems value="#{studiengangController.spsList}" var="sps" itemLabel="#{sps.spsid}, #{sps.SPSemester}, #{sps.SPJahr}" itemValue="#{sps.spsid}"/>
 			        </p:selectOneMenu>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{studiengangController.addRoom()}" update=":form:DegreecourseList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
@@ -106,13 +106,13 @@
                     <h:inputText id="semeste1r" value="#{studiengangController.semester}" ></h:inputText>   
                     
                     <p:outputLabel for="faculty1" value="Facultät: " />
-			        <p:selectOneMenu id="faculty1" value="#{studiengangController.facultyName}" style="width:100%">
-                    	<f:selectItems value="#{studiengangController.facultyList}" />
+			        <p:selectOneMenu id="faculty1" value="#{studiengangController.facultyID}" style="width:100%">
+                    	<f:selectItems value="#{studiengangController.facultyList}" var="fac" itemLabel="#{fac.facName}" itemValue="#{fac.fbid}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="spsid1" value="Stundenplansemesterid: " />
 			        <p:selectOneMenu id="spsid1" value="#{studiengangController.spsId}" style="width:100%">
-                    	<f:selectItems value="#{studiengangController.spsList}" />
+                    	<f:selectItems value="#{studiengangController.spsList}" var="sps" itemLabel="#{sps.spsid}, #{sps.SPSemester}, #{sps.SPJahr}" itemValue="#{sps.spsid}"/>
 			        </p:selectOneMenu>
 		            
                     <p:commandButton id="submit" value="Hinzufügen" actionListener="#{studiengangController.createDoStudiengang}" update=":form:DegreecourseList" oncomplete="PF('eventDialog').hide();" />		 			

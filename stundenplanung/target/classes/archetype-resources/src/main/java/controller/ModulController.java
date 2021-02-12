@@ -45,6 +45,11 @@ import javax.faces.bean.ViewScoped;
 
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.ModulFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -63,6 +68,9 @@ public class ModulController implements Serializable {
 	
 	@Inject 
 	private Modul modul;
+	
+	@EJB
+	private ModulFacadeLocal modulFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -159,19 +167,16 @@ public class ModulController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createModul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createModul() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Modul mod = new Modul();  
 		mod.setModName(modulName);    
 		mod.setModKuerzel(modulShort);      
 		mod.setPcid(pcId);
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(mod);  
-	        ut.commit(); 
+			modulFacadeLocal.create(mod);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -203,7 +208,7 @@ public class ModulController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteModul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteModul() throws Exception {
         modulList.remove(modulSelected);
         EntityManager em = emf.createEntityManager();
         TypedQuery<Modul> q = em.createNamedQuery("Modul.findByModID",Modul.class);
@@ -211,13 +216,9 @@ public class ModulController implements Serializable {
         modul = (Modul)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        //em.persist(q);
-	        em.remove(modul);
-	        ut.commit(); 
+        	modulFacadeLocal.remove(modul);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -238,17 +239,15 @@ public class ModulController implements Serializable {
     
     public void addModul(){
     	 try {
- 	        ut.begin();
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Modul.class, modulSelected.getModID());
  	        modul.setModID(modulSelected.getModID());
  	        modul.setModName(modulSelected.getModName());
  	        modul.setModKuerzel(modulSelected.getModKuerzel());
  	        modul.setPcid(modulSelected.getPcid());
- 	        em.merge(modul);
- 	        ut.commit(); 
+ 	        modulFacadeLocal.edit(modul);
  	    }
- 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	    catch (Exception e) {
  	        try {
  	            ut.rollback();
  	        } 

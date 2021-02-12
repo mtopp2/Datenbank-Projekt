@@ -29,6 +29,11 @@ import javax.transaction.UserTransaction;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.LocationFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -47,6 +52,9 @@ public class LocationController implements Serializable {
 	
 	@Inject 
 	private Location location;
+	
+	@EJB
+	private LocationFacadeLocal locationFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -122,18 +130,15 @@ public class LocationController implements Serializable {
     }
 	  
 	private UIComponent reg;
-	public void createLocation() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createLocation() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Location loc = new Location();  
 		loc.setLCity(locationCity);    
 		loc.setLStreet(locationStreet);      
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(loc);  
-	        ut.commit(); 
+			locationFacadeLocal.create(loc);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -160,7 +165,7 @@ public class LocationController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteLocation() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteLocation() throws Exception {
     	locationList.remove(locationSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Location> q = em.createNamedQuery("Location.findByLid",Location.class);
@@ -168,12 +173,9 @@ public class LocationController implements Serializable {
         location = (Location)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(location);
-	        ut.commit(); 
+        	locationFacadeLocal.remove(location);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -194,16 +196,14 @@ public class LocationController implements Serializable {
     
     public void addLocation(){
     	 try {
- 	        ut.begin();
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Location.class, locationSelected.getLid());
  	        location.setLid(locationSelected.getLid());
  	        location.setLCity(locationSelected.getLCity());
  	        location.setLStreet(locationSelected.getLStreet());
- 	        em.merge(location);
- 	        ut.commit(); 
+ 	        locationFacadeLocal.edit(location);
  	    }
- 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	    catch (Exception e) {
  	        try {
  	            ut.rollback();
  	        } 

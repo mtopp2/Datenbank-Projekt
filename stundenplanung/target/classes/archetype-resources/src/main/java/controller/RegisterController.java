@@ -29,6 +29,11 @@ import javax.transaction.UserTransaction;
 
 import javax.faces.bean.ManagedBean;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.AccountFacadeLocal;
+
 /**
  *
  * @author Anil
@@ -49,6 +54,9 @@ public class RegisterController implements Serializable {
     private Faculty faculty;
     private Benutzergruppe userGroup;
     ArrayList<String> facultyList = new ArrayList<>();
+    
+    @EJB
+	private AccountFacadeLocal accFacadeLocal;
 
     
     @PostConstruct /* Initialisiere bei Anwendungsstart */
@@ -210,7 +218,7 @@ public class RegisterController implements Serializable {
 
     //Eingegebene Daten an die Datenbank übermitteln
     private UIComponent reg;    
-    public void registerUser() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+    public void registerUser() throws Exception  {
             EntityManager em = emf.createEntityManager();
             List<Account> user_temp = new ArrayList<>();   
             try {
@@ -229,12 +237,9 @@ public class RegisterController implements Serializable {
                 //Dropdown Menü
                 newUser.setFaculty(findFac(facultyName));
                 try {
-                    ut.begin();   
-                    em.joinTransaction();  
-                    em.persist(newUser);  
-                    ut.commit(); 
+                	accFacadeLocal.create(newUser);
                 }
-                catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+                catch (Exception e) {
                     try {
                         ut.rollback();
                     } 

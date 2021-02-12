@@ -34,6 +34,13 @@ import org.primefaces.event.SelectEvent;
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+
+import EJB.FacultyFacadeLocal;
+import EJB.StundenplansemesterFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -53,6 +60,9 @@ public class StundenplansemesterController implements Serializable {
 	@Inject 
 	private Stundenplansemester scheduleSemester;
 	private Stundenplanstatus scheduleStatus;
+	
+	@EJB
+	private StundenplansemesterFacadeLocal stundenplansemesterFacadeLocal;
 
 	
 	@PostConstruct
@@ -183,7 +193,7 @@ public class StundenplansemesterController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStundenplansemester() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createStundenplansemester() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Stundenplansemester sps = new Stundenplansemester();
 		sps.setSPSemester(scheduleSemesterSection);
@@ -192,12 +202,9 @@ public class StundenplansemesterController implements Serializable {
 		sps.setStartDatum(startDate);
 		sps.setStundenplanstatus(findSps(scheduleSemesterId));
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(sps);  
-	        ut.commit(); 
+			stundenplansemesterFacadeLocal.create(sps);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -243,7 +250,7 @@ public class StundenplansemesterController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteStundenplansemester() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteStundenplansemester() throws Exception {
     	scheduleSemesterList.remove(scheduleSemesterSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplansemester> q = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
@@ -251,12 +258,9 @@ public class StundenplansemesterController implements Serializable {
         scheduleSemester = (Stundenplansemester)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(scheduleSemester);
-	        ut.commit(); 
+        	stundenplansemesterFacadeLocal.remove(scheduleSemester);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -281,7 +285,6 @@ public class StundenplansemesterController implements Serializable {
     
     public void addStundenPlanSemester(){
       	 try {
-      		ut.begin();
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Stundenplansemester.class, scheduleSemesterSelected.getSpsid());
 	        scheduleSemester.setSpsid(scheduleSemesterSelected.getSpsid());
@@ -290,10 +293,9 @@ public class StundenplansemesterController implements Serializable {
 	        scheduleSemester.setSPKw(scheduleSemesterSelected.getSPKw());
 	        scheduleSemester.setStartDatum(scheduleSemesterSelected.getStartDatum());
 	        scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterId));
-	        em.merge(scheduleSemester);
-	        ut.commit();  
+	        stundenplansemesterFacadeLocal.edit(scheduleSemester);
    	    }
-   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	    catch (Exception e) {
    	        try {
    	            ut.rollback();
    	        } 

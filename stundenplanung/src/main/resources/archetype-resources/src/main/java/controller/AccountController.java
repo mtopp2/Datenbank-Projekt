@@ -39,6 +39,11 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.AccountFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -59,6 +64,9 @@ public class AccountController implements Serializable {
 	private Account account;
 	private Faculty faculty;
 	private Benutzergruppe userGroup;
+	
+	@EJB
+	private AccountFacadeLocal accFacadeLocal;
 	
     ArrayList<String> facultyList = new ArrayList<>();
     ArrayList<String> userGroupList = new ArrayList<>();
@@ -223,7 +231,7 @@ public class AccountController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public void createAccount() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createAccount() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Account acc = new Account();  
 		acc.setAccName(accountName);
@@ -232,12 +240,9 @@ public class AccountController implements Serializable {
 		acc.setBenutzergruppe(findBG(userGroupName));
 		acc.setFaculty(findFac(facultyName));
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(acc);  
-	        ut.commit(); 
+			accFacadeLocal.create(acc);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -276,7 +281,7 @@ public class AccountController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteAccount() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteAccount() throws Exception {
     	accountList.remove(accountSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Account> q = em.createNamedQuery("Account.findByAccID",Account.class);
@@ -284,12 +289,9 @@ public class AccountController implements Serializable {
         account = (Account)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(account);
-	        ut.commit(); 
+        	accFacadeLocal.remove(account);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -328,7 +330,6 @@ public class AccountController implements Serializable {
     
     public void addAccount(){
       	 try {
-      		ut.begin();
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Account.class, accountSelected.getAccID());
 	        account.setAccID(accountSelected.getAccID());
@@ -337,10 +338,9 @@ public class AccountController implements Serializable {
 	        account.setAccEmail(accountSelected.getAccEmail());
 	        account.setBenutzergruppe(findBG(userGroupName));
             account.setFaculty(findFac(facultyName));
-	        em.merge(account);
-	        ut.commit(); 
+            accFacadeLocal.edit(account);
    	    }
-   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	    catch (Exception e) {
    	        try {
    	            ut.rollback();
    	        } 

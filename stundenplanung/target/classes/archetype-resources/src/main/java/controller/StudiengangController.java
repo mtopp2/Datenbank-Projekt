@@ -34,6 +34,11 @@ import org.primefaces.event.SelectEvent;
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.StudiengangFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -54,6 +59,9 @@ public class StudiengangController implements Serializable {
 	private Studiengang course;
 	private Faculty faculty;
 	private Stundenplansemester spSemester;
+	
+	@EJB
+	private StudiengangFacadeLocal studiengangFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -183,7 +191,7 @@ public class StudiengangController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStudiengang() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createStudiengang() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Studiengang bg = new Studiengang();  
 		bg.setSGName(courseName);
@@ -192,12 +200,9 @@ public class StudiengangController implements Serializable {
 		bg.setFaculty(findFac(facultyID));
 		bg.setStundenplansemester(findSP(spsId));
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(bg);  
-	        ut.commit(); 
+			studiengangFacadeLocal.create(bg);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -253,7 +258,7 @@ public class StudiengangController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteStudiengang() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteStudiengang() throws Exception {
     	courseList.remove(courseSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Studiengang> q = em.createNamedQuery("Studiengang.findBySgid",Studiengang.class);
@@ -261,12 +266,9 @@ public class StudiengangController implements Serializable {
         course = (Studiengang)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(course);
-	        ut.commit(); 
+        	studiengangFacadeLocal.remove(course);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -304,7 +306,7 @@ public class StudiengangController implements Serializable {
     
     public void addRoom(){
       	 try {
-      		ut.begin();
+
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Studiengang.class, courseSelected.getSgid());
 	        course.setSgid(courseSelected.getSgid());
@@ -313,10 +315,9 @@ public class StudiengangController implements Serializable {
 	        course.setSemester(courseSelected.getSemester());
 	        course.setFaculty(findFac(facultyID));
 	        course.setStundenplansemester(findSP(spsId));
-	        em.merge(course);
-	        ut.commit(); 
+	        studiengangFacadeLocal.edit(course);
    	    }
-   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	    catch (Exception e) {
    	        try {
    	            ut.rollback();
    	        } 

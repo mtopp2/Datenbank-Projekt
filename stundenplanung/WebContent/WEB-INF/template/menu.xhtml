@@ -13,80 +13,34 @@
                 <p:growl>
         	<p:autoUpdate />
     	</p:growl>
- 		<p:panelMenu style="width:195px">
- 		<p:submenu label="Einloggen" rendered="#{!loginController.isLoggedIn}">
+ 		<p:menu style="width:195px">
+ 		
+ 		<p:submenu label="Einloggen" rendered="#{!loginController.isLoggedIn}" >
             <p:menuitem value="Anmelden" action="/login.xhtml?faces-redirect=true" />
             <p:menuitem value="Registrieren" action="/register.xhtml?faces-redirect=true" />
         </p:submenu>
-        	<p:submenu label="Abmelden" rendered="#{loginController.isLoggedIn}">
+        
+        <p:submenu label="Ausloggen" rendered="#{loginController.isLoggedIn}">
             <p:menuitem value="Abmelden" action="#{loginController.logout()}"  />
         </p:submenu>
-        <p:separator />
-        <p:submenu label="Stundenplan" rendered="#{loginController.isLoggedIn}">
-            <p:menuitem value="Anzeigen" action="/showspe.xhtml?faces-redirect=true"  />
-            <p:menuitem value="Erstellen" action="/basic.xhtml?faces-redirect=true"  />
-        </p:submenu>
-        		<p:submenu label="Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl))}">
-                    <p:menuitem value="Anzeigen" action="/showmodul.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createmodul.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="Account" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showaccount.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createaccount.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="Location" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showlocation.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createlocation.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="BGruppe" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showbenutzergruppe.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createbenutzergruppe.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="Dozenten" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showdozenten.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createdozenten.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="Faculty" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showfaculty.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createfaculty.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="LV-Art" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showlehrveranstaltungsart.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createlehrveranstaltungsart.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="Raum" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showraum.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createraum.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="SG-Modul" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showsgmodul.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createsgmodul.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="Studiengang" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showstudiengang.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createstudiengang.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="SP-Semester" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showstundenplansemester.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createstundenplansemester.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-                <p:submenu label="SP-Status" rendered="#{loginController.isLoggedIn}">
-                    <p:menuitem value="Anzeigen" action="/showstundenplanstatus.xhtml?faces-redirect=true"  />
-                    <p:menuitem value="Erstellen" action="/createstundenplanstatus.xhtml?faces-redirect=true"  />                    
-                </p:submenu>
-                <p:separator />
-		</p:panelMenu>
+        
+        <p:submenu label="Anzeigen" >
+            <p:menuitem value="Stundenplan" action="/showspe.xhtml?faces-redirect=true"  />                 
+            <p:menuitem value="Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/showmodul.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Benutzer" rendered="#{(loginController.isLoggedIn and loginController.isAdm)}" action="/showaccount.xhtml?faces-redirect=true"  />                                                               
+            <p:menuitem value="Standort" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showlocation.xhtml?faces-redirect=true"  />
+            <p:menuitem value="BGruppe" rendered="#{(loginController.isLoggedIn and loginController.isAdm)}" action="/showbenutzergruppe.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Dozenten" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showdozenten.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Fakultät" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showfaculty.xhtml?faces-redirect=true"  />
+            <p:menuitem value="LV-Art" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showlehrveranstaltungsart.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Raum" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showraum.xhtml?faces-redirect=true"  />
+			<p:menuitem value="SG-Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showsgmodul.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Studiengang" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showstudiengang.xhtml?faces-redirect=true"  />
+            <p:menuitem value="SP-Semester" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showstundenplansemester.xhtml?faces-redirect=true"  />
+			<p:menuitem value="SP-Status" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showstundenplanstatus.xhtml?faces-redirect=true"  />                                        
+         </p:submenu>
+                
+		</p:menu>
         </h:form>
     </h:body>
 </html>

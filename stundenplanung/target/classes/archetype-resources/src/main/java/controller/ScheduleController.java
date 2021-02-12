@@ -6,7 +6,6 @@ import model.Lehrveranstaltungsart;
 import model.Raum;
 import model.Sgmodul;
 import model.Stundenplaneintrag;
-import EJB.ScheduleControllerBeanRemote;
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -52,6 +51,13 @@ import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
 import java.util.Calendar;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+
+import EJB.FacultyFacadeLocal;
+import EJB.StundenplaneintragFacadeLocal;
+
 /**
 *
 * @author Manuel
@@ -72,6 +78,9 @@ public class ScheduleController implements Serializable {
 	private Lehrveranstaltungsart teachingEvent;
 	private Sgmodul sgmodul;
 	private Faculty faculty;
+	
+	@EJB
+	private StundenplaneintragFacadeLocal speFacadeLocal;
 	
 	@PostConstruct
 	public void init() {
@@ -163,7 +172,6 @@ public class ScheduleController implements Serializable {
                 calendarEnd.set(Calendar.MINUTE, spe.getSPEEndZeit().getMinutes());
                 calendarEnd.set(Calendar.SECOND, spe.getSPEEndZeit().getSeconds());
 
-                ut.begin();
                 em.find(Stundenplaneintrag.class, spe.getSpid());
                 spe.setSPEStartZeit(calendarStart.getTime());
                 spe.setSPEEndZeit(calendarEnd.getTime());
@@ -173,8 +181,7 @@ public class ScheduleController implements Serializable {
                 timeStamp = new Timestamp(time);
                 
                 spe.setZeitStempel(timeStamp);
-                em.merge(spe);
-                ut.commit();
+                speFacadeLocal.edit(spe);
                 
             }
     	}
@@ -324,9 +331,7 @@ public class ScheduleController implements Serializable {
 	}
 	
 	//Einfügen der Events
-    public void addEvent() throws NotSupportedException, 
-            SystemException, RollbackException, HeuristicMixedException, 
-            HeuristicRollbackException, javax.transaction.RollbackException {
+    public void addEvent() throws Exception {
         
         String msg;
         EntityManager em;
@@ -346,10 +351,7 @@ public class ScheduleController implements Serializable {
             timeStamp = new Timestamp(time);
             eventSelected.setZeitStempel(timeStamp);
             
-            ut.begin();
-        	em.joinTransaction();
-            em.persist(eventSelected);
-            ut.commit();
+            speFacadeLocal.create(eventSelected);
             
             for(int j = 0; j < 7; j++) {
 	        	events[j].clear();
@@ -361,9 +363,7 @@ public class ScheduleController implements Serializable {
             
             event = new DefaultScheduleEvent();
         }
-        catch(NotSupportedException | SystemException | RollbackException | 
-                HeuristicMixedException | HeuristicRollbackException | 
-                SecurityException | IllegalStateException e){
+        catch(Exception e){
             msg = "Ereignis-Daten sind noch nicht vorhanden!";
             addMessage("messages", msg);
             
@@ -372,16 +372,13 @@ public class ScheduleController implements Serializable {
     }
     
     //Bearbeiten der Events
-    public void editEvent() throws NotSupportedException, 
-    		SystemException, RollbackException, HeuristicMixedException, 
-    		HeuristicRollbackException, javax.transaction.RollbackException {
+    public void editEvent() throws Exception {
 
     	String msg;
     	EntityManager em;
     	em = emf.createEntityManager();
 
     	try{
-            ut.begin();
             em.find(Stundenplaneintrag.class, eventSelected.getSpid());
             eventSelected.setSPEStartZeit(eventSelected.getSPEStartZeit());
             eventSelected.setSPEEndZeit(eventSelected.getSPEEndZeit());
@@ -395,9 +392,7 @@ public class ScheduleController implements Serializable {
             long time = date.getTime();
             timeStamp = new Timestamp(time);
             
-            eventSelected.setZeitStempel(timeStamp);
-            em.merge(eventSelected);
-            ut.commit();
+            speFacadeLocal.edit(eventSelected);
             
             msg = "Ereignis wurde geändert!";
             addMessage("messages", msg);
@@ -410,9 +405,7 @@ public class ScheduleController implements Serializable {
             event = new DefaultScheduleEvent();
        
 		}
-		catch(NotSupportedException | SystemException | RollbackException | 
-		        HeuristicMixedException | HeuristicRollbackException | 
-		        SecurityException | IllegalStateException e){
+		catch(Exception e){
 		    msg = "Ereignis-Daten sind noch nicht vorhanden!";
 		    addMessage("messages", msg);
 		    
@@ -421,7 +414,7 @@ public class ScheduleController implements Serializable {
     }
     
     //Löschen von Events
-    public void deleteEvent() throws javax.transaction.RollbackException{
+    public void deleteEvent() throws Exception{
         
         String msg = "";        
         
@@ -431,17 +424,12 @@ public class ScheduleController implements Serializable {
         q.setParameter("spid", eventSelected.getSpid());
         eventSelected = (Stundenplaneintrag)q.getSingleResult();
         
-        try{
-            ut.begin();
-	        em.joinTransaction();  
-            em.remove(eventSelected);
-            ut.commit();
+        try{            
+            speFacadeLocal.remove(eventSelected);
+            
             msg = "Ereignis wurde gelöscht!";
         }
-        catch(  NotSupportedException | SystemException | 
-                RollbackException | HeuristicMixedException | 
-                HeuristicRollbackException | SecurityException | 
-                IllegalStateException e){
+        catch(Exception e){
             msg = "Ereignis konnte nicht gelöscht werden!";    
         }
         addMessage("messages", msg);
@@ -496,7 +484,6 @@ public class ScheduleController implements Serializable {
         em = emf.createEntityManager();
         
         try{
-                ut.begin();
                 em.find(Stundenplaneintrag.class, eventSelected.getSpid());
                 eventSelected.setSPEStartZeit(date1);
                 eventSelected.setSPEEndZeit(date2);
@@ -505,14 +492,12 @@ public class ScheduleController implements Serializable {
                 long time = date.getTime();
                 timeStamp = new Timestamp(time);
                 eventSelected.setZeitStempel(timeStamp);
-                em.merge(eventSelected);
-                ut.commit();
+                
+                speFacadeLocal.edit(eventSelected);
                 msg = "Ereignis wurde geändert!";
                 addMessage("messages", msg);
         }
-        catch(NotSupportedException | SystemException | RollbackException | 
-                HeuristicMixedException | HeuristicRollbackException | 
-                SecurityException | IllegalStateException e){
+        catch(Exception e){
             msg = "Ereignis-Daten sind noch nicht vorhanden!";
             addMessage("messages", msg);
         }
@@ -535,7 +520,6 @@ public class ScheduleController implements Serializable {
         em = emf.createEntityManager();
         
         try{
-                ut.begin();
                 em.find(Stundenplaneintrag.class, eventSelected.getSpid());
                 eventSelected.setSPEEndZeit(date1);
                 //Zeitstempel
@@ -543,14 +527,11 @@ public class ScheduleController implements Serializable {
                 long time = date.getTime();
                 timeStamp = new Timestamp(time);
                 eventSelected.setZeitStempel(timeStamp);
-                em.merge(eventSelected);
-                ut.commit();
+                speFacadeLocal.edit(eventSelected);
                 msg = "Ereignis wurde geändert!";
                 addMessage("messages", msg);
         }
-        catch(NotSupportedException | SystemException | RollbackException | 
-                HeuristicMixedException | HeuristicRollbackException | 
-                SecurityException | IllegalStateException e){
+        catch(Exception e){
             msg = "Ereignis-Daten sind noch nicht vorhanden!";
             addMessage("messages", msg);
         }

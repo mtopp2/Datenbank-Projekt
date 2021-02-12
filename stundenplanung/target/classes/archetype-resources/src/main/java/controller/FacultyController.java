@@ -14,6 +14,9 @@ import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.FacultyFacadeLocal;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -33,17 +36,10 @@ import javax.transaction.UserTransaction;
 
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
-
 import com.sun.javafx.logging.Logger;
-
 import org.primefaces.event.CellEditEvent;
-//import org.primefaces.event.
-
-
 import javax.faces.bean.ManagedBean;
-//import javax.faces.bean.SessionScoped;
 import javax.faces.bean.ViewScoped;
-
 import controller.MessageForPrimefaces;
 
 /**
@@ -64,6 +60,10 @@ public class FacultyController implements Serializable {
 	
 	@Inject 
 	private Faculty faculty;
+	
+	@EJB
+	private FacultyFacadeLocal facFacadeLocal;
+	
 	
 	@PostConstruct
     public void init() {
@@ -146,18 +146,15 @@ public class FacultyController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createFaculty() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createFaculty() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Faculty fac = new Faculty();  
 		fac.setFacName(facultyName);    
 		fac.setFacShortName(facultyShortName);      
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(fac);  
-	        ut.commit(); 
+			facFacadeLocal.create(fac);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -176,11 +173,10 @@ public class FacultyController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public List<Faculty> getFacultyListAll(){
-		EntityManager em = emf.createEntityManager();
-		TypedQuery<Faculty> query = em.createNamedQuery("Faculty.findAll", Faculty.class);
-		facultyList = query.getResultList();
-		return query.getResultList();
+	public List<Faculty> getFacultyListAll(){		
+		List<Faculty> listFac;
+		listFac = facFacadeLocal.findAll();
+		return listFac;
 	}
 	
 	
@@ -189,7 +185,7 @@ public class FacultyController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteFaculty() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteFaculty() throws Exception {
         facultyList.remove(facultySelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Faculty> q = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
@@ -197,17 +193,13 @@ public class FacultyController implements Serializable {
         faculty = (Faculty)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        //em.persist(q);
-	        em.remove(faculty);
-	        ut.commit(); 
+        	this.facFacadeLocal.remove(faculty);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        catch (Exception ex) {
 	        }
 	    }       
 		em.close();
@@ -224,16 +216,14 @@ public class FacultyController implements Serializable {
     
     public void addFaculty(){
     	 try {
- 	        ut.begin();
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Faculty.class, facultySelected.getFbid());
  	        faculty.setFbid(facultySelected.getFbid());
  	        faculty.setFacName(facultySelected.getFacName());
  	        faculty.setFacShortName(facultySelected.getFacShortName());
- 	        em.merge(faculty);
- 	        ut.commit(); 
+ 	        facFacadeLocal.edit(faculty);
  	    }
- 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	    catch (SecurityException | IllegalStateException e) {
  	        try {
  	            ut.rollback();
  	        } 

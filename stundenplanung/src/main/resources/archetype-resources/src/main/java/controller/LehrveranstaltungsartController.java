@@ -33,6 +33,13 @@ import org.primefaces.event.SelectEvent;
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+
+import EJB.FacultyFacadeLocal;
+import EJB.LehrveranstaltungsartFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -51,6 +58,9 @@ public class LehrveranstaltungsartController implements Serializable {
 	
 	@Inject 
 	private Lehrveranstaltungsart teachingEvent;
+	
+	@EJB
+	private LehrveranstaltungsartFacadeLocal teachingEventFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -146,19 +156,16 @@ public class LehrveranstaltungsartController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createLehrveranstaltungsart() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createLehrveranstaltungsart() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Lehrveranstaltungsart lva = new Lehrveranstaltungsart();  
 		lva.setLvname(teachingEventName);
 		lva.setLvdauer(teachingEventLength);     
 		lva.setLvkurz(teachingEventShort);
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(lva);  
-	        ut.commit(); 
+			teachingEventFacadeLocal.create(lva);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -196,17 +203,15 @@ public class LehrveranstaltungsartController implements Serializable {
     
     public void addLehrveranstaltungsart(){
     	 try {
- 	        ut.begin();
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Lehrveranstaltungsart.class, teachingEventSelected.getLvid());
  	        teachingEvent.setLvid(teachingEventSelected.getLvid());
  	        teachingEvent.setLvname(teachingEventSelected.getLvname());
  	        teachingEvent.setLvdauer(teachingEventSelected.getLvdauer());
  	        teachingEvent.setLvkurz(teachingEventSelected.getLvkurz());
- 	        em.merge(teachingEvent);
- 	        ut.commit(); 
+ 	        teachingEventFacadeLocal.edit(teachingEvent);
  	    }
- 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	    catch (Exception e) {
  	        try {
  	            ut.rollback();
  	        } 
@@ -218,7 +223,7 @@ public class LehrveranstaltungsartController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteLehrveranstaltungsart() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteLehrveranstaltungsart() throws Exception {
         teachingEventList.remove(teachingEventSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Lehrveranstaltungsart> q = em.createNamedQuery("Lehrveranstaltungsart.findByLvid",Lehrveranstaltungsart.class);
@@ -226,12 +231,9 @@ public class LehrveranstaltungsartController implements Serializable {
         teachingEvent = (Lehrveranstaltungsart)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(teachingEvent);
-	        ut.commit(); 
+        	teachingEventFacadeLocal.remove(teachingEvent);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 

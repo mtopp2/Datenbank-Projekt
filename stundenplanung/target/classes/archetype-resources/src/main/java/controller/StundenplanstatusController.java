@@ -1,7 +1,6 @@
 package controller;
 
 
-import model.Faculty;
 import model.Stundenplanstatus;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -33,6 +32,11 @@ import org.primefaces.event.SelectEvent;
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.StundenplanstatusFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -52,6 +56,9 @@ public class StundenplanstatusController implements Serializable {
 	
 	@Inject 
 	private Stundenplanstatus stundenplanstatus;
+	
+	@EJB
+	private StundenplanstatusFacadeLocal stundenplanstatusFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -144,19 +151,16 @@ public class StundenplanstatusController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStundenplanstatus() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createStundenplanstatus() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Stundenplanstatus sps = new Stundenplanstatus();  
 		sps.setSPSTBezeichnung(statusDescription);
 		sps.setSPSTHint(statusHint);
 		sps.setPColor(statusColor);
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(sps);  
-	        ut.commit(); 
+			stundenplanstatusFacadeLocal.create(sps);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -195,17 +199,15 @@ public class StundenplanstatusController implements Serializable {
 	    
 	    public void addStundenplanstatus(){
 	    	 try {
-	 	        ut.begin();
 	 	        EntityManager em = emf.createEntityManager();
 	 	        em.find(Stundenplanstatus.class, statusSelected.getSpstid());
-	 	       stundenplanstatus.setSpstid(statusSelected.getSpstid());
-	 	       stundenplanstatus.setPColor(statusSelected.getPColor());
-	 	       stundenplanstatus.setSPSTBezeichnung(statusSelected.getSPSTBezeichnung());
-	 	       stundenplanstatus.setSPSTHint(statusSelected.getSPSTHint());
-	 	        em.merge(stundenplanstatus);
-	 	        ut.commit(); 
+	 	        stundenplanstatus.setSpstid(statusSelected.getSpstid());
+	 	        stundenplanstatus.setPColor(statusSelected.getPColor());
+	 	        stundenplanstatus.setSPSTBezeichnung(statusSelected.getSPSTBezeichnung());
+	 	        stundenplanstatus.setSPSTHint(statusSelected.getSPSTHint());
+	 	        stundenplanstatusFacadeLocal.edit(stundenplanstatus);
 	 	    }
-	 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	 	    catch (Exception e) {
 	 	        try {
 	 	            ut.rollback();
 	 	        } 
@@ -216,7 +218,7 @@ public class StundenplanstatusController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteStundenplanstatus() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteStundenplanstatus() throws Exception {
         scheduleStatusList.remove(statusSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplanstatus> q = em.createNamedQuery("Stundenplanstatus.findBySpsid",Stundenplanstatus.class);
@@ -224,12 +226,9 @@ public class StundenplanstatusController implements Serializable {
         stundenplanstatus = (Stundenplanstatus)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(stundenplanstatus);
-	        ut.commit(); 
+        	stundenplanstatusFacadeLocal.remove(stundenplanstatus);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 

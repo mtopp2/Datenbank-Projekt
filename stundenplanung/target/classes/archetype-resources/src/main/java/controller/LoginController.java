@@ -43,8 +43,8 @@ public class LoginController implements Serializable {
     @Resource
     private UserTransaction ut;
     
-    //@Inject
-    //private Account Account;
+    @Inject
+    private Account Account;
     
     
     private String accountName;

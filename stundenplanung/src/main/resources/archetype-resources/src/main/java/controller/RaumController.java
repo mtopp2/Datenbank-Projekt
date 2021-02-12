@@ -32,6 +32,13 @@ import org.primefaces.event.SelectEvent;
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+
+import EJB.FacultyFacadeLocal;
+import EJB.RaumFacadeLocal;
+
 /**
 *
 * @author Anil
@@ -51,6 +58,9 @@ public class RaumController implements Serializable {
 	@Inject 
 	private Raum room;
 	private Location location;
+	
+	@EJB
+	private RaumFacadeLocal raumFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -163,7 +173,7 @@ public class RaumController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createRoom() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createRoom() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Raum rau = new Raum();  
 		rau.setRName(roomName);
@@ -171,12 +181,9 @@ public class RaumController implements Serializable {
 		rau.setNachbarRaum(roomNeighbor);
 		rau.setLocation(findLoc(locationId));
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(rau);  
-	        ut.commit(); 
+	        raumFacadeLocal.create(rau);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -221,7 +228,7 @@ public class RaumController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteRoom() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteRoom() throws Exception {
         roomList.remove(roomSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Raum> q = em.createNamedQuery("Raum.findByRid",Raum.class);
@@ -229,12 +236,9 @@ public class RaumController implements Serializable {
         room = (Raum)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(room);
-	        ut.commit(); 
+        	this.raumFacadeLocal.remove(room);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -259,7 +263,7 @@ public class RaumController implements Serializable {
     
     public void addRoom(){
    	 try {
-   		ut.begin();
+
         EntityManager em = emf.createEntityManager();
         em.find(Raum.class, roomSelected.getRid());
         room.setRid(roomSelected.getRid());
@@ -267,10 +271,9 @@ public class RaumController implements Serializable {
         room.setKapazitaet(roomSelected.getKapazitaet());
         room.setNachbarRaum(roomSelected.getNachbarRaum());
         room.setLocation(findLoc(locationId));
-        em.merge(room);
-        ut.commit(); 
+        raumFacadeLocal.edit(room);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 

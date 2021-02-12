@@ -41,6 +41,12 @@ import javax.faces.bean.ViewScoped;
 
 import controller.MessageForPrimefaces;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+import javax.ejb.EJB;
+import EJB.BenutzergruppeFacadeLocal;
+
+
 /**
 *
 * @author Anil
@@ -59,6 +65,9 @@ public class BenutzergruppeController implements Serializable {
 	
 	@Inject 
 	private Benutzergruppe userGroup;
+	
+	@EJB
+	private BenutzergruppeFacadeLocal userGroupFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -155,19 +164,16 @@ public class BenutzergruppeController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createBenutzergruppe() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createBenutzergruppe() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Benutzergruppe bg = new Benutzergruppe();  
 		bg.setBGName(userGroupName);    
 		bg.setBGShortName(userGroupShortName);      
 		bg.setBGRechte(userGroupRights);
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(bg);  
-	        ut.commit(); 
+			userGroupFacadeLocal.create(bg);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -200,7 +206,7 @@ public class BenutzergruppeController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteBenutzergruppe() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteBenutzergruppe() throws Exception {
         userGroupList.remove(userGroupSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Benutzergruppe> q = em.createNamedQuery("Benutzergruppe.findByID",Benutzergruppe.class);
@@ -208,12 +214,9 @@ public class BenutzergruppeController implements Serializable {
         userGroup = (Benutzergruppe)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(userGroup);
-	        ut.commit(); 
+        	userGroupFacadeLocal.remove(userGroup);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -233,17 +236,15 @@ public class BenutzergruppeController implements Serializable {
     
     public void addBenutzergruppe(){
     	 try {
- 	        ut.begin();
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Benutzergruppe.class, userGroupSelected.getGroupID());
  	        userGroup.setGroupID(userGroupSelected.getGroupID());
  	        userGroup.setBGName(userGroupSelected.getBGName());
  	        userGroup.setBGShortName(userGroupSelected.getBGShortName());
  	        userGroup.setBGRechte(userGroupSelected.getBGRechte());
- 	        em.merge(userGroup);
- 	        ut.commit(); 
+ 	        userGroupFacadeLocal.edit(userGroup);
  	    }
- 	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+ 	    catch (Exception e) {
  	        try {
  	            ut.rollback();
  	        } 

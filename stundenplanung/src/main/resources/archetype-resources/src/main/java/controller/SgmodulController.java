@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -31,6 +32,9 @@ import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
+
+import EJB.ModulFacadeLocal;
+import EJB.SgModulFacadeLocal;
 
 import javax.faces.bean.ManagedBean;
 import controller.MessageForPrimefaces;
@@ -56,6 +60,9 @@ public class SgmodulController implements Serializable {
 	private Studiengang course;
 	private Modul module;
 	private Dozenten professor;
+	
+	@EJB
+	private SgModulFacadeLocal sgModulFacadeLocal;
 	
 	@PostConstruct
     public void init() {
@@ -224,7 +231,7 @@ public class SgmodulController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createSgmodul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createSgmodul() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Sgmodul sgm = new Sgmodul();  
 		sgm.setSGMNotiz(sgmodulNote);
@@ -233,12 +240,9 @@ public class SgmodulController implements Serializable {
 		sgm.setDozenten(findDoz(professorId));
 		sgm.setStudiengang(findSg(courseId));
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(sgm);  
-	        ut.commit(); 
+			sgModulFacadeLocal.create(sgm);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -279,7 +283,7 @@ public class SgmodulController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteSgmodul() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteSgmodul() throws Exception {
     	sgmodulList.remove(sgmodulSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Sgmodul> q = em.createNamedQuery("Sgmodul.findBySgmid",Sgmodul.class);
@@ -287,12 +291,9 @@ public class SgmodulController implements Serializable {
         sgmodul = (Sgmodul)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(sgmodul);
-	        ut.commit(); 
+        	sgModulFacadeLocal.remove(sgmodul); 
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -347,7 +348,7 @@ public class SgmodulController implements Serializable {
     
     public void addSgmodul(){
       	 try {
-      		ut.begin();
+      		
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Sgmodul.class, sgmodulSelected.getSgmid());
 	        sgmodul.setSgmid(sgmodulSelected.getSgmid());
@@ -356,10 +357,9 @@ public class SgmodulController implements Serializable {
 	        sgmodul.setModul(findMod(moduleId));
 	        sgmodul.setDozenten(findDoz(professorId));
 	        sgmodul.setStudiengang(findSg(courseId));
-	        em.merge(sgmodul);
-	        ut.commit();
+	        sgModulFacadeLocal.edit(sgmodul);
    	    }
-   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	    catch (Exception e) {
    	        try {
    	            ut.rollback();
    	        } 

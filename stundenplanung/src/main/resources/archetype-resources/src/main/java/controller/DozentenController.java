@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -38,6 +39,9 @@ import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 
 import com.sun.javafx.logging.Logger;
+
+import EJB.DozentenFacadeLocal;
+import EJB.ModulFacadeLocal;
 
 import org.primefaces.event.CellEditEvent;
 //import org.primefaces.event.
@@ -68,6 +72,9 @@ public class DozentenController implements Serializable {
 	@Inject 
 	private Dozenten professor;
 	private Account account;
+	
+	@EJB
+	private DozentenFacadeLocal dozentenFacadeLocal;
 	
 	List<Account> accountList ;
 	
@@ -199,7 +206,7 @@ public class DozentenController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createDozent() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
+	public void createDozent() throws Exception  {
 		EntityManager em = emf.createEntityManager();
 		Dozenten doz = new Dozenten();   
 		doz.setDName(professorName);
@@ -208,12 +215,9 @@ public class DozentenController implements Serializable {
 		doz.setDKurz(professorShortName);   
 		doz.setAccount(findAcc(accountId));
 		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(doz);  
-	        ut.commit(); 
+	        dozentenFacadeLocal.create(doz);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -254,7 +258,7 @@ public class DozentenController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteDozent() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteDozent() throws Exception {
     	professorList.remove(professorSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Dozenten> q = em.createNamedQuery("Dozenten.findByDid",Dozenten.class);
@@ -262,12 +266,9 @@ public class DozentenController implements Serializable {
         professor = (Dozenten)q.getSingleResult();
         
         try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(professor);
-	        ut.commit(); 
+        	dozentenFacadeLocal.remove(professor);
 	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+	    catch (Exception e) {
 	        try {
 	            ut.rollback();
 	        } 
@@ -299,7 +300,7 @@ public class DozentenController implements Serializable {
     
     public void addDozent(){
       	 try {
-      		 ut.begin();
+      		
 		        EntityManager em = emf.createEntityManager();
 		        em.find(Dozenten.class, professorSelected.getDid());
 		        professor.setDid(professorSelected.getDid());
@@ -308,10 +309,9 @@ public class DozentenController implements Serializable {
 		        professor.setDVorname(professorSelected.getDVorname());
 		        professor.setDTitel(professorSelected.getDTitel());
 		        professor.setAccount(findAcc(accountId));
-		        em.merge(professor);
-		        ut.commit();
+		        dozentenFacadeLocal.edit(professor);
    	    }
-   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
+   	    catch (Exception e) {
    	        try {
    	            ut.rollback();
    	        } 

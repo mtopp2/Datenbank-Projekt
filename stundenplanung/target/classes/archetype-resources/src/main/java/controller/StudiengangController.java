@@ -191,25 +191,14 @@ public class StudiengangController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStudiengang() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createStudiengang() {
 		Studiengang bg = new Studiengang();  
 		bg.setSGName(courseName);
 		bg.setSGKurz(courseShort);
 		bg.setSemester(semester);
 		bg.setFaculty(findFac(facultyID));
 		bg.setStundenplansemester(findSP(spsId));
-		try {
-			studiengangFacadeLocal.create(bg);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		studiengangFacadeLocal.create(bg);
 	}
 	
 	public void createDoStudiengang() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -264,17 +253,7 @@ public class StudiengangController implements Serializable {
         TypedQuery<Studiengang> q = em.createNamedQuery("Studiengang.findBySgid",Studiengang.class);
         q.setParameter("sgid", courseSelected.getSgid());
         course = (Studiengang)q.getSingleResult();
-        
-        try {
-        	studiengangFacadeLocal.remove(course);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+        studiengangFacadeLocal.remove(course);
 		em.close();
     }
     
@@ -305,25 +284,16 @@ public class StudiengangController implements Serializable {
     }
     
     public void addRoom(){
-      	 try {
-
-	        EntityManager em = emf.createEntityManager();
-	        em.find(Studiengang.class, courseSelected.getSgid());
-	        course.setSgid(courseSelected.getSgid());
-	        course.setSGName(courseSelected.getSGName());
-	        course.setSGKurz(courseSelected.getSGKurz());
-	        course.setSemester(courseSelected.getSemester());
-	        course.setFaculty(findFac(facultyID));
-	        course.setStundenplansemester(findSP(spsId));
-	        studiengangFacadeLocal.edit(course);
-   	    }
-   	    catch (Exception e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
-   	    }
+        EntityManager em = emf.createEntityManager();
+        em.find(Studiengang.class, courseSelected.getSgid());
+        course.setSgid(courseSelected.getSgid());
+        course.setSGName(courseSelected.getSGName());
+        course.setSGKurz(courseSelected.getSGKurz());
+        course.setSemester(courseSelected.getSemester());
+        course.setFaculty(findFac(facultyID));
+        course.setStundenplansemester(findSP(spsId));
+        studiengangFacadeLocal.edit(course);
       	courseList = getStudiengangList();
-      }
+      	em.close();
+    }
 }

@@ -234,7 +234,6 @@ public class LoginController implements Serializable {
         boolean found = false;
         if(nameFound==true){
            String pwd = current.getAccPwd();
-        
             if(pwd.equalsIgnoreCase(password)&& nameFound==true){
                 found=true;
                 userGroup = current.getBenutzergruppe();
@@ -243,24 +242,18 @@ public class LoginController implements Serializable {
             return found;
             } 
         }
-        
-        return found;
-        
+        return found; 
     }   
     
     //Was beim drücken des login Buttons passieren soll
     public String login(){
         String returnvalue;
         if(isLoggedIn==true){
-
             returnvalue= "index.xhtml";
-            
         }
         else{
             returnvalue="";
         }
-
-        
         return returnvalue;
     }
       

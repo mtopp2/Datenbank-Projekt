@@ -231,25 +231,14 @@ public class AccountController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public void createAccount() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createAccount() {
 		Account acc = new Account();  
 		acc.setAccName(accountName);
 		acc.setAccPwd(accountPassword);
 		acc.setAccEmail(accountEmail);
 		acc.setBenutzergruppe(findBG(userGroupName));
 		acc.setFaculty(findFac(facultyName));
-		try {
-			accFacadeLocal.create(acc);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		accFacadeLocal.create(acc);
 	}
 	
 	public void createDoAccount() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -281,23 +270,13 @@ public class AccountController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteAccount() throws Exception {
+    public void deleteAccount() {
     	accountList.remove(accountSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Account> q = em.createNamedQuery("Account.findByAccID",Account.class);
         q.setParameter("accID", accountSelected.getAccID());
         account = (Account)q.getSingleResult();
-        
-        try {
-        	accFacadeLocal.remove(account);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+        accFacadeLocal.remove(account);
 		em.close();
     }
     
@@ -329,7 +308,6 @@ public class AccountController implements Serializable {
     }
     
     public void addAccount(){
-      	 try {
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Account.class, accountSelected.getAccID());
 	        account.setAccID(accountSelected.getAccID());
@@ -339,16 +317,9 @@ public class AccountController implements Serializable {
 	        account.setBenutzergruppe(findBG(userGroupName));
             account.setFaculty(findFac(facultyName));
             accFacadeLocal.edit(account);
-   	    }
-   	    catch (Exception e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
-   	    }
-      	accountList = getAccountListAll();
-      }
+            accountList = getAccountListAll();
+    		em.close();
+  	}
 	
 	  
 	//Nachrichten an die View senden

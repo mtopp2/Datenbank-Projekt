@@ -151,23 +151,12 @@ public class StundenplanstatusController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStundenplanstatus() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createStundenplanstatus() {
 		Stundenplanstatus sps = new Stundenplanstatus();  
 		sps.setSPSTBezeichnung(statusDescription);
 		sps.setSPSTHint(statusHint);
 		sps.setPColor(statusColor);
-		try {
-			stundenplanstatusFacadeLocal.create(sps);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		stundenplanstatusFacadeLocal.create(sps);
 	}
 	
 	public void createDoStundenplanstatus() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -198,44 +187,26 @@ public class StundenplanstatusController implements Serializable {
 	    }
 	    
 	    public void addStundenplanstatus(){
-	    	 try {
-	 	        EntityManager em = emf.createEntityManager();
-	 	        em.find(Stundenplanstatus.class, statusSelected.getSpstid());
-	 	        stundenplanstatus.setSpstid(statusSelected.getSpstid());
-	 	        stundenplanstatus.setPColor(statusSelected.getPColor());
-	 	        stundenplanstatus.setSPSTBezeichnung(statusSelected.getSPSTBezeichnung());
-	 	        stundenplanstatus.setSPSTHint(statusSelected.getSPSTHint());
-	 	        stundenplanstatusFacadeLocal.edit(stundenplanstatus);
-	 	    }
-	 	    catch (Exception e) {
-	 	        try {
-	 	            ut.rollback();
-	 	        } 
-	 	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	 	        }
-	 	    }
+ 	       EntityManager em = emf.createEntityManager();
+ 	       em.find(Stundenplanstatus.class, statusSelected.getSpstid());
+ 	       stundenplanstatus.setSpstid(statusSelected.getSpstid());
+ 	       stundenplanstatus.setPColor(statusSelected.getPColor());
+ 	       stundenplanstatus.setSPSTBezeichnung(statusSelected.getSPSTBezeichnung());
+ 	       stundenplanstatus.setSPSTHint(statusSelected.getSPSTHint());
+ 	       stundenplanstatusFacadeLocal.edit(stundenplanstatus);
+ 	       em.close();
 	    }
+	    
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteStundenplanstatus() throws Exception {
+    public void deleteStundenplanstatus() {
         scheduleStatusList.remove(statusSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplanstatus> q = em.createNamedQuery("Stundenplanstatus.findBySpsid",Stundenplanstatus.class);
         q.setParameter("spstid", statusSelected.getSpstid());
         stundenplanstatus = (Stundenplanstatus)q.getSingleResult();
-        
-        try {
-        	stundenplanstatusFacadeLocal.remove(stundenplanstatus);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-        
+        stundenplanstatusFacadeLocal.remove(stundenplanstatus);
 		em.close();
     }
 

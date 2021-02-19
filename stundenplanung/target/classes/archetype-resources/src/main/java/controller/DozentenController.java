@@ -17,6 +17,7 @@ import java.util.logging.Level;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
@@ -38,6 +39,9 @@ import org.primefaces.event.RowEditEvent;
 import org.primefaces.event.SelectEvent;
 
 import com.sun.javafx.logging.Logger;
+
+import EJB.DozentenFacadeLocal;
+import EJB.ModulFacadeLocal;
 
 import org.primefaces.event.CellEditEvent;
 //import org.primefaces.event.
@@ -68,6 +72,9 @@ public class DozentenController implements Serializable {
 	@Inject 
 	private Dozenten professor;
 	private Account account;
+	
+	@EJB
+	private DozentenFacadeLocal dozentenFacadeLocal;
 	
 	List<Account> accountList ;
 	
@@ -199,28 +206,14 @@ public class DozentenController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createDozent() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createDozent() {
 		Dozenten doz = new Dozenten();   
 		doz.setDName(professorName);
 		doz.setDVorname(professorFirstName);
 		doz.setDTitel(professorTitle);
 		doz.setDKurz(professorShortName);   
 		doz.setAccount(findAcc(accountId));
-		try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.persist(doz);  
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+	    dozentenFacadeLocal.create(doz);
 	}
 	
 	public void createDoDozent() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -254,26 +247,13 @@ public class DozentenController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteDozent() throws IllegalStateException, SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception {
+    public void deleteDozent() {
     	professorList.remove(professorSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Dozenten> q = em.createNamedQuery("Dozenten.findByDid",Dozenten.class);
         q.setParameter("did", professorSelected.getDid());
         professor = (Dozenten)q.getSingleResult();
-        
-        try {
-	        ut.begin();   
-	        em.joinTransaction();  
-	        em.remove(professor);
-	        ut.commit(); 
-	    }
-	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+        dozentenFacadeLocal.remove(professor);
 		em.close();
     }
     
@@ -298,28 +278,17 @@ public class DozentenController implements Serializable {
     }
     
     public void addDozent(){
-      	 try {
-      		 ut.begin();
-		        EntityManager em = emf.createEntityManager();
-		        em.find(Dozenten.class, professorSelected.getDid());
-		        professor.setDid(professorSelected.getDid());
-		        professor.setDKurz(professorSelected.getDKurz());
-		        professor.setDName(professorSelected.getDName());
-		        professor.setDVorname(professorSelected.getDVorname());
-		        professor.setDTitel(professorSelected.getDTitel());
-		        professor.setAccount(findAcc(accountId));
-		        em.merge(professor);
-		        ut.commit();
-   	    }
-   	    catch (NotSupportedException | SystemException | RollbackException | HeuristicMixedException | HeuristicRollbackException | SecurityException | IllegalStateException e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
-   	    }
+        EntityManager em = emf.createEntityManager();
+        em.find(Dozenten.class, professorSelected.getDid());
+        professor.setDid(professorSelected.getDid());
+        professor.setDKurz(professorSelected.getDKurz());
+        professor.setDName(professorSelected.getDName());
+        professor.setDVorname(professorSelected.getDVorname());
+        professor.setDTitel(professorSelected.getDTitel());
+        professor.setAccount(findAcc(accountId));
+        dozentenFacadeLocal.edit(professor);
       	professorList = getDozentenList();
-      	//professorList.add(null);
+		em.close();
       }
     
    // ---------------------------------------------------------------------------------------------------------------------

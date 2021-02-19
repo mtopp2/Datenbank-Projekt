@@ -10,7 +10,7 @@
 		<ui:define name="content">
 		<h:form id="idForm">
 		<p:growl id="messages" showDetail="true" life="5000" redisplay="true"/>
-			<p:panel id="panel_Calendar" styleClass="schedule" style="overflow-x: auto;">
+			<p:panel id="panel_Calendar" header="Stundenplan" styleClass="schedule; p-mb-2" style="width:100%; height:100%; overflow-x: auto;">
 			    <h:panelGrid id="buttons" columns="4">
 			    
 	            <p:selectOneMenu
@@ -97,6 +97,7 @@
 			        </p:schedule> 
 		        </h:panelGroup>
 			</p:panel>
+			<!-- <p:resizable for="panel_Calendar" minWidth="1030" maxWidth="1530" minHeight="536" maxHeight="720"/> -->
 		</h:form>
 		<h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip" width="600">

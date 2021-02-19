@@ -193,25 +193,14 @@ public class StundenplansemesterController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStundenplansemester() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createStundenplansemester() {
 		Stundenplansemester sps = new Stundenplansemester();
 		sps.setSPSemester(scheduleSemesterSection);
 		sps.setSPJahr(scheduleYear);
 		sps.setSPKw(scheduleCalendarWeek);
 		sps.setStartDatum(startDate);
 		sps.setStundenplanstatus(findSps(scheduleSemesterId));
-		try {
-			stundenplansemesterFacadeLocal.create(sps);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		stundenplansemesterFacadeLocal.create(sps);
 	}
 	
 	public void createDoStundenplansemester() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -250,23 +239,13 @@ public class StundenplansemesterController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteStundenplansemester() throws Exception {
+    public void deleteStundenplansemester() {
     	scheduleSemesterList.remove(scheduleSemesterSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplansemester> q = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
         q.setParameter("spsid", scheduleSemesterSelected.getSpsid());
         scheduleSemester = (Stundenplansemester)q.getSingleResult();
-        
-        try {
-        	stundenplansemesterFacadeLocal.remove(scheduleSemester);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+        stundenplansemesterFacadeLocal.remove(scheduleSemester);
 		em.close();
     }
     
@@ -284,25 +263,17 @@ public class StundenplansemesterController implements Serializable {
     }
     
     public void addStundenPlanSemester(){
-      	 try {
-	        EntityManager em = emf.createEntityManager();
-	        em.find(Stundenplansemester.class, scheduleSemesterSelected.getSpsid());
-	        scheduleSemester.setSpsid(scheduleSemesterSelected.getSpsid());
-	        scheduleSemester.setSPSemester(scheduleSemesterSelected.getSPSemester());
-	        scheduleSemester.setSPJahr(scheduleSemesterSelected.getSPJahr());
-	        scheduleSemester.setSPKw(scheduleSemesterSelected.getSPKw());
-	        scheduleSemester.setStartDatum(scheduleSemesterSelected.getStartDatum());
-	        scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterId));
-	        stundenplansemesterFacadeLocal.edit(scheduleSemester);
-   	    }
-   	    catch (Exception e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
-   	    }
+        EntityManager em = emf.createEntityManager();
+        em.find(Stundenplansemester.class, scheduleSemesterSelected.getSpsid());
+        scheduleSemester.setSpsid(scheduleSemesterSelected.getSpsid());
+        scheduleSemester.setSPSemester(scheduleSemesterSelected.getSPSemester());
+        scheduleSemester.setSPJahr(scheduleSemesterSelected.getSPJahr());
+        scheduleSemester.setSPKw(scheduleSemesterSelected.getSPKw());
+        scheduleSemester.setStartDatum(scheduleSemesterSelected.getStartDatum());
+        scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterId));
+        stundenplansemesterFacadeLocal.edit(scheduleSemester);
       	scheduleSemesterList = getStundenplansemesterList();
-      }
+      	em.close();
+    }
   
 }

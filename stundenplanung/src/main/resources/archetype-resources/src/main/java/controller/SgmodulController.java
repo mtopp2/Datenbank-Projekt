@@ -231,25 +231,14 @@ public class SgmodulController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createSgmodul() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createSgmodul() {
 		Sgmodul sgm = new Sgmodul();  
 		sgm.setSGMNotiz(sgmodulNote);
 		sgm.setModSemester(moduleSemester);
 		sgm.setModul(findMod(moduleId));
 		sgm.setDozenten(findDoz(professorId));
 		sgm.setStudiengang(findSg(courseId));
-		try {
-			sgModulFacadeLocal.create(sgm);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		sgModulFacadeLocal.create(sgm);
 	}
 	
 	public void createDoSgmodul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -283,23 +272,13 @@ public class SgmodulController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteSgmodul() throws Exception {
+    public void deleteSgmodul() {
     	sgmodulList.remove(sgmodulSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Sgmodul> q = em.createNamedQuery("Sgmodul.findBySgmid",Sgmodul.class);
         q.setParameter("sgmid", sgmodulSelected.getSgmid());
         sgmodul = (Sgmodul)q.getSingleResult();
-        
-        try {
-        	sgModulFacadeLocal.remove(sgmodul); 
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+        sgModulFacadeLocal.remove(sgmodul); 
 		em.close();
     }
     
@@ -347,26 +326,17 @@ public class SgmodulController implements Serializable {
    //----------------------------------------------------------------------------------------------------------------------------------------------
     
     public void addSgmodul(){
-      	 try {
-      		
-	        EntityManager em = emf.createEntityManager();
-	        em.find(Sgmodul.class, sgmodulSelected.getSgmid());
-	        sgmodul.setSgmid(sgmodulSelected.getSgmid());
-	        sgmodul.setModSemester(sgmodulSelected.getModSemester());
-	        sgmodul.setSGMNotiz(sgmodulSelected.getSGMNotiz());
-	        sgmodul.setModul(findMod(moduleId));
-	        sgmodul.setDozenten(findDoz(professorId));
-	        sgmodul.setStudiengang(findSg(courseId));
-	        sgModulFacadeLocal.edit(sgmodul);
-   	    }
-   	    catch (Exception e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
-   	    }
-      	sgmodulList = getSgmodulListAll();
-      }
+        EntityManager em = emf.createEntityManager();
+        em.find(Sgmodul.class, sgmodulSelected.getSgmid());
+        sgmodul.setSgmid(sgmodulSelected.getSgmid());
+        sgmodul.setModSemester(sgmodulSelected.getModSemester());
+        sgmodul.setSGMNotiz(sgmodulSelected.getSGMNotiz());
+        sgmodul.setModul(findMod(moduleId));
+        sgmodul.setDozenten(findDoz(professorId));
+        sgmodul.setStudiengang(findSg(courseId));
+        sgModulFacadeLocal.edit(sgmodul);
+	  	sgmodulList = getSgmodulListAll();
+	  	em.close();
+  	}
     
 }

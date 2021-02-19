@@ -130,22 +130,11 @@ public class LocationController implements Serializable {
     }
 	  
 	private UIComponent reg;
-	public void createLocation() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createLocation() {
 		Location loc = new Location();  
 		loc.setLCity(locationCity);    
 		loc.setLStreet(locationStreet);      
-		try {
-			locationFacadeLocal.create(loc);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		locationFacadeLocal.create(loc);
 	}
 	
 	public void createDoLocation() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -165,23 +154,13 @@ public class LocationController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteLocation() throws Exception {
+    public void deleteLocation() {
     	locationList.remove(locationSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Location> q = em.createNamedQuery("Location.findByLid",Location.class);
         q.setParameter("lid", locationSelected.getLid());
         location = (Location)q.getSingleResult();
-        
-        try {
-        	locationFacadeLocal.remove(location);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
+        locationFacadeLocal.remove(location);
 		em.close();
     }
     
@@ -195,20 +174,12 @@ public class LocationController implements Serializable {
     }
     
     public void addLocation(){
-    	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Location.class, locationSelected.getLid());
- 	        location.setLid(locationSelected.getLid());
- 	        location.setLCity(locationSelected.getLCity());
- 	        location.setLStreet(locationSelected.getLStreet());
- 	        locationFacadeLocal.edit(location);
- 	    }
- 	    catch (Exception e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
- 	    }
+        EntityManager em = emf.createEntityManager();
+        em.find(Location.class, locationSelected.getLid());
+        location.setLid(locationSelected.getLid());
+        location.setLCity(locationSelected.getLCity());
+        location.setLStreet(locationSelected.getLStreet());
+        locationFacadeLocal.edit(location);
+		em.close();
     }
 }

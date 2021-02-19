@@ -146,22 +146,11 @@ public class FacultyController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createFaculty() throws Exception  {
-		EntityManager em = emf.createEntityManager();
+	public void createFaculty() {
 		Faculty fac = new Faculty();  
 		fac.setFacName(facultyName);    
 		fac.setFacShortName(facultyShortName);      
-		try {
-			facFacadeLocal.create(fac);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-		em.close();
+		facFacadeLocal.create(fac);
 	}
 	
 	public void createDoFaculty() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -191,17 +180,7 @@ public class FacultyController implements Serializable {
         TypedQuery<Faculty> q = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
         q.setParameter("fbid", facultySelected.getFbid());
         faculty = (Faculty)q.getSingleResult();
-        
-        try {
-        	this.facFacadeLocal.remove(faculty);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (Exception ex) {
-	        }
-	    }       
+        this.facFacadeLocal.remove(faculty);    
 		em.close();
     }
     
@@ -215,21 +194,14 @@ public class FacultyController implements Serializable {
     }
     
     public void addFaculty(){
-    	 try {
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Faculty.class, facultySelected.getFbid());
  	        faculty.setFbid(facultySelected.getFbid());
  	        faculty.setFacName(facultySelected.getFacName());
  	        faculty.setFacShortName(facultySelected.getFacShortName());
  	        facFacadeLocal.edit(faculty);
- 	    }
- 	    catch (SecurityException | IllegalStateException e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
- 	    }
+ 	        em.close();
+
     }
     
     

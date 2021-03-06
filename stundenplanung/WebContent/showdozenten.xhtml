@@ -15,13 +15,6 @@
 		 
 		 		<p:ajax event="rowSelect" listener="#{dozentenController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ProfessorList"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.did}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.did}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
-		 
 		        <p:column headerText="Name">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.DName}" /></f:facet>
@@ -50,18 +43,8 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Account">
-		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.account.accName}" /></f:facet>
-		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.account.accName}" style="width:100%">
-		                        <f:selectItems value="#{dozentenController.accountList}" var="#{account.accName}" itemLabel="#{account.accName}" itemValue="#{account.accName}" />
-		                    </h:selectOneMenu>
-		                </f:facet>
-		            </p:cellEditor>
-		        </p:column>
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Dozenten Editiert Details" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="professorName" value="Dozenten Name: "/>
@@ -71,15 +54,10 @@
                     <h:inputText id="professorFirstName" value="#{dozentenController.professorSelected.DVorname}" ></h:inputText>
                     
                     <h:outputLabel for="title" value="Titel: "/>
-                    <h:inputText id="title" value="#{dozentenController.professorSelected.DTitel}" ></h:inputText>
+                    <h:inputText id="title" value="#{dozentenController.professorSelected.DTitel}" size="30"></h:inputText>
                     
                     <h:outputLabel for="professorShort" value="Kürzel: "/>
                     <h:inputText id="professorShort" value="#{dozentenController.professorSelected.DKurz}" ></h:inputText>
-                    
-                    <p:outputLabel for="account" value="Account: " />
-			        <p:selectOneMenu id="account" value="#{dozentenController.accountId}" style="width:100%">
-                    	<f:selectItems value="#{dozentenController.accountList}" var="acc" itemLabel="#{acc.accID}, #{acc.accName}" itemValue="#{acc.accID}"/>
-			        </p:selectOneMenu>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{dozentenController.addDozent()}" update=":form:ProfessorList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
 		 			<p:commandButton value="Löschen" update=":form:ProfessorList" actionListener="#{dozentenController.deleteDozent()}" oncomplete="PF('eventEditDialog').hide();"/>
@@ -87,7 +65,7 @@
 		    </p:dialog>
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="350">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Dozenten" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <h:outputLabel for="professorName1" value="Dozenten Name: "/>
@@ -101,11 +79,6 @@
                     
                     <h:outputLabel for="professorShort1" value="Kürzel: "/>
                     <h:inputText id="professorShort1" value="#{dozentenController.professorShortName}" ></h:inputText>
-                    
-                    <p:outputLabel for="account1" value="Account: " />
-			        <p:selectOneMenu id="account1" value="#{dozentenController.accountId}" style="width:100%">
-                    	<f:selectItems value="#{dozentenController.accountList}" var="acc" itemLabel="#{acc.accID}, #{acc.accName}" itemValue="#{acc.accID}"/>
-			        </p:selectOneMenu>
 		            
                     <p:commandButton id="submit" value="Hinzufügen" actionListener="#{dozentenController.createDoDozent}" update=":form:ProfessorList" oncomplete="PF('eventDialog').hide();" />		 			
 		 			<p:commandButton id="reset" type="reset" value="Reset" />

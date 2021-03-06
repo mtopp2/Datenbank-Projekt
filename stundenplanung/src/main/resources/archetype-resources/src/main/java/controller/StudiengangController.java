@@ -67,13 +67,12 @@ public class StudiengangController implements Serializable {
     public void init() {
 		courseList = getStudiengangList();
         facultyList = getFacultyList();
-        spsList = getSpsList();
     }
  
     List<Faculty> facultyList ;
     List<Stundenplansemester> spsList ;
     
-    private int spsId;
+
     private int facultyID;
     private int semester;
 	private String courseShort;
@@ -91,16 +90,7 @@ public class StudiengangController implements Serializable {
 
 	public void setFacultyID(int facultyID) {
 		this.facultyID = facultyID;
-	}
-	public int getSpsId() {
-		return spsId;
-	}
-
-	public void setSpsId(int spsId) {
-		this.spsId = spsId;
-	}
-
-	
+	}	
 
 	public Studiengang getCourse() {
 		return course;
@@ -197,7 +187,6 @@ public class StudiengangController implements Serializable {
 		bg.setSGKurz(courseShort);
 		bg.setSemester(semester);
 		bg.setFaculty(findFac(facultyID));
-		bg.setStundenplansemester(findSP(spsId));
 		studiengangFacadeLocal.create(bg);
 	}
 	
@@ -240,7 +229,6 @@ public class StudiengangController implements Serializable {
         courseSelected = e.getObject();
         
         facultyID = courseSelected.getFaculty().getFbid();
-        spsId = courseSelected.getStundenplansemester().getSpsid();
          
         
     }
@@ -291,7 +279,6 @@ public class StudiengangController implements Serializable {
         course.setSGKurz(courseSelected.getSGKurz());
         course.setSemester(courseSelected.getSemester());
         course.setFaculty(findFac(facultyID));
-        course.setStundenplansemester(findSP(spsId));
         studiengangFacadeLocal.edit(course);
       	courseList = getStudiengangList();
       	em.close();

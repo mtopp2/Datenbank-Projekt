@@ -71,26 +71,23 @@ public class DozentenController implements Serializable {
 	
 	@Inject 
 	private Dozenten professor;
-	private Account account;
 	
 	@EJB
 	private DozentenFacadeLocal dozentenFacadeLocal;
 	
-	List<Account> accountList ;
+
 	
 	@PostConstruct
     public void init() {
 		professorList = getDozentenList();
-		accountList = getAccountList();
+
     }
  
 	
-	private int accountId;
 	private String professorShortName;
 	private String professorName;
 	private String professorTitle;
 	private String professorFirstName;
-	private String accountName;
 	private boolean professorShortNameOk = false;
 	private boolean professorNameOk = false;
 
@@ -99,14 +96,6 @@ public class DozentenController implements Serializable {
 	List<Dozenten> professorList;
 	
 	private Dozenten professorSelected;
-	
-	public int getAccountId() {
-		return accountId;
-	}
-
-	public void setAccountId(int accountId) {
-		this.accountId = accountId;
-	}
 	
 	public Dozenten getProfessorSelected() {
 		return professorSelected;
@@ -181,13 +170,6 @@ public class DozentenController implements Serializable {
 	public void setProfessorFirstName(String professorFirstName) {
 	        this.professorFirstName = professorFirstName;
 	}
-	 public String getAccountName() {
-	        return accountName;
-	    }
-
-	public void setAccountName(String accountName) {
-	        this.accountName = accountName;
-	    }
 	    
 	public UIComponent getReg() {
         return reg;
@@ -195,14 +177,6 @@ public class DozentenController implements Serializable {
 
     public void setReg(UIComponent reg) {
         this.reg = reg;
-    }
-    
-    public Account getAccount() {
-        return account;
-    }
-
-    public void setAccount(Account account) {
-        this.account = account;
     }
 	  
 	private UIComponent reg;  
@@ -212,7 +186,6 @@ public class DozentenController implements Serializable {
 		doz.setDVorname(professorFirstName);
 		doz.setDTitel(professorTitle);
 		doz.setDKurz(professorShortName);   
-		doz.setAccount(findAcc(accountId));
 	    dozentenFacadeLocal.create(doz);
 	}
 	
@@ -238,11 +211,6 @@ public class DozentenController implements Serializable {
         
         professorSelected = e.getObject();
         
-        accountName = professorSelected.getAccount().getAccName();
-        if (accountName == null) {
-        	this.accountName = null;
-        }
-        
     }
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
@@ -257,35 +225,15 @@ public class DozentenController implements Serializable {
 		em.close();
     }
     
-    public List<Account> getAccountList(){
-		EntityManager em = emf.createEntityManager();
-		TypedQuery<Account> query = em.createNamedQuery("Account.findAll", Account.class);
-		accountList = query.getResultList();
-		return accountList;
-	}
-    
-    private Account findAcc(int accountId) {
-        try{
-            EntityManager em = emf.createEntityManager(); 
-            TypedQuery<Account> query
-                = em.createNamedQuery("Account.findByAccID",Account.class);
-            query.setParameter("accID", accountId);
-            account = (Account)query.getSingleResult();
-        }
-        catch(Exception e){   
-        }
-        return account;
-    }
     
     public void addDozent(){
         EntityManager em = emf.createEntityManager();
         em.find(Dozenten.class, professorSelected.getDid());
-        professor.setDid(professorSelected.getDid());
+    	professor.setDid(professorSelected.getDid());
         professor.setDKurz(professorSelected.getDKurz());
         professor.setDName(professorSelected.getDName());
         professor.setDVorname(professorSelected.getDVorname());
         professor.setDTitel(professorSelected.getDTitel());
-        professor.setAccount(findAcc(accountId));
         dozentenFacadeLocal.edit(professor);
       	professorList = getDozentenList();
 		em.close();

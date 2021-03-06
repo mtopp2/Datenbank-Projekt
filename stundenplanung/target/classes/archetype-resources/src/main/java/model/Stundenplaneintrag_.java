@@ -6,7 +6,7 @@ import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
 
-@Generated(value="Dali", date="2021-01-07T13:49:04.527+0100")
+@Generated(value="Dali", date="2021-03-04T17:54:53.926+0100")
 @StaticMetamodel(Stundenplaneintrag.class)
 public class Stundenplaneintrag_ {
 	public static volatile SingularAttribute<Stundenplaneintrag, Integer> spid;
@@ -18,4 +18,5 @@ public class Stundenplaneintrag_ {
 	public static volatile SingularAttribute<Stundenplaneintrag, Lehrveranstaltungsart> lehrveranstaltungsart;
 	public static volatile SingularAttribute<Stundenplaneintrag, Raum> raum;
 	public static volatile SingularAttribute<Stundenplaneintrag, Sgmodul> sgmodul;
+	public static volatile SingularAttribute<Stundenplaneintrag, Stundenplansemester> stundenplansemester;
 }

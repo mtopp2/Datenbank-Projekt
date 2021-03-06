@@ -42,10 +42,6 @@ public class Account implements Serializable {
 	@JoinColumn(name="FK_FBID")
 	private Faculty faculty;
 
-	//bi-directional many-to-one association to Dozenten
-	@OneToMany(mappedBy="account")
-	private List<Dozenten> dozentens;
-
 	public Account() {
 	}
 
@@ -95,28 +91,6 @@ public class Account implements Serializable {
 
 	public void setFaculty(Faculty faculty) {
 		this.faculty = faculty;
-	}
-
-	public List<Dozenten> getDozentens() {
-		return this.dozentens;
-	}
-
-	public void setDozentens(List<Dozenten> dozentens) {
-		this.dozentens = dozentens;
-	}
-
-	public Dozenten addDozenten(Dozenten dozenten) {
-		getDozentens().add(dozenten);
-		dozenten.setAccount(this);
-
-		return dozenten;
-	}
-
-	public Dozenten removeDozenten(Dozenten dozenten) {
-		getDozentens().remove(dozenten);
-		dozenten.setAccount(null);
-
-		return dozenten;
 	}
 
 }

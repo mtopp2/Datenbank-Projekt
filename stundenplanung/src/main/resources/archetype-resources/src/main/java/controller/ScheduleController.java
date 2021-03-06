@@ -6,6 +6,7 @@ import model.Lehrveranstaltungsart;
 import model.Raum;
 import model.Sgmodul;
 import model.Stundenplaneintrag;
+import model.Stundenplansemester;
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -78,6 +79,7 @@ public class ScheduleController implements Serializable {
 	private Lehrveranstaltungsart teachingEvent;
 	private Sgmodul sgmodul;
 	private Faculty faculty;
+	private Stundenplansemester spSemester;
 	
 	@EJB
 	private StundenplaneintragFacadeLocal speFacadeLocal;
@@ -128,6 +130,14 @@ public class ScheduleController implements Serializable {
     
     ArrayList<String> facultyList = new ArrayList<>();
     private String facultySelection;
+    
+    ArrayList<Stundenplansemester> spsList = new ArrayList<>();
+    private int spsId;
+    
+    ArrayList<String> sps1List = new ArrayList<>();
+    private String spSemesterSelection;
+    ArrayList<Integer> sps2List = new ArrayList<>();
+    private int spYearSelection;
     
     Calendar calendar;
     Calendar calendarStart;
@@ -214,10 +224,13 @@ public class ScheduleController implements Serializable {
     
 	public void eventLoader() {        
         try{/* Laden der Datenbank*/
+        	spSemester = findSPSelection(spSemesterSelection, spYearSelection);
+            spsId = spSemester.getSpsid();
             EntityManager em = emf.createEntityManager();
-            Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlanC", Stundenplaneintrag.class);
+            Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlanD", Stundenplaneintrag.class);
             query.setParameter("stgang", courseSelection);
             query.setParameter("facName", facultySelection);
+            query.setParameter("spsid", spsId);
             scheduleEntryList = query.getResultList();
         }
         catch(Exception e){}
@@ -325,6 +338,38 @@ public class ScheduleController implements Serializable {
             facultyList.add(f1.getFacName());
         }
         
+        EntityManager em6 = emf.createEntityManager();
+        Query sps = em6.createNamedQuery("Stundenplansemester.findAll");
+        List spssList = sps.getResultList();
+        for (Object spsListitem : spssList)
+        {
+        	Stundenplansemester spss =(Stundenplansemester)spsListitem;
+            spsList.add(spss);
+        }
+        
+        EntityManager em7 = emf.createEntityManager();
+        Query sps1 = em7.createNamedQuery("Stundenplansemester.findAllGroupBySpsemester");
+        List sps11List = sps1.getResultList();
+        for (Object sps1Listitem : sps11List)
+        {
+        	Stundenplansemester sps11 =(Stundenplansemester)sps1Listitem;
+            sps1List.add(sps11.getSPSemester());
+        }
+        
+        EntityManager em8 = emf.createEntityManager();
+        Query sps2 = em8.createNamedQuery("Stundenplansemester.findAllGroupBySpJahr");
+        List sps22List = sps2.getResultList();
+        for (Object sps2Listitem : sps22List)
+        {
+        	Stundenplansemester sps22 =(Stundenplansemester)sps2Listitem;
+            sps2List.add(sps22.getSPJahr());
+        }
+        
+        spSemesterSelection = sps1List.get(1);
+        spYearSelection = sps2List.get(1);
+        spSemester = findSPSelection(spSemesterSelection, spYearSelection);
+        spsId = spSemester.getSpsid();
+        
 		facultySelection = facultyList.get(8);
         courseSelection = courseList.get(0);
 
@@ -345,6 +390,7 @@ public class ScheduleController implements Serializable {
         	eventSelected.setSgmodul(findSgm(sgmodulId));
         	eventSelected.setLehrveranstaltungsart(findLva(teName));
         	eventSelected.setRaum(findRau(roomId));
+        	eventSelected.setStundenplansemester(findSP(spsId));
         	eventSelected.setStudierendenzahl(studentNumber);
             Date date= new Date();
             long time = date.getTime();
@@ -379,13 +425,14 @@ public class ScheduleController implements Serializable {
     	em = emf.createEntityManager();
 
     	try{
-            em.find(Stundenplaneintrag.class, eventSelected.getSpid());
+            em.find(Stundenplaneintrag.class, eventSelected.getSpid());            
             eventSelected.setSPEStartZeit(eventSelected.getSPEStartZeit());
             eventSelected.setSPEEndZeit(eventSelected.getSPEEndZeit());
             eventSelected.setSPTermin(eventSelected.getSPTermin());
             eventSelected.setSgmodul(findSgm(sgmodulId));
             eventSelected.setLehrveranstaltungsart(findLva(teName));
             eventSelected.setRaum(findRau(roomId));
+            eventSelected.setStundenplansemester(findSP(spsId));
             eventSelected.setStudierendenzahl(eventSelected.getStudierendenzahl());
             //Zeitstempel
             Date date= new Date();
@@ -445,6 +492,7 @@ public class ScheduleController implements Serializable {
         sgmodulId = eventSelected.getSgmodul().getSgmid();
         teName = eventSelected.getLehrveranstaltungsart().getLvname();
         roomId = eventSelected.getRaum().getRid();
+        spsId = eventSelected.getStundenplansemester().getSpsid();
     }
     
     //Neue Events hinzufügen
@@ -773,6 +821,37 @@ public class ScheduleController implements Serializable {
         return sgmodul;
     }
 	
+	private Stundenplansemester findSP(int sm) {
+        try{
+            EntityManager em = emf.createEntityManager(); 
+            TypedQuery<Stundenplansemester> query
+                = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
+            query.setParameter("spsid", sm);
+            spSemester = (Stundenplansemester)query.getSingleResult();
+        }
+        catch(Exception e){   
+        }
+        return spSemester;
+    }
+	
+	//--------------------------------------------------------------
+	
+	private Stundenplansemester findSPSelection(String sps,int sm) {
+        try{
+            EntityManager em = emf.createEntityManager(); 
+            TypedQuery<Stundenplansemester> query
+                = em.createNamedQuery("Stundenplansemester.findBySPSemesterAndYear",Stundenplansemester.class);
+            query.setParameter("SPSemester", sps);
+            query.setParameter("SPJahr", sm);
+            spSemester = (Stundenplansemester)query.getSingleResult();
+        }
+        catch(Exception e){   
+        }
+        return spSemester;
+    }	
+	
+	//--------------------------------------------------------------
+	
 	public static LocalDateTime asLocalDateTime(Date date) {
 	    return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
 	}
@@ -916,5 +995,63 @@ public class ScheduleController implements Serializable {
 	public void setLoadDb(List<Stundenplaneintrag> loadDb) {
 		this.loadDb = loadDb;
 	}
+	
+	public int getSpsId() {
+		return spsId;
+	}
+
+	public void setSpsId(int spsId) {
+		this.spsId = spsId;
+	}
+
+	public ArrayList<Stundenplansemester> getSpsList() {
+		return spsList;
+	}
+
+	public void setSpsList(ArrayList<Stundenplansemester> spsList) {
+		this.spsList = spsList;
+	}
+
+	public Stundenplansemester getSpSemester() {
+		return spSemester;
+	}
+
+	public void setSpSemester(Stundenplansemester spSemester) {
+		this.spSemester = spSemester;
+	}
+
+	public ArrayList<String> getSps1List() {
+		return sps1List;
+	}
+
+	public void setSps1List(ArrayList<String> sps1List) {
+		this.sps1List = sps1List;
+	}
+
+	public String getSpSemesterSelection() {
+		return spSemesterSelection;
+	}
+
+	public void setSpSemesterSelection(String spSemesterSelection) {
+		this.spSemesterSelection = spSemesterSelection;
+	}
+
+	public ArrayList<Integer> getSps2List() {
+		return sps2List;
+	}
+
+	public void setSps2List(ArrayList<Integer> sps2List) {
+		this.sps2List = sps2List;
+	}
+
+	public int getSpYearSelection() {
+		return spYearSelection;
+	}
+
+	public void setSpYearSelection(int spYearSelection) {
+		this.spYearSelection = spYearSelection;
+	}
+	
+	
 
 }

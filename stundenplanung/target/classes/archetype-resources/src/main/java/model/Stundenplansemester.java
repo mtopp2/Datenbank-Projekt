@@ -2,6 +2,7 @@ package model;
 
 import java.io.Serializable;
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +14,11 @@ import java.util.List;
 @Entity
 @NamedQueries({
 	@NamedQuery(name="Stundenplansemester.findAll", query="SELECT s FROM Stundenplansemester s"),
+	@NamedQuery(name="Stundenplansemester.findAllGroupBySpsemester", query="SELECT s FROM Stundenplansemester s GROUP BY s.SPSemester"),
+	@NamedQuery(name="Stundenplansemester.findAllGroupBySpJahr", query="SELECT s FROM Stundenplansemester s GROUP BY s.SPJahr"),
 	@NamedQuery(name="Stundenplansemester.findBySpsid", query="SELECT s FROM Stundenplansemester s WHERE s.spsid=:spsid"),
-	@NamedQuery(name="Stundenplansemester.findBySPSemester", query="SELECT s FROM Stundenplansemester s WHERE s.SPSemester=:SPSemester")})
+	@NamedQuery(name="Stundenplansemester.findBySPSemester", query="SELECT s FROM Stundenplansemester s WHERE s.SPSemester=:SPSemester"),
+	@NamedQuery(name="Stundenplansemester.findBySPSemesterAndYear", query="SELECT s FROM Stundenplansemester s WHERE s.SPSemester=:SPSemester AND s.SPJahr=:SPJahr")})
 public class Stundenplansemester implements Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -29,10 +33,13 @@ public class Stundenplansemester implements Serializable {
 
 	@Temporal(TemporalType.DATE)
 	private Date startDatum;
+	
+	@Temporal(TemporalType.DATE)
+	private Date endDatum;
 
-	//bi-directional many-to-one association to Studiengang
+	//bi-directional many-to-one association to Stundenplaneintrag
 	@OneToMany(mappedBy="stundenplansemester")
-	private List<Studiengang> studiengangs;
+	private List<Stundenplaneintrag> stundenplaneintrags;
 
 	//bi-directional many-to-one association to Stundenplanstatus
 	@ManyToOne
@@ -50,6 +57,14 @@ public class Stundenplansemester implements Serializable {
 		this.spsid = spsid;
 	}
 
+	public Date getEndDatum() {
+		return this.endDatum;
+	}
+
+	public void setEndDatum(Date endDatum) {
+		this.endDatum = endDatum;
+	}
+
 	public int getSPJahr() {
 		return this.SPJahr;
 	}
@@ -58,11 +73,11 @@ public class Stundenplansemester implements Serializable {
 		this.SPJahr = SPJahr;
 	}
 
-	public Integer getSPKw() {
+	public int getSPKw() {
 		return this.SPKw;
 	}
 
-	public void setSPKw(Integer SPKw) {
+	public void setSPKw(int SPKw) {
 		this.SPKw = SPKw;
 	}
 
@@ -82,26 +97,26 @@ public class Stundenplansemester implements Serializable {
 		this.startDatum = startDatum;
 	}
 
-	public List<Studiengang> getStudiengangs() {
-		return this.studiengangs;
+	public List<Stundenplaneintrag> getStundenplaneintrags() {
+		return this.stundenplaneintrags;
 	}
 
-	public void setStudiengangs(List<Studiengang> studiengangs) {
-		this.studiengangs = studiengangs;
+	public void setStundenplaneintrags(List<Stundenplaneintrag> stundenplaneintrags) {
+		this.stundenplaneintrags = stundenplaneintrags;
 	}
 
-	public Studiengang addStudiengang(Studiengang studiengang) {
-		getStudiengangs().add(studiengang);
-		studiengang.setStundenplansemester(this);
+	public Stundenplaneintrag addStundenplaneintrag(Stundenplaneintrag stundenplaneintrag) {
+		getStundenplaneintrags().add(stundenplaneintrag);
+		stundenplaneintrag.setStundenplansemester(this);
 
-		return studiengang;
+		return stundenplaneintrag;
 	}
 
-	public Studiengang removeStudiengang(Studiengang studiengang) {
-		getStudiengangs().remove(studiengang);
-		studiengang.setStundenplansemester(null);
+	public Stundenplaneintrag removeStundenplaneintrag(Stundenplaneintrag stundenplaneintrag) {
+		getStundenplaneintrags().remove(stundenplaneintrag);
+		stundenplaneintrag.setStundenplansemester(null);
 
-		return studiengang;
+		return stundenplaneintrag;
 	}
 
 	public Stundenplanstatus getStundenplanstatus() {

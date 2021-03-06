@@ -3,7 +3,6 @@ package model;
 import java.io.Serializable;
 import javax.persistence.*;
 import java.util.List;
-import model.Account;
 
 
 /**
@@ -35,11 +34,6 @@ public class Dozenten implements Serializable {
 	private String DTitel;
 
 	private String DVorname;
-
-	//bi-directional many-to-one association to Account
-	@ManyToOne
-	@JoinColumn(name="FK_AccID")
-	private Account account;
 
 	//bi-directional many-to-one association to Sgmodul
 	@OneToMany(mappedBy="dozenten")
@@ -86,14 +80,6 @@ public class Dozenten implements Serializable {
 
 	public void setDVorname(String DVorname) {
 		this.DVorname = DVorname;
-	}
-
-	public Account getAccount() {
-		return this.account;
-	}
-
-	public void setAccount(Account account) {
-		this.account = account;
 	}
 
 	public List<Sgmodul> getSgmoduls() {

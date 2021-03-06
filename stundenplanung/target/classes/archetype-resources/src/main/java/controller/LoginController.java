@@ -8,10 +8,17 @@ package controller;
 
 import model.Account;
 import model.Benutzergruppe;
+import model.Faculty;
+
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 
 import javax.faces.context.FacesContext;
@@ -19,10 +26,17 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.UserTransaction;
 
+import org.primefaces.event.SelectEvent;
+
+import EJB.AccountFacadeLocal;
+
 import javax.faces.bean.ManagedBean;
+
+
 //import javax.faces.bean.SessionScoped;
 
 /**
@@ -44,8 +58,16 @@ public class LoginController implements Serializable {
     private UserTransaction ut;
     
     @Inject
-    private Account Account;
+    private Account account;
+    private Faculty faculty;
     
+    @EJB
+	private AccountFacadeLocal accFacadeLocal;
+    
+
+    
+    ArrayList<String> facultyList = new ArrayList<>();
+    private String facultyName;
     
     private String accountName;
     private String accountPassword;
@@ -64,15 +86,74 @@ public class LoginController implements Serializable {
     private String summery;
     
     private int id;
+    
+    private String accountPassword1;
+	private String accountPassword2;
+	private boolean accountPasswordOk1 = false;
+	private boolean accountPasswordOk2 = false;
  
     
 //Getter und Setter Methoden
+	
+	public String getAccountPassword1() {
+		return accountPassword1;
+	}
+	  
+	public void setAccountPassword1(String accountPassword1) {
+		if(accountPassword1!=null){
+	        this.accountPassword1 = accountPassword1;
+	        accountPasswordOk1=true;
+	    }
+	}
+	
+	public String getAccountPassword2() {
+		return accountPassword2;
+	}
+	  
+	public void setAccountPassword2(String accountPassword2) {
+		if(accountPassword2!=null){
+	        this.accountPassword2 = accountPassword2;
+	        accountPasswordOk2=true;
+	    }
+	}
+    
+    public ArrayList<String> getFacultyList() {
+		return facultyList;
+	}
+
+	public void setFacultyList(ArrayList<String> facultyList) {
+		this.facultyList = facultyList;
+	}
+    
+    public String getFacultyName() {
+		return facultyName;
+	}
+
+	public void setFacultyName(String facultyName) {
+		this.facultyName = facultyName;
+	}
+    
+    public Faculty getFaculty() {
+		return faculty;
+	}
+
+	public void setFaculty(Faculty faculty) {
+		this.faculty = faculty;
+	}
+    
+    public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
     
     public boolean isIsAdm() {
         return isAdm;
     }
 
-    public void setIsAdm(boolean isAdm) {
+	public void setIsAdm(boolean isAdm) {
         this.isAdm = isAdm;
     }
     
@@ -275,6 +356,50 @@ public class LoginController implements Serializable {
     private void addMessage(String loginformidName, String msg) {
         FacesMessage message = new FacesMessage(msg);
         FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+    }    
+    
+    
+    //---------------------------------------------------------------------------------------------
+    
+    
+	
+	private Account findAcc(String accName) {
+        try{
+            EntityManager em = emf.createEntityManager(); 
+            TypedQuery<Account> query
+                = em.createNamedQuery("Account.findByAccName",Account.class);
+            query.setParameter("accName", accName);
+            account = (Account)query.getSingleResult();
+        }
+        catch(Exception e){   
+        }
+        return account;
     }
+	
+
+	
+	public void changePassword(){
+		account = findAcc(accountName);
+		EntityManager em = emf.createEntityManager();
+        em.find(Account.class, account.getAccID());
+        account.setAccPwd(accountPassword1);
+        accFacadeLocal.edit(account);
+		em.close();		  
+	}
+	
+	
+	public String changePasswordOk() {
+		String returnvalue = "";
+		try {
+			if(accountPasswordOk1 == true && accountPasswordOk2 == true) {
+				changePassword();
+				returnvalue= "index.xhtml";
+			}
+		}
+		catch(Exception e){
+			returnvalue="accountdetails.xhtml";
+		}
+		return returnvalue;
+	}
     
 }

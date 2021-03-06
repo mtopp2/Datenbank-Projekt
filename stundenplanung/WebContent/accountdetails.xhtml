@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>		    
+		    
+		    <h:panelGrid id="eventDetails" columns="2">
+			    <h:outputLabel for="accountPassword1" value="Passwort: "/>
+	            <h:inputSecret id="accountPassword1" value="${loginController.accountPassword1}" required = "true" requiredMessage="Ein Passwort muss eingegeben werden."></h:inputSecret>  
+	            
+	            <h:outputLabel for="accountPassword2" value="Passwort wiederholen: "/>
+	            <h:inputSecret id="accountPassword2" value="${loginController.accountPassword2}" required = "true" requiredMessage="Ein Passwort muss eingegeben werden."></h:inputSecret>
+	            
+	            <p:commandButton id="submit1" type="submit" value="Speichern" action="#{loginController.changePasswordOk()}"/>
+            </h:panelGrid>
+	    </h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

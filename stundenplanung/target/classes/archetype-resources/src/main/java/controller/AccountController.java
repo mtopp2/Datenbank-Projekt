@@ -328,7 +328,4 @@ public class AccountController implements Serializable {
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
   
-  
-  
-  
 }

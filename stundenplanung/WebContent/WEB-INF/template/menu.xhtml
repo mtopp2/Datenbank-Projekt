@@ -22,10 +22,13 @@
         
         <p:submenu label="Ausloggen" rendered="#{loginController.isLoggedIn}">
             <p:menuitem value="Abmelden" action="#{loginController.logout()}"  />
+            <p:menuitem value="Account Details" rendered="#{(loginController.isLoggedIn)}" action="/accountdetails.xhtml?faces-redirect=true"  />
         </p:submenu>
         
         <p:submenu label="Anzeigen" >
-            <p:menuitem value="Stundenplan" action="/showspe.xhtml?faces-redirect=true"  />                 
+            <p:menuitem value="Stundenplan" action="/showspe.xhtml?faces-redirect=true"  />
+            <p:menuitem value="StundenplanProf" action="/showspeprof.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Kopierer" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/scheduleCopie.xhtml?faces-redirect=true"  />                 
             <p:menuitem value="Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/showmodul.xhtml?faces-redirect=true"  />
             <p:menuitem value="Benutzer" rendered="#{(loginController.isLoggedIn and loginController.isAdm)}" action="/showaccount.xhtml?faces-redirect=true"  />                                                               
             <p:menuitem value="Standort" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showlocation.xhtml?faces-redirect=true"  />

@@ -40,11 +40,6 @@ public class Studiengang implements Serializable {
 	@JoinColumn(name="FK_FBID")
 	private Faculty faculty;
 
-	//bi-directional many-to-one association to Stundenplansemester
-	@ManyToOne
-	@JoinColumn(name="FK_SPSID")
-	private Stundenplansemester stundenplansemester;
-
 	public Studiengang() {
 	}
 
@@ -108,14 +103,6 @@ public class Studiengang implements Serializable {
 
 	public void setFaculty(Faculty faculty) {
 		this.faculty = faculty;
-	}
-
-	public Stundenplansemester getStundenplansemester() {
-		return this.stundenplansemester;
-	}
-
-	public void setStundenplansemester(Stundenplansemester stundenplansemester) {
-		this.stundenplansemester = stundenplansemester;
 	}
 
 }

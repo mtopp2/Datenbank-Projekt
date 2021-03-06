@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 29. Jan 2021 um 14:05
+-- Erstellungszeit: 06. Mrz 2021 um 14:35
 -- Server-Version: 10.4.11-MariaDB
 -- PHP-Version: 7.4.2
 
@@ -87,103 +87,102 @@ CREATE TABLE `dozenten` (
   `DName` varchar(60) NOT NULL,
   `DVorname` varchar(60) NOT NULL,
   `DTitel` varchar(40) NOT NULL,
-  `DKurz` varchar(6) NOT NULL,
-  `FK_AccID` int(6) DEFAULT NULL
+  `DKurz` varchar(6) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `dozenten`
 --
 
-INSERT INTO `dozenten` (`DID`, `DName`, `DVorname`, `DTitel`, `DKurz`, `FK_AccID`) VALUES
-(2, 'Bachmann', 'Bernhard', 'Prof. Dr. phil.', 'Bm', NULL),
-(4, 'Biegler-König', 'Cornelia', 'OStR.in', 'Bk', NULL),
-(5, 'Biegler-König', 'Friedrich', 'Prof. Dr. math.', 'Bi', NULL),
-(10, 'Cottin', 'Claudia', 'Prof\'n. Dr. rer. nat.', 'Co', NULL),
-(11, 'Diekmann', 'Paul', 'Prof. Dr.-Ing.', 'Di', NULL),
-(13, 'Dornseifer-Seitz', 'Adelheid', 'Dipl. Übersetzerin', 'Ds', NULL),
-(14, 'Draxl', 'Sybille', 'Dipl. math.', 'Dx', NULL),
-(15, 'Dürkopp', 'Klaus', 'Prof. Dr.-Ing.', 'Dü', NULL),
-(16, 'Feyerabend', 'Franz', 'Prof. Dr.-Ing.', 'Fb', NULL),
-(18, 'Grünwoldt', 'Lutz', 'Prof. Dr.-Ing.', 'Gr', NULL),
-(19, 'Gudermann', 'Frank', 'Prof. Dr. rer. nat.', 'Gm', NULL),
-(21, 'Haubrock', 'Jens', 'Prof. Dr.-Ing.', 'Ha', NULL),
-(22, 'Schöning', 'Sonja', 'Prof. Dr. rer. nat.', 'Sh', NULL),
-(24, 'Hofer', 'Klaus', 'Prof. Dr. Ing. habil.', 'Hf', NULL),
-(25, 'Hoffmann', 'Sebastian', 'Prof. Dr.-Ing.', 'Hm', NULL),
-(26, 'Hüsgen', 'Bruno', 'Prof. Dr.-Ing.', 'Hü', NULL),
-(28, 'Jaroschek', 'Christoph', 'Prof. Dr.-Ing.', 'Jk', NULL),
-(30, 'Kaschuba', 'Reinhard', 'Prof. Dr.-Ing.', 'Kb', NULL),
-(32, 'Kisse', 'Raimund', 'Prof. Dr.-Ing.', 'Ki', NULL),
-(36, 'Kühlert', 'Heinrich', 'Prof. Dr.-Ing.', 'Kü', NULL),
-(37, 'Lajios', 'Georgios', 'Prof. Dr. rer. nat.', 'La', NULL),
-(38, 'Loviscach', 'Jörn', 'Prof. Dr. rer. nat.', 'Lo', NULL),
-(39, 'Lütkemeyer', 'Dirk', 'Prof. Dr. rer. nat.', 'Lü', NULL),
-(40, 'Manz-Schumacher', 'Hildegard', 'Prof. Dr. rer. pol.', 'Ma', NULL),
-(41, 'Naumann', 'Rolf', 'Prof. Dr.-Ing.', 'Na', NULL),
-(43, 'Ohlhoff', 'Antje', 'Prof. Dr. rer. nat.', 'Oh', NULL),
-(44, 'Panreck', 'Klaus', 'Prof. Dr.-Ing.', 'Pa', NULL),
-(45, 'Patel', 'Anant', 'Prof. Dr. rer. nat.', 'Pa', NULL),
-(46, 'Petrova', 'Svetozara', 'Prof. Dr. rer. nat.', 'Pt', NULL),
-(47, 'Petry', 'Martin', 'Prof. Dr. rer. nat.', 'Pe', NULL),
-(49, 'Schierenberg', 'Marc-Oliver', 'Prof. Dr. rer. nat.', 'Si', NULL),
-(51, 'Schmidt', 'Norbert', 'Prof. Dr.-Ing.', 'Sd', NULL),
-(53, 'Schröder', 'Christian', 'Prof. Dr. rer. nat.', 'Sö', NULL),
-(54, 'Schultheis', 'Rüdiger', 'Prof. Dr.-Ing.', 'Sl', NULL),
-(55, 'Schumacher', 'Bernd-Josef', 'Prof. Dr. rer. nat.', 'Sc', NULL),
-(56, 'Schwenzfeier-Hellkamp', 'Eva', 'Prof. Dr.-Ing.', 'Sp', NULL),
-(58, 'Ueckerdt', 'Rainer', 'Prof. Dr. sc. techn. Dr. rer. nat.', 'Ue', NULL),
-(59, 'Vucetic', 'Dragan', 'Prof. Dr.', 'Vu', NULL),
-(60, 'Wameling', 'Hubertus', 'Prof. Dr.', 'Wm', NULL),
-(61, 'Waßmuth', 'Joachim', 'Prof. Dr.-Ing.', 'Wu', NULL),
-(63, 'Weidemann', 'Dirk', 'Prof. Dr.-Ing.', 'Wn', NULL),
-(65, 'Zielke', 'Dirk', 'Prof. Dr.-Ing.', 'Zi', NULL),
-(73, 'Liebing', 'Günter', 'Dr.', 'Li', NULL),
-(74, 'Niemann', 'Martin', 'Dr.', 'Ni', NULL),
-(75, 'Jakobs-Schönwandt', 'Desiree', 'Dr.', 'Js', NULL),
-(78, 'Schneider', 'Axel', 'Prof. Dr. rer. nat.', 'SrA', NULL),
-(81, 'Feldmann', 'Dirk', 'Dr. rer. nat.', 'Fe', NULL),
-(82, 'Thole', 'Frank', 'Dipl.-Ing.', 'Th', NULL),
-(86, 'Fromme', 'Lars', 'Prof. Dr. rer.nat.', 'Fr', NULL),
-(92, 'Vemmer', 'Marina', 'M.Sc.', 'Ve', NULL),
-(95, 'Böttner', 'Rudolph', 'Dr.', 'Bö', NULL),
-(96, 'Westerwalbesloh', 'Thomas', 'Prof. Dr.', 'Ww', NULL),
-(98, 'Komarnicki', 'Przemyslaw', 'Dr.', 'Ko', NULL),
-(99, 'Viertel', 'Klaus', '', 'Vi', NULL),
-(100, 'Homburg', 'Sarah Vanessa', 'M.Sc.', 'Hg', NULL),
-(101, 'Sauser', '', 'Prof. Dr.-Ing.', 'Sr', NULL),
-(102, 'Schenck', 'Wolfram', 'Prof. Dr.', 'Sk', NULL),
-(103, 'Stockem', 'Irina', 'ME', 'So', NULL),
-(106, 'Kohlhase', 'Martin', 'Prof. Dr.-Ing.', 'Kh', NULL),
-(107, 'Lorenz', 'Sissy-Christin', 'M.Sc.', 'Lr', NULL),
-(108, 'Prott-Warner', 'Vanessa', 'DI', 'Pw', NULL),
-(110, 'Gronemann', 'Andreas', 'Dipl.-Ing. (FH)', 'Gn', NULL),
-(111, 'Teich', 'Lisa', 'M.sc.', 'Te', NULL),
-(112, 'Stötzer', 'Martin', 'Dr.', 'St', NULL),
-(114, 'Bekemeier', 'Simon', 'M.Eng.', 'Be', NULL),
-(115, 'Krell', 'Vivien', 'M.Sc.', 'Kr', NULL),
-(116, 'Lemke', 'Annika Vera', 'M.Sc.', 'Lk', NULL),
-(118, 'Hesse', 'Thomas', 'Prof. Dr.-Ing.', 'He', NULL),
-(119, 'Hilbig', 'Thomas', 'Dipl.-Ing.', 'Hi', NULL),
-(120, 'Charles', 'Peter', 'Prof. Dr.-Ing.', 'Cs', NULL),
-(121, 'Horst', 'Jörg', 'Dr.rer.nat.', 'Ht', NULL),
-(122, 'Schlüter', 'Ralph', '', 'SL', NULL),
-(123, 'Humbert', '', '', 'Hu', NULL),
-(124, 'Schoden', 'Fabian', 'WMA', 'So', NULL),
-(125, 'Wrede', 'Nicola', '', 'Wr', NULL),
-(126, 'Bünte', 'Andreas', 'Dr.-Ing.', 'Bü', NULL),
-(127, 'Hartman', 'Holger', 'Dipl.-VW', 'Hm', NULL),
-(128, 'Wasmuth', 'Joachim', 'Dr.-Ing.', 'Wa', NULL),
-(129, 'Herrmann', 'Katharina', '', 'Hr', NULL),
-(130, 'Preiser', '???', 'Dr.', 'Ps', NULL),
-(131, 'Lösenbeck', 'Hr.', 'DI', 'Ls', NULL),
-(132, 'Horstmann', 'Magnus', 'Prof. Dr.-Ing.', 'Hn', NULL),
-(133, 'Fahrig', 'Michael', 'Prof. Dr.-Ing.', 'Fa', NULL),
-(134, 'Funke', 'Herbert', 'Prof. Dr.-Ing.', 'Fu', NULL),
-(135, 'Kaimann', 'Andrea', 'Prof\'n. Dr.-Ing.', 'Km', NULL),
-(136, 'Manowicz', 'Adam-Alexander', 'Prof. Dr.', 'Mw', NULL),
-(141, 'Lüke', 'Sabine', 'M.Sc.', 'Lk', NULL),
-(142, 'Topp', 'Manuel', 'Prof', 'MT', 56);
+INSERT INTO `dozenten` (`DID`, `DName`, `DVorname`, `DTitel`, `DKurz`) VALUES
+(2, 'Bachmann', 'Bernhard', 'Prof. Dr. phil.', 'Bm'),
+(4, 'Biegler-König', 'Cornelia', 'OStR.in', 'Bk'),
+(5, 'Biegler-König', 'Friedrich', 'Prof. Dr. math.', 'Bi'),
+(10, 'Cottin', 'Claudia', 'Prof\'n. Dr. rer. nat.', 'Co'),
+(11, 'Diekmann', 'Paul', 'Prof. Dr.-Ing.', 'Di'),
+(13, 'Dornseifer-Seitz', 'Adelheid', 'Dipl. Übersetzerin', 'Ds'),
+(14, 'Draxl', 'Sybille', 'Dipl. math.', 'Dx'),
+(15, 'Dürkopp', 'Klaus', 'Prof. Dr.-Ing.', 'Dü'),
+(16, 'Feyerabend', 'Franz', 'Prof. Dr.-Ing.', 'Fb'),
+(18, 'Grünwoldt', 'Lutz', 'Prof. Dr.-Ing.', 'Gr'),
+(19, 'Gudermann', 'Frank', 'Prof. Dr. rer. nat.', 'Gm'),
+(21, 'Haubrock', 'Jens', 'Prof. Dr.-Ing.', 'Ha'),
+(22, 'Schöning', 'Sonja', 'Prof. Dr. rer. nat.', 'Sh'),
+(24, 'Hofer', 'Klaus', 'Prof. Dr. Ing. habil.', 'Hf'),
+(25, 'Hoffmann', 'Sebastian', 'Prof. Dr.-Ing.', 'Hm'),
+(26, 'Hüsgen', 'Bruno', 'Prof. Dr.-Ing.', 'Hü'),
+(28, 'Jaroschek', 'Christoph', 'Prof. Dr.-Ing.', 'Jk'),
+(30, 'Kaschuba', 'Reinhard', 'Prof. Dr.-Ing.', 'Kb'),
+(32, 'Kisse', 'Raimund', 'Prof. Dr.-Ing.', 'Ki'),
+(36, 'Kühlert', 'Heinrich', 'Prof. Dr.-Ing.', 'Kü'),
+(37, 'Lajios', 'Georgios', 'Prof. Dr. rer. nat.', 'La'),
+(38, 'Loviscach', 'Jörn', 'Prof. Dr. rer. nat.', 'Lo'),
+(39, 'Lütkemeyer', 'Dirk', 'Prof. Dr. rer. nat.', 'Lü'),
+(40, 'Manz-Schumacher', 'Hildegard', 'Prof. Dr. rer. pol.', 'Ma'),
+(41, 'Naumann', 'Rolf', 'Prof. Dr.-Ing.', 'Na'),
+(43, 'Ohlhoff', 'Antje', 'Prof. Dr. rer. nat.', 'Oh'),
+(44, 'Panreck', 'Klaus', 'Prof. Dr.-Ing.', 'Pa'),
+(45, 'Patel', 'Anant', 'Prof. Dr. rer. nat.', 'Pa'),
+(46, 'Petrova', 'Svetozara', 'Prof. Dr. rer. nat.', 'Pt'),
+(47, 'Petry', 'Martin', 'Prof. Dr. rer. nat.', 'Pe'),
+(49, 'Schierenberg', 'Marc-Oliver', 'Prof. Dr. rer. nat.', 'Si'),
+(51, 'Schmidt', 'Norbert', 'Prof. Dr.-Ing.', 'Sd'),
+(53, 'Schröder', 'Christian', 'Prof. Dr. rer. nat.', 'Sö'),
+(54, 'Schultheis', 'Rüdiger', 'Prof. Dr.-Ing.', 'Sl'),
+(55, 'Schumacher', 'Bernd-Josef', 'Prof. Dr. rer. nat.', 'Sc'),
+(56, 'Schwenzfeier-Hellkamp', 'Eva', 'Prof. Dr.-Ing.', 'Sp'),
+(58, 'Ueckerdt', 'Rainer', 'Prof. Dr. sc. techn. Dr. rer. nat.', 'Ue'),
+(59, 'Vucetic', 'Dragan', 'Prof. Dr.', 'Vu'),
+(60, 'Wameling', 'Hubertus', 'Prof. Dr.', 'Wm'),
+(61, 'Waßmuth', 'Joachim', 'Prof. Dr.-Ing.', 'Wu'),
+(63, 'Weidemann', 'Dirk', 'Prof. Dr.-Ing.', 'Wn'),
+(65, 'Zielke', 'Dirk', 'Prof. Dr.-Ing.', 'Zi'),
+(73, 'Liebing', 'Günter', 'Dr.', 'Li'),
+(74, 'Niemann', 'Martin', 'Dr.', 'Ni'),
+(75, 'Jakobs-Schönwandt', 'Desiree', 'Dr.', 'Js'),
+(78, 'Schneider', 'Axel', 'Prof. Dr. rer. nat.', 'SrA'),
+(81, 'Feldmann', 'Dirk', 'Dr. rer. nat.', 'Fe'),
+(82, 'Thole', 'Frank', 'Dipl.-Ing.', 'Th'),
+(86, 'Fromme', 'Lars', 'Prof. Dr. rer.nat.', 'Fr'),
+(92, 'Vemmer', 'Marina', 'M.Sc.', 'Ve'),
+(95, 'Böttner', 'Rudolph', 'Dr.', 'Bö'),
+(96, 'Westerwalbesloh', 'Thomas', 'Prof. Dr.', 'Ww'),
+(98, 'Komarnicki', 'Przemyslaw', 'Dr.', 'Ko'),
+(99, 'Viertel', 'Klaus', '', 'Vi'),
+(100, 'Homburg', 'Sarah Vanessa', 'M.Sc.', 'Hg'),
+(101, 'Sauser', '', 'Prof. Dr.-Ing.', 'Sr'),
+(102, 'Schenck', 'Wolfram', 'Prof. Dr.', 'Sk'),
+(103, 'Stockem', 'Irina', 'ME', 'So'),
+(106, 'Kohlhase', 'Martin', 'Prof. Dr.-Ing.', 'Kh'),
+(107, 'Lorenz', 'Sissy-Christin', 'M.Sc.', 'Lr'),
+(108, 'Prott-Warner', 'Vanessa', 'DI', 'Pw'),
+(110, 'Gronemann', 'Andreas', 'Dipl.-Ing. (FH)', 'Gn'),
+(111, 'Teich', 'Lisa', 'M.sc.', 'Te'),
+(112, 'Stötzer', 'Martin', 'Dr.', 'St'),
+(114, 'Bekemeier', 'Simon', 'M.Eng.', 'Be'),
+(115, 'Krell', 'Vivien', 'M.Sc.', 'Kr'),
+(116, 'Lemke', 'Annika Vera', 'M.Sc.', 'Lk'),
+(118, 'Hesse', 'Thomas', 'Prof. Dr.-Ing.', 'He'),
+(119, 'Hilbig', 'Thomas', 'Dipl.-Ing.', 'Hi'),
+(120, 'Charles', 'Peter', 'Prof. Dr.-Ing.', 'Cs'),
+(121, 'Horst', 'Jörg', 'Dr.rer.nat.', 'Ht'),
+(122, 'Schlüter', 'Ralph', '', 'SL'),
+(123, 'Humbert', '', '', 'Hu'),
+(124, 'Schoden', 'Fabian', 'WMA', 'So'),
+(125, 'Wrede', 'Nicola', '', 'Wr'),
+(126, 'Bünte', 'Andreas', 'Dr.-Ing.', 'Bü'),
+(127, 'Hartman', 'Holger', 'Dipl.-VW', 'Hm'),
+(128, 'Wasmuth', 'Joachim', 'Dr.-Ing.', 'Wa'),
+(129, 'Herrmann', 'Katharina', '', 'Hr'),
+(130, 'Preiser', '???', 'Dr.', 'Ps'),
+(131, 'Lösenbeck', 'Hr.', 'DI', 'Ls'),
+(132, 'Horstmann', 'Magnus', 'Prof. Dr.-Ing.', 'Hn'),
+(133, 'Fahrig', 'Michael', 'Prof. Dr.-Ing.', 'Fa'),
+(134, 'Funke', 'Herbert', 'Prof. Dr.-Ing.', 'Fu'),
+(135, 'Kaimann', 'Andrea', 'Prof\'n. Dr.-Ing.', 'Km'),
+(136, 'Manowicz', 'Adam-Alexander', 'Prof. Dr.', 'Mw'),
+(141, 'Lüke', 'Sabine', 'M.Sc.', 'LK'),
+(142, 'Topp', 'Manuel', 'Prof', 'M');
 
 -- --------------------------------------------------------
 
@@ -631,28 +630,27 @@ CREATE TABLE `studiengang` (
   `SGName` varchar(30) NOT NULL,
   `SGKurz` varchar(30) NOT NULL,
   `Semester` int(1) NOT NULL,
-  `FK_FBID` int(5) NOT NULL,
-  `FK_SPSID` int(4) NOT NULL DEFAULT 69
+  `FK_FBID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Daten für Tabelle `studiengang`
 --
 
-INSERT INTO `studiengang` (`SGID`, `SGName`, `SGKurz`, `Semester`, `FK_FBID`, `FK_SPSID`) VALUES
-(1, 'Ingenieurinformatik_BA', 'INI', 6, 9, 91),
-(2, 'Elektrotechnik_BA', 'ELE', 6, 9, 91),
-(4, 'Regenerative Energien_BA', 'RGE', 6, 9, 91),
-(5, 'Elektrotechnik_MA', 'MEL', 2, 9, 91),
-(6, 'Maschinenbau_BA', 'MAB', 6, 9, 91),
-(9, 'Maschinenbau_MA', 'MMB', 2, 9, 91),
-(10, 'Elektrotechnik_VB', 'ELV', 8, 8, 91),
-(11, 'Optimierung und Simulation_MA', 'OUS', 2, 9, 91),
-(13, 'Mechatronik_BA', 'MEC', 6, 9, 91),
-(14, 'Digitale Technologien_BA', 'DIT', 6, 6, 91),
-(15, 'Biomechatronik_MA', 'BME', 4, 9, 91),
-(16, 'Maschinenbau_VB', 'MAV', 8, 8, 91),
-(17, 'Mathematik_BA', 'MAT', 6, 9, 91);
+INSERT INTO `studiengang` (`SGID`, `SGName`, `SGKurz`, `Semester`, `FK_FBID`) VALUES
+(1, 'Ingenieurinformatik_BA', 'INI', 6, 9),
+(2, 'Elektrotechnik_BA', 'ELE', 6, 9),
+(4, 'Regenerative Energien_BA', 'RGE', 6, 9),
+(5, 'Elektrotechnik_MA', 'MEL', 2, 9),
+(6, 'Maschinenbau_BA', 'MAB', 6, 9),
+(9, 'Maschinenbau_MA', 'MMB', 2, 9),
+(10, 'Elektrotechnik_VB', 'ELV', 8, 8),
+(11, 'Optimierung und Simulation_MA', 'OUS', 2, 9),
+(13, 'Mechatronik_BA', 'MEC', 6, 9),
+(14, 'Digitale Technologien_BA', 'DIT', 6, 6),
+(15, 'Biomechatronik_MA', 'BME', 4, 9),
+(16, 'Maschinenbau_VB', 'MAV', 8, 8),
+(17, 'Mathematik_BA', 'MAT', 6, 9);
 
 -- --------------------------------------------------------
 
@@ -668,6 +666,7 @@ CREATE TABLE `stundenplaneintrag` (
   `FK_SGMID` int(11) DEFAULT NULL,
   `FK_LVID` int(11) DEFAULT NULL,
   `FK_RID` int(5) DEFAULT NULL,
+  `FK_SPSID` int(4) DEFAULT NULL,
   `Studierendenzahl` int(5) NOT NULL,
   `ZeitStempel` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -676,25 +675,43 @@ CREATE TABLE `stundenplaneintrag` (
 -- Daten für Tabelle `stundenplaneintrag`
 --
 
-INSERT INTO `stundenplaneintrag` (`SPID`, `SPEStartZeit`, `SPEEndZeit`, `SPTermin`, `FK_SGMID`, `FK_LVID`, `FK_RID`, `Studierendenzahl`, `ZeitStempel`) VALUES
-(3, '2021-01-26 08:00:00', '2021-01-26 09:30:00', 1, 49, 2, 24, 30, '2021-01-28 13:38:20'),
-(8, '2021-01-28 08:00:00', '2021-01-28 08:45:00', 1, 49, 2, 24, 30, '2021-01-28 13:38:21'),
-(9, '2021-01-27 08:00:00', '2021-01-27 09:30:00', 2, 49, 1, 27, 20, '2021-01-28 13:38:21'),
-(11, '2021-01-26 08:00:00', '2021-01-26 08:45:00', 1, 54, 2, 24, 30, '2021-01-28 13:38:21'),
-(12, '2021-01-26 08:00:00', '2021-01-26 08:45:00', 1, 56, 2, 24, 30, '2021-01-28 13:38:21'),
-(13, '2021-01-26 08:00:00', '2021-01-26 09:15:00', 1, 252, 2, 24, 30, '2021-01-28 13:38:21'),
-(29, '2021-01-27 10:15:00', '2021-01-27 11:45:00', 1, 49, 1, 24, 30, '2021-01-28 13:38:21'),
-(96, '2021-01-28 12:00:00', '2021-01-28 13:00:00', 6, 49, 2, 26, 6, '2021-01-28 13:38:21'),
-(97, '2021-01-28 14:00:00', '2021-01-28 15:00:00', 2, 49, 2, 27, 2, '2021-01-28 13:38:21'),
-(101, '2021-01-27 14:00:00', '2021-01-27 15:00:00', 3, 49, 1, 25, 3, '2021-01-28 13:38:21'),
-(104, '2021-01-27 14:00:00', '2021-01-27 15:00:00', 3, 55, 1, 25, 3, '2021-01-28 13:38:21'),
-(106, '2021-01-25 08:00:00', '2021-01-25 09:15:00', 3, 49, 1, 26, 3, '2021-01-28 13:38:21'),
-(111, '2021-01-25 10:30:00', '2021-01-25 11:30:00', 6, 49, 2, 27, 2, '2021-01-28 13:38:21'),
-(112, '2021-01-26 09:15:00', '2021-01-26 10:15:00', 2, 55, 1, 24, 2, '2021-01-28 13:38:22'),
-(113, '2021-01-26 12:30:00', '2021-01-26 13:30:00', 3, 49, 1, 24, 2, '2021-01-28 13:38:22'),
-(114, '2021-01-27 09:00:00', '2021-01-27 10:00:00', 4, 55, 1, 24, 2, '2021-01-28 13:38:22'),
-(115, '2021-01-27 15:30:00', '2021-01-27 16:30:00', 3, 49, 1, 24, 2, '2021-01-28 13:38:22'),
-(116, '2021-01-26 10:30:00', '2021-01-26 12:00:00', 4, 55, 2, 28, 1, '2021-01-28 13:38:22');
+INSERT INTO `stundenplaneintrag` (`SPID`, `SPEStartZeit`, `SPEEndZeit`, `SPTermin`, `FK_SGMID`, `FK_LVID`, `FK_RID`, `FK_SPSID`, `Studierendenzahl`, `ZeitStempel`) VALUES
+(3, '2021-03-02 08:00:00', '2021-03-02 09:30:00', 1, 49, 2, 24, 91, 30, '2021-03-06 13:24:34'),
+(8, '2021-03-04 10:00:00', '2021-03-04 10:45:00', 1, 49, 2, 24, 91, 30, '2021-03-06 13:24:34'),
+(11, '2021-03-02 08:00:00', '2021-03-02 08:45:00', 1, 54, 2, 24, 91, 30, '2021-03-06 13:24:34'),
+(12, '2021-03-02 08:00:00', '2021-03-02 08:45:00', 1, 56, 2, 24, 91, 30, '2021-03-06 13:24:34'),
+(13, '2021-03-02 08:00:00', '2021-03-02 09:15:00', 1, 252, 2, 24, 91, 30, '2021-03-06 13:24:34'),
+(29, '2021-03-03 10:15:00', '2021-03-03 11:45:00', 1, 49, 1, 24, 91, 30, '2021-03-06 13:24:34'),
+(96, '2021-03-04 12:00:00', '2021-03-04 13:00:00', 6, 49, 2, 26, 91, 6, '2021-03-06 13:24:34'),
+(97, '2021-03-04 14:00:00', '2021-03-04 15:00:00', 2, 49, 2, 27, 91, 2, '2021-03-06 13:24:34'),
+(101, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 49, 1, 25, 91, 3, '2021-03-06 13:24:34'),
+(104, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 55, 1, 25, 91, 3, '2021-03-06 13:24:34'),
+(106, '2021-03-01 08:00:00', '2021-03-01 09:15:00', 3, 49, 1, 26, 91, 3, '2021-03-06 13:24:34'),
+(111, '2021-03-01 10:30:00', '2021-03-01 11:30:00', 6, 49, 2, 27, 91, 2, '2021-03-06 13:24:34'),
+(112, '2021-03-02 09:15:00', '2021-03-02 10:15:00', 2, 55, 1, 24, 91, 2, '2021-03-06 13:24:34'),
+(113, '2021-03-02 12:30:00', '2021-03-02 13:30:00', 3, 49, 1, 24, 91, 2, '2021-03-06 13:24:34'),
+(114, '2021-03-03 09:00:00', '2021-03-03 10:00:00', 4, 55, 1, 24, 91, 2, '2021-03-06 13:24:34'),
+(115, '2021-03-03 15:30:00', '2021-03-03 16:30:00', 3, 49, 1, 24, 91, 2, '2021-03-06 13:24:34'),
+(116, '2021-03-02 10:30:00', '2021-03-02 12:00:00', 4, 55, 2, 28, 91, 1, '2021-03-06 13:24:34'),
+(120, '2021-03-02 08:30:00', '2021-03-02 09:30:00', 2, 54, 2, 24, 91, 2, '2021-03-06 13:24:34'),
+(154, '2021-03-03 08:00:00', '2021-03-03 09:00:00', 2, 49, 1, 24, 91, 2, '2021-03-06 13:25:36'),
+(189, '2021-03-02 08:00:00', '2021-03-02 09:30:00', 1, 49, 2, 24, 75, 30, '2021-03-06 13:24:34'),
+(190, '2021-03-04 10:00:00', '2021-03-04 10:45:00', 1, 49, 2, 24, 75, 30, '2021-03-06 13:24:34'),
+(191, '2021-03-02 08:00:00', '2021-03-02 08:45:00', 1, 54, 2, 24, 75, 30, '2021-03-06 13:24:34'),
+(192, '2021-03-03 10:15:00', '2021-03-03 11:45:00', 1, 49, 1, 24, 75, 30, '2021-03-06 13:24:34'),
+(193, '2021-03-04 12:00:00', '2021-03-04 13:00:00', 6, 49, 2, 26, 75, 6, '2021-03-06 13:24:34'),
+(194, '2021-03-04 14:00:00', '2021-03-04 15:00:00', 2, 49, 2, 27, 75, 2, '2021-03-06 13:24:34'),
+(195, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 49, 1, 25, 75, 3, '2021-03-06 13:24:34'),
+(196, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 55, 1, 25, 75, 3, '2021-03-06 13:24:34'),
+(197, '2021-03-01 08:00:00', '2021-03-01 09:15:00', 3, 49, 1, 26, 75, 3, '2021-03-06 13:24:34'),
+(198, '2021-03-01 10:30:00', '2021-03-01 11:30:00', 6, 49, 2, 27, 75, 2, '2021-03-06 13:24:34'),
+(199, '2021-03-02 09:15:00', '2021-03-02 10:15:00', 2, 55, 1, 24, 75, 2, '2021-03-06 13:24:34'),
+(200, '2021-03-02 12:30:00', '2021-03-02 13:30:00', 3, 49, 1, 24, 75, 2, '2021-03-06 13:24:34'),
+(201, '2021-03-03 09:00:00', '2021-03-03 10:00:00', 4, 55, 1, 24, 75, 2, '2021-03-06 13:24:34'),
+(202, '2021-03-03 15:30:00', '2021-03-03 16:30:00', 3, 49, 1, 24, 75, 2, '2021-03-06 13:24:34'),
+(203, '2021-03-02 10:30:00', '2021-03-02 12:00:00', 4, 55, 2, 28, 75, 1, '2021-03-06 13:24:34'),
+(204, '2021-03-02 08:30:00', '2021-03-02 09:30:00', 2, 54, 2, 24, 75, 2, '2021-03-06 13:24:34'),
+(205, '2021-03-03 08:00:00', '2021-03-03 09:00:00', 2, 49, 1, 24, 75, 2, '2021-03-06 13:25:36');
 
 -- --------------------------------------------------------
 
@@ -708,6 +725,7 @@ CREATE TABLE `stundenplansemester` (
   `SPJahr` int(4) DEFAULT NULL,
   `SPKw` int(2) NOT NULL,
   `StartDatum` date NOT NULL,
+  `EndDatum` date NOT NULL,
   `FK_SPSTID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -715,14 +733,11 @@ CREATE TABLE `stundenplansemester` (
 -- Daten für Tabelle `stundenplansemester`
 --
 
-INSERT INTO `stundenplansemester` (`SPSID`, `SPSemester`, `SPJahr`, `SPKw`, `StartDatum`, `FK_SPSTID`) VALUES
-(68, 'SoSe', 2019, 0, '2019-07-08', 4),
-(69, 'SoSe', 2019, 0, '2019-09-23', 4),
-(75, 'WiSe', 2019, 5, '2020-01-27', 4),
-(76, 'WiSe', 2019, 0, '2020-03-23', 4),
-(79, 'SoSe', 2020, 0, '2020-06-29', 3),
-(82, 'SoSe', 2020, 42, '2020-10-12', 3),
-(91, 'WiSe', 2020, 5, '2021-02-01', 3);
+INSERT INTO `stundenplansemester` (`SPSID`, `SPSemester`, `SPJahr`, `SPKw`, `StartDatum`, `EndDatum`, `FK_SPSTID`) VALUES
+(68, 'SoSe', 2019, 0, '2019-07-08', '2019-07-08', 4),
+(75, 'WiSe', 2019, 5, '2020-01-27', '2020-01-27', 4),
+(82, 'SoSe', 2020, 42, '2020-10-12', '2020-10-12', 3),
+(91, 'WiSe', 2020, 5, '2021-02-01', '2021-02-01', 3);
 
 -- --------------------------------------------------------
 
@@ -770,8 +785,7 @@ ALTER TABLE `benutzergruppe`
 -- Indizes für die Tabelle `dozenten`
 --
 ALTER TABLE `dozenten`
-  ADD PRIMARY KEY (`DID`),
-  ADD KEY `FK_AccID` (`FK_AccID`);
+  ADD PRIMARY KEY (`DID`);
 
 --
 -- Indizes für die Tabelle `faculty`
@@ -820,8 +834,7 @@ ALTER TABLE `sgmodul`
 --
 ALTER TABLE `studiengang`
   ADD PRIMARY KEY (`SGID`),
-  ADD KEY `FFBID` (`FK_FBID`),
-  ADD KEY `FK_SPSID` (`FK_SPSID`);
+  ADD KEY `FFBID` (`FK_FBID`);
 
 --
 -- Indizes für die Tabelle `stundenplaneintrag`
@@ -830,7 +843,8 @@ ALTER TABLE `stundenplaneintrag`
   ADD PRIMARY KEY (`SPID`),
   ADD KEY `FK_RID` (`FK_RID`),
   ADD KEY `FK_SGMID` (`FK_SGMID`),
-  ADD KEY `FK_LVID` (`FK_LVID`);
+  ADD KEY `FK_LVID` (`FK_LVID`),
+  ADD KEY `FK_SPSID` (`FK_SPSID`);
 
 --
 -- Indizes für die Tabelle `stundenplansemester`
@@ -865,7 +879,7 @@ ALTER TABLE `benutzergruppe`
 -- AUTO_INCREMENT für Tabelle `faculty`
 --
 ALTER TABLE `faculty`
-  MODIFY `FBID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `FBID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT für Tabelle `lehrveranstaltungsart`
@@ -883,7 +897,7 @@ ALTER TABLE `location`
 -- AUTO_INCREMENT für Tabelle `modul`
 --
 ALTER TABLE `modul`
-  MODIFY `ModID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=283;
+  MODIFY `ModID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=284;
 
 --
 -- AUTO_INCREMENT für Tabelle `raum`
@@ -907,7 +921,7 @@ ALTER TABLE `studiengang`
 -- AUTO_INCREMENT für Tabelle `stundenplaneintrag`
 --
 ALTER TABLE `stundenplaneintrag`
-  MODIFY `SPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=117;
+  MODIFY `SPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplansemester`
@@ -933,12 +947,6 @@ ALTER TABLE `accounts`
   ADD CONSTRAINT `accounts_ibfk_2` FOREIGN KEY (`FK_FBID`) REFERENCES `faculty` (`FBID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Constraints der Tabelle `dozenten`
---
-ALTER TABLE `dozenten`
-  ADD CONSTRAINT `dozenten_ibfk_1` FOREIGN KEY (`FK_AccID`) REFERENCES `accounts` (`AccID`);
-
---
 -- Constraints der Tabelle `raum`
 --
 ALTER TABLE `raum`
@@ -956,8 +964,7 @@ ALTER TABLE `sgmodul`
 -- Constraints der Tabelle `studiengang`
 --
 ALTER TABLE `studiengang`
-  ADD CONSTRAINT `studiengang_ibfk_1` FOREIGN KEY (`FK_FBID`) REFERENCES `faculty` (`FBID`),
-  ADD CONSTRAINT `studiengang_ibfk_2` FOREIGN KEY (`FK_SPSID`) REFERENCES `stundenplansemester` (`SPSID`);
+  ADD CONSTRAINT `studiengang_ibfk_1` FOREIGN KEY (`FK_FBID`) REFERENCES `faculty` (`FBID`);
 
 --
 -- Constraints der Tabelle `stundenplaneintrag`
@@ -965,7 +972,8 @@ ALTER TABLE `studiengang`
 ALTER TABLE `stundenplaneintrag`
   ADD CONSTRAINT `stundenplaneintrag_ibfk_2` FOREIGN KEY (`FK_RID`) REFERENCES `raum` (`RID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `stundenplaneintrag_ibfk_3` FOREIGN KEY (`FK_SGMID`) REFERENCES `sgmodul` (`SGMID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `stundenplaneintrag_ibfk_4` FOREIGN KEY (`FK_LVID`) REFERENCES `lehrveranstaltungsart` (`LVID`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `stundenplaneintrag_ibfk_4` FOREIGN KEY (`FK_LVID`) REFERENCES `lehrveranstaltungsart` (`LVID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `stundenplaneintrag_ibfk_5` FOREIGN KEY (`FK_SPSID`) REFERENCES `stundenplansemester` (`SPSID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints der Tabelle `stundenplansemester`

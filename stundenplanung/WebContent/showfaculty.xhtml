@@ -10,42 +10,32 @@
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
-		    <p:commandButton value="Fakultät Hinzugügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+		    <p:commandButton value="Fachbereich Hinzugügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="FacultyList" var="list" value="#{facultyController.facultyList}" selectionMode="single" selection="#{facultyController.facultySelected}"  rowKey="#{list.fbid}">
 			
 		        <p:ajax event="rowSelect" listener="#{facultyController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="FacultyList"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.fbid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.fbid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
-		 
-		        <p:column headerText="Fakultät">
+		        <p:column headerText="Fachbereich">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.facName}" /></f:facet>
 		                <f:facet name="input"><p:inputText value="#{list.facName}" style="width:96%" label="Fakultät"/></f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Fakultätkürzel">
+		        <p:column headerText="Fachbereichskürzel">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.facShortName}" /></f:facet>
 		                <f:facet name="input"><p:inputText value="#{list.facShortName}" style="width:96%" label="Fakultät kürzel"/></f:facet>
 		            </p:cellEditor>
 		        </p:column>
-		        
-		        
-		        
-		        
+		        		        
 		    </p:dataTable>
 		     
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Fachbereich Editiert Details" showEffect="clip" hideEffect="clip" width="500">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="facName_reg" value="Fakultät: "/>
-                    <h:inputText id="facName_reg" value="#{facultyController.facultySelected.facName}" ></h:inputText>                                                  
+                    <h:inputText id="facName_reg" value="#{facultyController.facultySelected.facName}" size="63"></h:inputText>                                                  
                     
                     <h:outputLabel for="facShortName_reg" value="Kürzel: "/>
                     <h:inputText id="facShortName_reg" value="#{facultyController.facultySelected.facShortName}" ></h:inputText>
@@ -57,12 +47,12 @@
 		     
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fakultät" showEffect="clip" hideEffect="clip">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fachbereich" showEffect="clip" hideEffect="clip" width="530">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <h:outputLabel styleClass="label" style="font-size:12pt" for="facName_reg" value="Fakultät: "/>
                     <h:panelGrid columns="3">
-                    	<h:inputText id="facName_reg" styleClass="form-control" value="#{facultyController.facultyName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden."></h:inputText>
+                    	<h:inputText id="facName_reg" styleClass="form-control" value="#{facultyController.facultyName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden." size="63"></h:inputText>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="facName_reg" style="color: red"/>
                     </h:panelGrid>                                                        

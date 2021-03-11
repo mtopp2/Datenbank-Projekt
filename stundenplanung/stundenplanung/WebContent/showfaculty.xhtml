@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+		    <p:commandButton value="Fakultät Hinzugügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="FacultyList" var="list" value="#{facultyController.facultyList}" selectionMode="single" selection="#{facultyController.facultySelected}"  rowKey="#{list.fbid}">
+			
+		        <p:ajax event="rowSelect" listener="#{facultyController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="FacultyList"/>
+		 
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.fbid}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.fbid}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Fakultät">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.facName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.facName}" style="width:96%" label="Fakultät"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Fakultätkürzel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.facShortName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.facShortName}" style="width:96%" label="Fakultät kürzel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        
+		        
+		        
+		    </p:dataTable>
+		     
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="facName_reg" value="Fakultät: "/>
+                    <h:inputText id="facName_reg" value="#{facultyController.facultySelected.facName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="facShortName_reg" value="Kürzel: "/>
+                    <h:inputText id="facShortName_reg" value="#{facultyController.facultySelected.facShortName}" ></h:inputText>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{facultyController.addFaculty()}" update=":form:FacultyList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:FacultyList" actionListener="#{facultyController.deleteFaculty()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		     
+		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fakultät" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel styleClass="label" style="font-size:12pt" for="facName_reg" value="Fakultät: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="facName_reg" styleClass="form-control" value="#{facultyController.facultyName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="facName_reg" style="color: red"/>
+                    </h:panelGrid>                                                        
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="facShortName_reg" value="Kürzel: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="facShortName_reg" styleClass="form-control" value="#{facultyController.facultyShortName}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="facShortName_reg" style="color: red"/>
+                    </h:panelGrid>
+                    
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{facultyController.createDoFaculty}" update=":form:FacultyList" oncomplete="PF('eventDialog').hide();"/>		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

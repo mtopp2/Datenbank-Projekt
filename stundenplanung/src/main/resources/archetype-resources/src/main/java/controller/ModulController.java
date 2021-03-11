@@ -3,6 +3,9 @@ package controller;
 import model.Account;
 import model.Faculty;
 import model.Modul;
+import model.Pruefcode;
+import model.Studiengang;
+
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
@@ -68,6 +71,7 @@ public class ModulController implements Serializable {
 	
 	@Inject 
 	private Modul modul;
+	private Pruefcode code;
 	
 	@EJB
 	private ModulFacadeLocal modulFacadeLocal;
@@ -75,16 +79,25 @@ public class ModulController implements Serializable {
 	@PostConstruct
     public void init() {
         modulList = getModulListAll();
+        EntityManager em = emf.createEntityManager();
+        Query q = em.createNamedQuery("Pruefcode.findAll");
+		List FList = q.getResultList();
+        for (Object FListitem : FList)
+        {
+        	Pruefcode pCode =(Pruefcode)FListitem;
+        	codeList.add(pCode);
+        }
     }
- 
+	
+	ArrayList<Pruefcode> codeList = new ArrayList<>();
 	
 	
 	private String modulShort;
 	private String modulName;
-	private Integer pcId;
+	private int pcId;
 	private boolean modulShortOk = false;
 	private boolean modulNameOk = false;
-	private boolean pcIdOk = false;
+	
 	
 	List<Modul> modulList;
 	
@@ -99,7 +112,21 @@ public class ModulController implements Serializable {
 		this.modulSelected = modulSelected;
 	}
 	
+	public ArrayList<Pruefcode> getCodeList() {
+		return codeList;
+	}
+
+	public void setCodeList(ArrayList<Pruefcode> codeList) {
+		this.codeList = codeList;
+	}
 	
+	public Pruefcode getCode() {
+		return code;
+	}
+
+	public void setCode(Pruefcode code) {
+		this.code = code;
+	}
 	  
     public List<Modul> getModulList() {
         return modulList;
@@ -143,19 +170,12 @@ public class ModulController implements Serializable {
 	    }
 	}
 	  
-	public Integer getPcId() {
+	public int getPcId() {
 		return pcId;
 	}
 	  
-	public void setPcId(Integer pcId) {
-		if(pcId!=null){
+	public void setPcId(int pcId) {
 	        this.pcId = pcId;
-	        pcIdOk=true;
-	    }
-	    else{
-	    	FacesMessage message = new FacesMessage("Prüfcodeid bereits vorhanden.");
-            FacesContext.getCurrentInstance().addMessage("ModulForm:pcid_reg", message);
-	    }
 	}
 	
 	public UIComponent getReg() {
@@ -167,16 +187,27 @@ public class ModulController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createModul() {
+	public void createModul() throws Exception  {
+		EntityManager em = emf.createEntityManager();
 		Modul mod = new Modul();  
 		mod.setModName(modulName);    
 		mod.setModKuerzel(modulShort);      
-		mod.setPcid(pcId);
-		modulFacadeLocal.create(mod);
+		mod.setPruefcode(findCode(pcId));
+		try {
+			modulFacadeLocal.create(mod);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+		em.close();
 	}
 	
 	public void createDoModul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(modulNameOk == true && modulShortOk == true && pcIdOk == true) {
+		if(modulNameOk == true && modulShortOk == true) {
 			createModul();
 			modulList = getModulListAll();
 		}
@@ -197,13 +228,24 @@ public class ModulController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteModul() {
+    public void deleteModul() throws Exception {
         modulList.remove(modulSelected);
         EntityManager em = emf.createEntityManager();
         TypedQuery<Modul> q = em.createNamedQuery("Modul.findByModID",Modul.class);
         q.setParameter("modID", modulSelected.getModID());
         modul = (Modul)q.getSingleResult();
-        modulFacadeLocal.remove(modul);
+        
+        try {
+        	modulFacadeLocal.remove(modul);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+        
 		em.close();
     }
     
@@ -212,21 +254,42 @@ public class ModulController implements Serializable {
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
         modulSelected = e.getObject();
+        pcId = modulSelected.getPruefcode().getPcid();
         
     }
     
     public void addModul(){
+    	 try {
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Modul.class, modulSelected.getModID());
  	        modul.setModID(modulSelected.getModID());
  	        modul.setModName(modulSelected.getModName());
  	        modul.setModKuerzel(modulSelected.getModKuerzel());
- 	        modul.setPcid(modulSelected.getPcid());
+ 	        modul.setPruefcode(findCode(pcId));
  	        modulFacadeLocal.edit(modul);
- 			em.close();
+ 	    }
+ 	    catch (Exception e) {
+ 	        try {
+ 	            ut.rollback();
+ 	        } 
+ 	        catch (IllegalStateException | SecurityException | SystemException ex) {
+ 	        }
+ 	    }
+    	 modulList = getModulListAll();
     }
     
-    
+    private Pruefcode findCode(int pcid) {
+        try{
+            EntityManager em = emf.createEntityManager(); 
+            TypedQuery<Pruefcode> query
+                = em.createNamedQuery("Pruefcode.findByPcid",Pruefcode.class);
+            query.setParameter("pcid", pcid);
+            code = (Pruefcode)query.getSingleResult();
+        }
+        catch(Exception e){   
+        }
+        return code;
+    }
    // ---------------------------------------------------------------------------------------------------------------------
     
 	

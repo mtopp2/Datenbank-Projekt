@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Erstellungszeit: 06. Mrz 2021 um 14:35
+-- Erstellungszeit: 11. Mrz 2021 um 14:38
 -- Server-Version: 10.4.11-MariaDB
 -- PHP-Version: 7.4.2
 
@@ -44,12 +44,12 @@ CREATE TABLE `accounts` (
 INSERT INTO `accounts` (`AccID`, `AccName`, `AccPwd`, `AccEmail`, `FK_GroupID`, `FK_FBID`) VALUES
 (47, 'User1', '1234', 'user1@fh-bielefeld.de', 2, 9),
 (48, 'User2', '1234', 'user2@fh-bielefeld.de', 2, 8),
-(49, 'User3', '1234', 'user3@fh-bielefeld.de', NULL, 7),
-(50, 'User4', '1234', 'user4@fh-bielefeld.de', NULL, 1),
-(51, 'User5', '1234', 'user5@fh-bielefeld.de', NULL, 3),
-(52, 'User6', '1234', 'user6@fh-bielefeld.de', NULL, 2),
-(53, 'User7', '1234', 'user7@fh-bielefeld.de', NULL, 3),
-(54, 'User8', '1234', 'user8@fh-bielefeld.de', NULL, 1),
+(49, 'User3', '1234', 'user3@fh-bielefeld.de', 1, 7),
+(50, 'User4', '1234', 'user4@fh-bielefeld.de', 9, 1),
+(51, 'User5', '1234', 'user5@fh-bielefeld.de', 2, 3),
+(52, 'User6', '1234', 'user6@fh-bielefeld.de', 9, 2),
+(53, 'User7', '1234', 'user7@fh-bielefeld.de', 2, 3),
+(54, 'User8', '1234', 'user8@fh-bielefeld.de', 9, 1),
 (55, 'User9', '1234', 'user9@fh-bielefeld.de', 2, 1),
 (56, 'Manu', 'Manu', 'manu.topp@online.de', 1, 8);
 
@@ -426,6 +426,132 @@ INSERT INTO `modul` (`ModID`, `ModName`, `ModKuerzel`, `PCID`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Tabellenstruktur für Tabelle `pruefcodes`
+--
+
+CREATE TABLE `pruefcodes` (
+  `PCID` int(11) NOT NULL,
+  `PrCode` int(11) NOT NULL COMMENT 'Prüfungsnummer im LSF',
+  `FK_SgID` int(5) NOT NULL DEFAULT 1,
+  `VertiefungsrichtungShortName` varchar(10) DEFAULT NULL,
+  `PflichtOderWahl` varchar(15) NOT NULL DEFAULT 'P'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Daten für Tabelle `pruefcodes`
+--
+
+INSERT INTO `pruefcodes` (`PCID`, `PrCode`, `FK_SgID`, `VertiefungsrichtungShortName`, `PflichtOderWahl`) VALUES
+(1, 1400, 2, '', 'P'),
+(2, 1900, 2, '', 'P'),
+(3, 2100, 2, '', 'P'),
+(4, 2200, 1, '', 'P'),
+(5, 2300, 2, '', 'P'),
+(6, 2400, 2, '', 'P'),
+(7, 2800, 2, '', 'P'),
+(8, 2900, 2, '', 'P'),
+(9, 3100, 4, '', 'P'),
+(10, 3500, 2, 'EAU', 'P'),
+(11, 3600, 2, '', 'P'),
+(12, 3400, 4, 'EES', 'P'),
+(13, 3700, 2, 'EAN', 'P'),
+(14, 3800, 13, '', 'W'),
+(15, 4000, 2, 'EAN', 'P'),
+(16, 4100, 2, 'EAU', 'P'),
+(17, 4200, 2, '', 'P'),
+(18, 4300, 1, '', 'P'),
+(19, 4400, 1, '', 'P'),
+(21, 3800, 1, '', 'P'),
+(22, 3900, 2, 'EAN', 'P'),
+(23, 4100, 2, 'EAN', 'P'),
+(24, 4200, 4, 'EFS', 'W'),
+(26, 4400, 1, '', 'P'),
+(27, 1100, 2, '', 'P'),
+(28, 1200, 2, '', 'P'),
+(29, 1300, 2, '', 'P'),
+(31, 1500, 2, '', 'P'),
+(32, 1600, 2, '', 'P'),
+(33, 1700, 2, '', 'P'),
+(34, 1800, 2, '', 'P'),
+(36, 2000, 2, '', 'P'),
+(41, 2500, 2, '', 'P'),
+(42, 2600, 2, '', 'P'),
+(43, 2700, 2, '', 'P'),
+(47, 3200, 2, '', 'P'),
+(48, 3300, 2, 'EAN', 'P'),
+(49, 4200, 4, 'EES', 'W'),
+(56, 3700, 2, 'EAU', 'P'),
+(57, 3800, 1, '', 'P'),
+(58, 3900, 2, 'EAU', 'P'),
+(59, 4100, 13, '', 'W'),
+(60, 4300, 1, '', 'P'),
+(61, 4400, 1, '', 'P'),
+(62, 3400, 2, '', 'P'),
+(63, 3500, 2, 'EAN', 'P'),
+(64, 3600, 1, '', 'P'),
+(68, 4100, 1, '', 'P'),
+(69, 4500, 2, 'EAU', 'P'),
+(70, 1000, 2, '', 'P'),
+(85, 4000, 13, '', 'W'),
+(86, 4002, 1, '', 'P'),
+(87, 4003, 1, '', 'P'),
+(88, 4004, 1, '', 'P'),
+(89, 4005, 1, '', 'P'),
+(90, 4006, 1, '', 'P'),
+(91, 4007, 1, '', 'P'),
+(93, 4640, 1, '', 'P'),
+(94, 4650, 1, '', 'P'),
+(95, 4008, 1, '', 'P'),
+(96, 0, 1, '', 'P'),
+(97, 2018, 1, '', 'P'),
+(98, 2028, 1, '', 'P'),
+(99, 2027, 1, '', 'P'),
+(100, 2026, 1, '', 'P'),
+(101, 2019, 1, '', 'P'),
+(102, 2021, 1, '', 'P'),
+(104, 2020, 1, '', 'P'),
+(105, 4600, 1, '', 'P'),
+(106, 2029, 1, '', 'P'),
+(107, 2030, 1, '', 'P'),
+(108, 2023, 1, '', 'P'),
+(109, 2022, 1, '', 'P'),
+(110, 1272, 1, '', 'P'),
+(111, 1210, 1, '', 'P'),
+(112, 3000, 1, '', 'W'),
+(115, 4660, 1, '', 'P'),
+(116, 3804, 2, '', 'W'),
+(117, 3812, 1, '', 'P'),
+(118, 3805, 1, '', 'P'),
+(119, 4401, 1, '', 'P'),
+(120, 1193, 1, '', 'P'),
+(121, 2303, 4, '', 'W'),
+(122, 3050, 2, '', 'P'),
+(123, 3150, 2, '', 'P'),
+(124, 3300, 2, 'EAU', 'P'),
+(125, 3300, 4, 'EES', 'W'),
+(126, 3300, 4, 'EFS', 'W'),
+(127, 3900, 4, 'EES', 'W'),
+(128, 6100, 2, '', 'P'),
+(129, 7000, 2, '', 'P'),
+(130, 8000, 2, '', 'P'),
+(131, 2500, 1, '', 'P'),
+(132, 3911, 13, '', 'W'),
+(133, 3200, 1, '', 'P'),
+(134, 4503, 13, '', 'W'),
+(135, 3400, 13, '', 'W'),
+(136, 3700, 1, '', 'P'),
+(137, 4504, 13, '', 'W'),
+(138, 3202, 15, '', 'P'),
+(139, 1005, 1, '', 'P'),
+(140, 1005, 1, '', 'P'),
+(141, 1174, 2, '', 'P'),
+(142, 1066, 2, '', 'P'),
+(143, 1068, 2, '', 'P'),
+(144, 1060, 4, '', 'P');
+
+-- --------------------------------------------------------
+
+--
 -- Tabellenstruktur für Tabelle `raum`
 --
 
@@ -662,6 +788,7 @@ CREATE TABLE `stundenplaneintrag` (
   `SPID` int(11) NOT NULL,
   `SPEStartZeit` datetime NOT NULL,
   `SPEEndZeit` datetime NOT NULL,
+  `Wochentag` enum('Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag') NOT NULL,
   `SPTermin` int(1) NOT NULL,
   `FK_SGMID` int(11) DEFAULT NULL,
   `FK_LVID` int(11) DEFAULT NULL,
@@ -675,43 +802,47 @@ CREATE TABLE `stundenplaneintrag` (
 -- Daten für Tabelle `stundenplaneintrag`
 --
 
-INSERT INTO `stundenplaneintrag` (`SPID`, `SPEStartZeit`, `SPEEndZeit`, `SPTermin`, `FK_SGMID`, `FK_LVID`, `FK_RID`, `FK_SPSID`, `Studierendenzahl`, `ZeitStempel`) VALUES
-(3, '2021-03-02 08:00:00', '2021-03-02 09:30:00', 1, 49, 2, 24, 91, 30, '2021-03-06 13:24:34'),
-(8, '2021-03-04 10:00:00', '2021-03-04 10:45:00', 1, 49, 2, 24, 91, 30, '2021-03-06 13:24:34'),
-(11, '2021-03-02 08:00:00', '2021-03-02 08:45:00', 1, 54, 2, 24, 91, 30, '2021-03-06 13:24:34'),
-(12, '2021-03-02 08:00:00', '2021-03-02 08:45:00', 1, 56, 2, 24, 91, 30, '2021-03-06 13:24:34'),
-(13, '2021-03-02 08:00:00', '2021-03-02 09:15:00', 1, 252, 2, 24, 91, 30, '2021-03-06 13:24:34'),
-(29, '2021-03-03 10:15:00', '2021-03-03 11:45:00', 1, 49, 1, 24, 91, 30, '2021-03-06 13:24:34'),
-(96, '2021-03-04 12:00:00', '2021-03-04 13:00:00', 6, 49, 2, 26, 91, 6, '2021-03-06 13:24:34'),
-(97, '2021-03-04 14:00:00', '2021-03-04 15:00:00', 2, 49, 2, 27, 91, 2, '2021-03-06 13:24:34'),
-(101, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 49, 1, 25, 91, 3, '2021-03-06 13:24:34'),
-(104, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 55, 1, 25, 91, 3, '2021-03-06 13:24:34'),
-(106, '2021-03-01 08:00:00', '2021-03-01 09:15:00', 3, 49, 1, 26, 91, 3, '2021-03-06 13:24:34'),
-(111, '2021-03-01 10:30:00', '2021-03-01 11:30:00', 6, 49, 2, 27, 91, 2, '2021-03-06 13:24:34'),
-(112, '2021-03-02 09:15:00', '2021-03-02 10:15:00', 2, 55, 1, 24, 91, 2, '2021-03-06 13:24:34'),
-(113, '2021-03-02 12:30:00', '2021-03-02 13:30:00', 3, 49, 1, 24, 91, 2, '2021-03-06 13:24:34'),
-(114, '2021-03-03 09:00:00', '2021-03-03 10:00:00', 4, 55, 1, 24, 91, 2, '2021-03-06 13:24:34'),
-(115, '2021-03-03 15:30:00', '2021-03-03 16:30:00', 3, 49, 1, 24, 91, 2, '2021-03-06 13:24:34'),
-(116, '2021-03-02 10:30:00', '2021-03-02 12:00:00', 4, 55, 2, 28, 91, 1, '2021-03-06 13:24:34'),
-(120, '2021-03-02 08:30:00', '2021-03-02 09:30:00', 2, 54, 2, 24, 91, 2, '2021-03-06 13:24:34'),
-(154, '2021-03-03 08:00:00', '2021-03-03 09:00:00', 2, 49, 1, 24, 91, 2, '2021-03-06 13:25:36'),
-(189, '2021-03-02 08:00:00', '2021-03-02 09:30:00', 1, 49, 2, 24, 75, 30, '2021-03-06 13:24:34'),
-(190, '2021-03-04 10:00:00', '2021-03-04 10:45:00', 1, 49, 2, 24, 75, 30, '2021-03-06 13:24:34'),
-(191, '2021-03-02 08:00:00', '2021-03-02 08:45:00', 1, 54, 2, 24, 75, 30, '2021-03-06 13:24:34'),
-(192, '2021-03-03 10:15:00', '2021-03-03 11:45:00', 1, 49, 1, 24, 75, 30, '2021-03-06 13:24:34'),
-(193, '2021-03-04 12:00:00', '2021-03-04 13:00:00', 6, 49, 2, 26, 75, 6, '2021-03-06 13:24:34'),
-(194, '2021-03-04 14:00:00', '2021-03-04 15:00:00', 2, 49, 2, 27, 75, 2, '2021-03-06 13:24:34'),
-(195, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 49, 1, 25, 75, 3, '2021-03-06 13:24:34'),
-(196, '2021-03-03 14:00:00', '2021-03-03 15:00:00', 3, 55, 1, 25, 75, 3, '2021-03-06 13:24:34'),
-(197, '2021-03-01 08:00:00', '2021-03-01 09:15:00', 3, 49, 1, 26, 75, 3, '2021-03-06 13:24:34'),
-(198, '2021-03-01 10:30:00', '2021-03-01 11:30:00', 6, 49, 2, 27, 75, 2, '2021-03-06 13:24:34'),
-(199, '2021-03-02 09:15:00', '2021-03-02 10:15:00', 2, 55, 1, 24, 75, 2, '2021-03-06 13:24:34'),
-(200, '2021-03-02 12:30:00', '2021-03-02 13:30:00', 3, 49, 1, 24, 75, 2, '2021-03-06 13:24:34'),
-(201, '2021-03-03 09:00:00', '2021-03-03 10:00:00', 4, 55, 1, 24, 75, 2, '2021-03-06 13:24:34'),
-(202, '2021-03-03 15:30:00', '2021-03-03 16:30:00', 3, 49, 1, 24, 75, 2, '2021-03-06 13:24:34'),
-(203, '2021-03-02 10:30:00', '2021-03-02 12:00:00', 4, 55, 2, 28, 75, 1, '2021-03-06 13:24:34'),
-(204, '2021-03-02 08:30:00', '2021-03-02 09:30:00', 2, 54, 2, 24, 75, 2, '2021-03-06 13:24:34'),
-(205, '2021-03-03 08:00:00', '2021-03-03 09:00:00', 2, 49, 1, 24, 75, 2, '2021-03-06 13:25:36');
+INSERT INTO `stundenplaneintrag` (`SPID`, `SPEStartZeit`, `SPEEndZeit`, `Wochentag`, `SPTermin`, `FK_SGMID`, `FK_LVID`, `FK_RID`, `FK_SPSID`, `Studierendenzahl`, `ZeitStempel`) VALUES
+(3, '2021-03-09 08:00:00', '2021-03-09 09:30:00', 'Dienstag', 1, 49, 2, 24, 91, 30, '2021-03-10 17:21:50'),
+(8, '2021-03-11 10:00:00', '2021-03-11 10:45:00', 'Donnerstag', 1, 49, 2, 24, 91, 30, '2021-03-10 17:21:50'),
+(11, '2021-03-09 08:00:00', '2021-03-09 08:45:00', 'Dienstag', 1, 54, 2, 24, 91, 30, '2021-03-10 17:21:50'),
+(12, '2021-03-09 08:00:00', '2021-03-09 08:45:00', 'Dienstag', 1, 56, 2, 24, 91, 30, '2021-03-10 17:21:51'),
+(13, '2021-03-09 08:00:00', '2021-03-09 09:15:00', 'Dienstag', 1, 252, 2, 24, 91, 30, '2021-03-10 17:21:51'),
+(29, '2021-03-10 10:15:00', '2021-03-10 11:45:00', 'Mittwoch', 1, 49, 1, 24, 91, 30, '2021-03-10 17:21:51'),
+(96, '2021-03-11 12:00:00', '2021-03-11 13:00:00', 'Donnerstag', 6, 49, 2, 26, 91, 6, '2021-03-10 17:21:51'),
+(97, '2021-03-11 14:00:00', '2021-03-11 15:00:00', 'Donnerstag', 2, 49, 2, 27, 91, 2, '2021-03-10 17:21:51'),
+(101, '2021-03-10 14:00:00', '2021-03-10 15:00:00', 'Mittwoch', 3, 49, 1, 25, 91, 3, '2021-03-10 17:21:51'),
+(104, '2021-03-10 14:00:00', '2021-03-10 15:00:00', 'Mittwoch', 3, 55, 1, 25, 91, 3, '2021-03-10 17:21:52'),
+(106, '2021-03-08 08:00:00', '2021-03-08 09:15:00', 'Montag', 3, 49, 1, 26, 91, 3, '2021-03-10 17:21:52'),
+(111, '2021-03-08 10:30:00', '2021-03-08 11:30:00', 'Montag', 6, 49, 2, 27, 91, 2, '2021-03-10 17:21:52'),
+(112, '2021-03-09 09:15:00', '2021-03-09 10:15:00', 'Dienstag', 2, 55, 1, 24, 91, 2, '2021-03-10 17:21:52'),
+(113, '2021-03-09 12:30:00', '2021-03-09 13:30:00', 'Dienstag', 3, 49, 1, 24, 91, 2, '2021-03-10 17:21:52'),
+(114, '2021-03-10 09:00:00', '2021-03-10 10:00:00', 'Mittwoch', 4, 55, 1, 24, 91, 2, '2021-03-10 17:21:52'),
+(115, '2021-03-10 15:30:00', '2021-03-10 16:30:00', 'Mittwoch', 3, 49, 1, 24, 91, 2, '2021-03-10 17:21:52'),
+(116, '2021-03-09 10:30:00', '2021-03-09 12:00:00', 'Dienstag', 4, 55, 2, 28, 91, 1, '2021-03-10 17:21:52'),
+(120, '2021-03-09 08:30:00', '2021-03-09 09:30:00', 'Dienstag', 2, 54, 2, 24, 91, 2, '2021-03-10 17:21:52'),
+(206, '2021-03-10 08:00:00', '2021-03-10 09:00:00', 'Mittwoch', 1, 49, 1, 24, 91, 3, '2021-03-10 17:21:52'),
+(209, '2021-03-09 10:15:00', '2021-03-09 11:30:00', 'Dienstag', 4, 49, 1, 24, 91, 3, '2021-03-10 17:21:52'),
+(228, '2021-03-12 08:00:00', '2021-03-12 09:30:00', 'Freitag', 3, 49, 1, 24, 91, 2, '2021-03-10 17:23:40'),
+(229, '2021-03-09 08:00:00', '2021-03-09 09:30:00', 'Dienstag', 1, 49, 2, 24, 75, 30, '2021-03-10 17:21:50'),
+(230, '2021-03-11 10:00:00', '2021-03-11 10:45:00', 'Donnerstag', 1, 49, 2, 24, 75, 30, '2021-03-10 17:21:50'),
+(231, '2021-03-09 08:00:00', '2021-03-09 08:45:00', 'Dienstag', 1, 54, 2, 24, 75, 30, '2021-03-10 17:21:50'),
+(232, '2021-03-10 10:15:00', '2021-03-10 11:45:00', 'Mittwoch', 1, 49, 1, 24, 75, 30, '2021-03-10 17:21:51'),
+(233, '2021-03-11 12:00:00', '2021-03-11 13:00:00', 'Donnerstag', 6, 49, 2, 26, 75, 6, '2021-03-10 17:21:51'),
+(234, '2021-03-11 14:00:00', '2021-03-11 15:00:00', 'Donnerstag', 2, 49, 2, 27, 75, 2, '2021-03-10 17:21:51'),
+(235, '2021-03-10 14:00:00', '2021-03-10 15:00:00', 'Mittwoch', 3, 49, 1, 25, 75, 3, '2021-03-10 17:21:51'),
+(236, '2021-03-10 14:00:00', '2021-03-10 15:00:00', 'Mittwoch', 3, 55, 1, 25, 75, 3, '2021-03-10 17:21:52'),
+(237, '2021-03-08 08:00:00', '2021-03-08 09:15:00', 'Montag', 3, 49, 1, 26, 75, 3, '2021-03-10 17:21:52'),
+(238, '2021-03-08 10:30:00', '2021-03-08 11:30:00', 'Montag', 6, 49, 2, 27, 75, 2, '2021-03-10 17:21:52'),
+(239, '2021-03-09 09:15:00', '2021-03-09 10:15:00', 'Dienstag', 2, 55, 1, 24, 75, 2, '2021-03-10 17:21:52'),
+(240, '2021-03-09 12:30:00', '2021-03-09 13:30:00', 'Dienstag', 3, 49, 1, 24, 75, 2, '2021-03-10 17:21:52'),
+(241, '2021-03-10 09:00:00', '2021-03-10 10:00:00', 'Mittwoch', 4, 55, 1, 24, 75, 2, '2021-03-10 17:21:52'),
+(242, '2021-03-10 15:30:00', '2021-03-10 16:30:00', 'Mittwoch', 3, 49, 1, 24, 75, 2, '2021-03-10 17:21:52'),
+(243, '2021-03-09 10:30:00', '2021-03-09 12:00:00', 'Dienstag', 4, 55, 2, 28, 75, 1, '2021-03-10 17:21:52'),
+(244, '2021-03-09 08:30:00', '2021-03-09 09:30:00', 'Dienstag', 2, 54, 2, 24, 75, 2, '2021-03-10 17:21:52'),
+(245, '2021-03-10 08:00:00', '2021-03-10 09:00:00', 'Mittwoch', 1, 49, 1, 24, 75, 3, '2021-03-10 17:21:52'),
+(246, '2021-03-09 10:15:00', '2021-03-09 11:30:00', 'Dienstag', 4, 49, 1, 24, 75, 3, '2021-03-10 17:21:52'),
+(247, '2021-03-12 08:00:00', '2021-03-12 09:30:00', 'Freitag', 3, 49, 1, 24, 75, 2, '2021-03-10 17:23:40');
 
 -- --------------------------------------------------------
 
@@ -734,7 +865,7 @@ CREATE TABLE `stundenplansemester` (
 --
 
 INSERT INTO `stundenplansemester` (`SPSID`, `SPSemester`, `SPJahr`, `SPKw`, `StartDatum`, `EndDatum`, `FK_SPSTID`) VALUES
-(68, 'SoSe', 2019, 0, '2019-07-08', '2019-07-08', 4),
+(68, 'SoSe', 2019, 0, '2019-03-25', '2019-07-19', 4),
 (75, 'WiSe', 2019, 5, '2020-01-27', '2020-01-27', 4),
 (82, 'SoSe', 2020, 42, '2020-10-12', '2020-10-12', 3),
 (91, 'WiSe', 2020, 5, '2021-02-01', '2021-02-01', 3);
@@ -813,6 +944,13 @@ ALTER TABLE `modul`
   ADD KEY `fk_modul_pruefcodes1` (`PCID`);
 
 --
+-- Indizes für die Tabelle `pruefcodes`
+--
+ALTER TABLE `pruefcodes`
+  ADD PRIMARY KEY (`PCID`),
+  ADD KEY `FK_SgID` (`FK_SgID`);
+
+--
 -- Indizes für die Tabelle `raum`
 --
 ALTER TABLE `raum`
@@ -873,67 +1011,73 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT für Tabelle `benutzergruppe`
 --
 ALTER TABLE `benutzergruppe`
-  MODIFY `GroupID` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `GroupID` tinyint(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT für Tabelle `faculty`
 --
 ALTER TABLE `faculty`
-  MODIFY `FBID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `FBID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT für Tabelle `lehrveranstaltungsart`
 --
 ALTER TABLE `lehrveranstaltungsart`
-  MODIFY `LVID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `LVID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT für Tabelle `location`
 --
 ALTER TABLE `location`
-  MODIFY `LID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `LID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT für Tabelle `modul`
 --
 ALTER TABLE `modul`
-  MODIFY `ModID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=284;
+  MODIFY `ModID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=285;
+
+--
+-- AUTO_INCREMENT für Tabelle `pruefcodes`
+--
+ALTER TABLE `pruefcodes`
+  MODIFY `PCID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=146;
 
 --
 -- AUTO_INCREMENT für Tabelle `raum`
 --
 ALTER TABLE `raum`
-  MODIFY `RID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `RID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT für Tabelle `sgmodul`
 --
 ALTER TABLE `sgmodul`
-  MODIFY `SGMID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=261;
+  MODIFY `SGMID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=262;
 
 --
 -- AUTO_INCREMENT für Tabelle `studiengang`
 --
 ALTER TABLE `studiengang`
-  MODIFY `SGID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `SGID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplaneintrag`
 --
 ALTER TABLE `stundenplaneintrag`
-  MODIFY `SPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=206;
+  MODIFY `SPID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=248;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplansemester`
 --
 ALTER TABLE `stundenplansemester`
-  MODIFY `SPSID` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `SPSID` int(4) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT für Tabelle `stundenplanstatus`
 --
 ALTER TABLE `stundenplanstatus`
-  MODIFY `SPSTID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `SPSTID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Constraints der exportierten Tabellen
@@ -945,6 +1089,18 @@ ALTER TABLE `stundenplanstatus`
 ALTER TABLE `accounts`
   ADD CONSTRAINT `accounts_ibfk_1` FOREIGN KEY (`FK_GroupID`) REFERENCES `benutzergruppe` (`GroupID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `accounts_ibfk_2` FOREIGN KEY (`FK_FBID`) REFERENCES `faculty` (`FBID`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `modul`
+--
+ALTER TABLE `modul`
+  ADD CONSTRAINT `modul_ibfk_1` FOREIGN KEY (`PCID`) REFERENCES `pruefcodes` (`PCID`);
+
+--
+-- Constraints der Tabelle `pruefcodes`
+--
+ALTER TABLE `pruefcodes`
+  ADD CONSTRAINT `pruefcodes_ibfk_1` FOREIGN KEY (`FK_SgID`) REFERENCES `studiengang` (`SGID`);
 
 --
 -- Constraints der Tabelle `raum`

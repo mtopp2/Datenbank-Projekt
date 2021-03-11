@@ -30,6 +30,8 @@ public class Stundenplaneintrag implements Serializable {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date SPEEndZeit;
+	
+	private String wochentag;
 
 	private int SPTermin;
 
@@ -82,6 +84,14 @@ public class Stundenplaneintrag implements Serializable {
 
 	public void setSPEStartZeit(Date SPEStartZeit) {
 		this.SPEStartZeit = SPEStartZeit;
+	}
+	
+	public String getWochentag() {
+		return this.wochentag;
+	}
+
+	public void setWochentag(String wochentag) {
+		this.wochentag = wochentag;
 	}
 
 	public int getSPTermin() {

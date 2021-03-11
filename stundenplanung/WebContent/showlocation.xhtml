@@ -15,25 +15,13 @@
 			
         		<p:ajax event="rowSelect" listener="#{locationController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LocationList"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.lid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.lid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
 		 
-		        <p:column headerText="Stadt">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.LCity}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.LCity}" style="width:96%" label="Stadt"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Stadt" sortBy="#{list.LCity}">
+		                <h:outputText value="#{list.LCity}" />
 		        </p:column>
 		        
-		        <p:column headerText="Straße">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.LStreet}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.LStreet}" style="width:96%" label="Straße"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Straße" sortBy="#{list.LStreet}">
+		                <h:outputText value="#{list.LStreet}" />
 		        </p:column> 		 
 		       
 		    </p:dataTable>

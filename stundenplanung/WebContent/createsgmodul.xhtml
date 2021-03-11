@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
+			<ui:define name="content">
+            <div>
+                <div class="row">
+                    <div                   
+                        class="col col-md-4 col-md-offset-4"
+                        style="background: whitesmoke">
+                    <h:outputLabel      
+                        style="color: whitesmoke"
+                        value=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4 col-md-offset-4"
+                         style="background: whitesmoke">
+                         <h:form id="SgmodulForm">                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="modSemester_reg" 
+                                value="Im welchen Semester: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="modSemester_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{sgmodulController.modSemester}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Semester muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="modSemester_reg" style="color: red"/>
+                            </h:panelGrid>                                                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="SGMNotiz_reg" 
+                                value="Notiz: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="SGMNotiz_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{sgmodulController.SGMNotiz}" 
+                                    required = "true"  
+                                    requiredMessage="Eine Notiz muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="SGMNotiz_reg" style="color: red"/>
+                            </h:panelGrid>
+                            <h:outputLabel     
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="modName_reg" 
+	                            value="Modul: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:selectOneMenu
+	                                styleClass="form-control" 
+	                                id="modName_reg"
+	                                required="true"
+	                                requiredMessage="Bitte ein Modul zu dem Studiengang auswählen:"
+	                                value="#{sgmodulController.modName}">
+	                                <f:selectItem
+	                                    itemLabel="-----"
+	                                    noSelectionOption="true"/>
+	                                    <f:selectItems
+	                                        value="#{sgmodulController.modulListe}"/>
+	                               </h:selectOneMenu>
+	                            <h:outputLabel     
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="modName_reg" style="color: red"/>
+	                        </h:panelGrid>
+	                        <h:outputLabel     
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="DName_reg" 
+	                            value="Dozenten: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:selectOneMenu
+	                                styleClass="form-control" 
+	                                id="DName_reg"
+	                                required="true"
+	                                requiredMessage="Bitte einen Dozenten zu dem Studiengang auswählen:"
+	                                value="#{sgmodulController.DName}">
+	                                <f:selectItem
+	                                    itemLabel="-----"
+	                                    noSelectionOption="true"/>
+	                                    <f:selectItems
+	                                        value="#{sgmodulController.dozentenListe}"/>
+	                               </h:selectOneMenu>
+	                            <h:outputLabel     
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="DName_reg" style="color: red"/>
+	                        </h:panelGrid>
+	                        <h:outputLabel     
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="SGName_reg" 
+	                            value="Studiengang: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:selectOneMenu
+	                                styleClass="form-control" 
+	                                id="SGName_reg"
+	                                required="true"
+	                                requiredMessage="Bitte ein Studiengang auswählen:"
+	                                value="#{sgmodulController.SGName}">
+	                                <f:selectItem
+	                                    itemLabel="-----"
+	                                    noSelectionOption="true"/>
+	                                    <f:selectItems
+	                                        value="#{sgmodulController.studiengangListe}"/>
+	                               </h:selectOneMenu>
+	                            <h:outputLabel     
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="SGName_reg" style="color: red"/>
+	                        </h:panelGrid>
+                            <h:panelGrid>
+                                <h:commandButton   
+                                    id="submit"
+                                    type="submit"
+                                    styleClass="btn btn-primary" 
+                                    value="Hinzufügen" 
+                                    style="margin-top: 10px" 
+                                    action="#{sgmodulController.createDoSgmodul()}"/>
+                            </h:panelGrid> 
+                            <h:message for="submit"/>
+                    	</h:form>
+                    </div>
+                </div>
+        	</div>
+        	</ui:define>
+		</ui:composition>
+    </h:body>
+</html>

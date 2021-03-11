@@ -13,8 +13,7 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="Benutzergruppe.findAll", query="SELECT b FROM Benutzergruppe b"),
 	@NamedQuery(name="Benutzergruppe.findByID", query="SELECT b FROM Benutzergruppe b WHERE b.groupID = :groupID"),
-	@NamedQuery(name="Benutzergruppe.findByBGName", query = "SELECT b FROM Benutzergruppe b WHERE b.BGName = :BGName"),
-	@NamedQuery(name="Benutzergruppe.updateBenutzergruppe", query="UPDATE Benutzergruppe b SET b.groupID=:groupID, b.BGName=:BGName, b.BGShortName=:BGShortName, b.BGRechte=:BGRechte WHERE b.groupID=:groupID")})
+	@NamedQuery(name="Benutzergruppe.findByBGName", query = "SELECT b FROM Benutzergruppe b WHERE b.BGName = :BGName")})
 public class Benutzergruppe implements Serializable {
 	private static final long serialVersionUID = 1L;
 

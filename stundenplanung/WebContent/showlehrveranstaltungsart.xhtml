@@ -16,32 +16,18 @@
 			
 		         <p:ajax event="rowSelect" listener="#{lehrveranstaltungsartController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LehrveranstaltungsartListe"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.lvid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.lvid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
+		        
 		 
-		        <p:column headerText="Lehrveranstaltungsname">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.lvname}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.lvname}" style="width:96%" label="Lehrveranstaltungsname"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Lehrveranstaltungsname" sortBy="#{list.lvname}">		           
+		                <h:outputText value="#{list.lvname}" />		                
 		        </p:column>
 		        
-		        <p:column headerText="Lehrveranstaltungskurzform">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.lvkurz}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.lvkurz}" style="width:96%" label="Lehrveranstaltungskurzform"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Lehrveranstaltungskurzform" sortBy="#{list.lvkurz}">
+		                <h:outputText value="#{list.lvkurz}" />		                
 		        </p:column>
 		        
-		        <p:column headerText="Lehrveranstaltungsdauer">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.lvdauer}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.lvdauer}" style="width:96%" label="Lehrveranstaltungsdauer"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Lehrveranstaltungsdauer" sortBy="#{list.lvdauer}">
+		                <h:outputText value="#{list.lvdauer}" />	                
 		        </p:column>
 		        
 		    </p:dataTable>

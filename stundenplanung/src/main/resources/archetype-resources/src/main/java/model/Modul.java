@@ -13,8 +13,7 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="Modul.findAll", query="SELECT m FROM Modul m"),
 	@NamedQuery(name = "Modul.findByModID", query = "SELECT m FROM Modul m WHERE m.modID = :modID"),
-	@NamedQuery(name = "Modul.findByModName", query = "SELECT m FROM Modul m WHERE m.modName = :modName"),
-    @NamedQuery(name="Modul.updateModul", query="UPDATE Modul m SET m.modID=:modID, m.modName=:modName, m.modKuerzel=:modKuerzel, m.pcid=:pcid WHERE m.modID=:modID")})
+	@NamedQuery(name = "Modul.findByModName", query = "SELECT m FROM Modul m WHERE m.modName = :modName")})
 
 public class Modul implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -26,11 +25,13 @@ public class Modul implements Serializable {
 
 	private String modName;
 
-	private Integer pcid;
-
 	//bi-directional many-to-one association to Sgmodul
 	@OneToMany(mappedBy="modul")
 	private List<Sgmodul> sgmoduls;
+	
+	@ManyToOne
+	@JoinColumn(name="pcid")
+	private Pruefcode pruefcode;
 
 	public Modul() {
 	}
@@ -59,12 +60,12 @@ public class Modul implements Serializable {
 		this.modName = modName;
 	}
 
-	public Integer getPcid() {
-		return this.pcid;
+	public Pruefcode getPruefcode() {
+		return this.pruefcode;
 	}
 
-	public void setPcid(Integer pcid) {
-		this.pcid = pcid;
+	public void setPruefcode(Pruefcode pruefcode) {
+		this.pruefcode = pruefcode;
 	}
 
 	public List<Sgmodul> getSgmoduls() {

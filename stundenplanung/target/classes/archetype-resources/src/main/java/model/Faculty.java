@@ -15,8 +15,7 @@ import java.util.List;
 @NamedQueries({
 	@NamedQuery(name="Faculty.findAll", query="SELECT f FROM Faculty f"),
 	@NamedQuery(name="Faculty.findByFacName", query = "SELECT f FROM Faculty f WHERE f.facName = :facName"),
-	@NamedQuery(name = "Faculty.findByFbid", query = "SELECT f FROM Faculty f WHERE f.fbid = :fbid"),
-    @NamedQuery(name="Faculty.updateFaculty", query="UPDATE Faculty f SET f.fbid=:fbid, f.facName=:facName, f.facShortName=:facShortName WHERE f.fbid=:fbid")})
+	@NamedQuery(name = "Faculty.findByFbid", query = "SELECT f FROM Faculty f WHERE f.fbid = :fbid")})
 public class Faculty implements Serializable {
 	private static final long serialVersionUID = 1L;
 

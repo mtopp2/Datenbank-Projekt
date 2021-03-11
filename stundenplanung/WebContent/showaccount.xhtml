@@ -10,40 +10,25 @@
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
-		    <p:commandButton value="Account Hinzufügen" id="ajax" update="msgs" action="/register.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+		    <p:commandButton value="Benutzer Hinzufügen" id="ajax" update="msgs" action="/register.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="AccountList" var="list" value="#{accountController.accountList}" editable="true" selectionMode="single" selection="#{accountController.accountSelected}" rowKey="#{list.accID}">
 			
 				<p:ajax event="rowSelect" listener="#{accountController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="AccountList"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.accID}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.accID}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
 		 
-		        <p:column headerText="Accountname">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.accName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.accName}" style="width:96%" label="Accountname"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Benutzername" sortBy="#{list.accName}">
+		                <h:outputText value="#{list.accName}" />
 		        </p:column>
 		        
-		        <p:column headerText="Passwort">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.accPwd}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.accPwd}" style="width:96%" label="PWD"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Passwort" sortBy="#{list.accPwd}">		          
+		               <h:outputText value="#{list.accPwd}" />		                
 		        </p:column>
 		        
-		        <p:column headerText="Accountemail">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.accEmail}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.accEmail}" style="width:96%" label="Accountemail"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Benutzeremail" sortBy="#{list.accEmail}">
+		               <h:outputText value="#{list.accEmail}" />		                
 		        </p:column>
 		        
-		        <p:column headerText="Benutzergruppe">
+		        <p:column headerText="Benutzergruppe" sortBy="#{list.benutzergruppe.BGName}">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.benutzergruppe.BGName}" /></f:facet>
 		                <f:facet name="input">
@@ -54,7 +39,7 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Fakultät">
+		        <p:column headerText="Fachbereich" sortBy="#{list.faculty.facName}">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
 		                <f:facet name="input">
@@ -65,16 +50,16 @@
 		            </p:cellEditor>
 		        </p:column>
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="600">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Benutzer Editiert Details" showEffect="clip" hideEffect="clip" width="600">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
-		            <h:outputLabel for="accountName" value="Accountname: "/>
+		            <h:outputLabel for="accountName" value="Benutzername: "/>
                     <h:inputText id="accountName" value="#{accountController.accountSelected.accName}" ></h:inputText>                                                  
                     
-                    <h:outputLabel for="accountPassword" value="Accountpasswort: "/>
+                    <h:outputLabel for="accountPassword" value="Passwort: "/>
                     <h:inputText id="accountPassword" value="#{accountController.accountSelected.accPwd}" ></h:inputText>   
                     
-                    <h:outputLabel for="accountEmail" value="Accountemail: "/>
+                    <h:outputLabel for="accountEmail" value="Benutzeremail: "/>
                     <h:inputText id="accountEmail" value="#{accountController.accountSelected.accEmail}" ></h:inputText>   
                     
                     <p:outputLabel for="userGroup" value="Benutzergruppe: " />
@@ -82,7 +67,7 @@
                     	<f:selectItems value="#{accountController.userGroupList}" />
 			        </p:selectOneMenu>
 			        
-			        <p:outputLabel for="faculty" value="Fakultät: " />
+			        <p:outputLabel for="faculty" value="Fachbereich: " />
 			        <p:selectOneMenu id="faculty" value="#{accountController.facultyName}" style="width:100%">
                     	<f:selectItems value="#{accountController.facultyList}" />
 			        </p:selectOneMenu>

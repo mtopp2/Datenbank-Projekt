@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
+			<ui:define name="content">
+            <div>
+                <div class="row">
+                    <div                   
+                        class="col col-md-4 col-md-offset-4"
+                        style="background: whitesmoke">
+                    <h:outputLabel      
+                        style="color: whitesmoke"
+                        value=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4 col-md-offset-4"
+                         style="background: whitesmoke">
+                         <h:form  id="BenutzergruppeForm">                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="BGName_reg" 
+                                value="Benutzergruppename: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="BGName_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{benutzergruppeController.BGName}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Benutzergruppename muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="BGName_reg" style="color: red"/>
+                            </h:panelGrid>                                                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="BGShortName_reg" 
+                                value="Benutzergruppekürzel: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="BGShortName_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{benutzergruppeController.BGShortName}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Benutzergruppekürzel muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="BGShortName_reg" style="color: red"/>
+                            </h:panelGrid>
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="BGRechte_reg" 
+                                value="Benutzergrupperechte: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="BGRechte_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{benutzergruppeController.BGRechte}" 
+                                    required = "true"  
+                                    requiredMessage="Eine Benutzergrupperechte muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="BGRechte_reg" style="color: red"/>
+                            </h:panelGrid>
+                            <h:panelGrid>
+                                <h:commandButton   
+                                    id="submit"
+                                    type="submit"
+                                    styleClass="btn btn-primary" 
+                                    value="Hinzufügen" 
+                                    style="margin-top: 10px" 
+                                    action="#{benutzergruppeController.createDoBenutzergruppe()}"/>
+                            </h:panelGrid> 
+                            <h:message for="submit"/>
+                    	</h:form>
+                    </div>
+                </div>
+        	</div>
+        	</ui:define>
+		</ui:composition>
+    </h:body>
+</html>

@@ -15,35 +15,20 @@
 		 
 		 		<p:ajax event="rowSelect" listener="#{studiengangController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="DegreecourseList"/>
 		 		
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.sgid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.sgid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
 		 
-		        <p:column headerText="Studiengang">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.SGName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.SGName}" style="width:96%" label="Studiengang"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Studiengang" sortBy="#{list.SGName}">
+		                <h:outputText value="#{list.SGName}" />		               
 		        </p:column>
 		        
-		        <p:column headerText="Kürzel">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.SGKurz}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.SGKurz}" style="width:96%" label="Kürzel"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Kürzel" sortBy="#{list.SGKurz}">
+		                <h:outputText value="#{list.SGKurz}" />
 		        </p:column>
 		        
-		        <p:column headerText="Anzahl Semester">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.semester}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.semester}" style="width:96%" label="Anz. Semester"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Anzahl Semester" sortBy="#{list.semester}">
+		                <h:outputText value="#{list.semester}" />
 		        </p:column>
 		        
-		        <p:column headerText="Faculty">
+		        <p:column headerText="Fachbereich" sortBy="#{list.faculty.facName}">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.faculty.facName}" /></f:facet>
 		                <f:facet name="input">
@@ -52,9 +37,10 @@
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
-		        </p:column>       
+		        </p:column>
+		        	       
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="600">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Studiengang Editiert Details" showEffect="clip" hideEffect="clip" width="600">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="sgname" value="Studiengang: "/>
@@ -66,10 +52,11 @@
                     <h:outputLabel for="semester" value="Anzahl Semester: "/>
                     <h:inputText id="semester" value="#{studiengangController.courseSelected.semester}" ></h:inputText>   
                     
-                    <p:outputLabel for="faculty" value="Facultät: " />
+                    <p:outputLabel for="faculty" value="Fachbereich: " />
 			        <p:selectOneMenu id="faculty" value="#{studiengangController.facultyID}" style="width:100%">
                     	<f:selectItems value="#{studiengangController.facultyList}" var="fac" itemLabel="#{fac.facName}" itemValue="#{fac.fbid}"/>
 			        </p:selectOneMenu>
+			        
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{studiengangController.addRoom()}" update=":form:DegreecourseList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
 		 			<p:commandButton value="Löschen" update=":form:DegreecourseList" actionListener="#{studiengangController.deleteStudiengang()}" oncomplete="PF('eventEditDialog').hide();"/>
@@ -77,7 +64,7 @@
 		    </p:dialog>
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="600">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Studiengang" showEffect="clip" hideEffect="clip" width="600">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <h:outputLabel for="sgname1" value="Studiengang: "/>
@@ -89,7 +76,7 @@
                     <h:outputLabel for="semester1" value="Anzahl Semester: "/>
                     <h:inputText id="semeste1r" value="#{studiengangController.semester}" ></h:inputText>   
                     
-                    <p:outputLabel for="faculty1" value="Facultät: " />
+                    <p:outputLabel for="faculty1" value="Fachbereich: " />
 			        <p:selectOneMenu id="faculty1" value="#{studiengangController.facultyID}" style="width:100%">
                     	<f:selectItems value="#{studiengangController.facultyList}" var="fac" itemLabel="#{fac.facName}" itemValue="#{fac.fbid}"/>
 			        </p:selectOneMenu>

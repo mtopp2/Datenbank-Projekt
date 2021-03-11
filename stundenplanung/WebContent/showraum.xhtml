@@ -15,35 +15,20 @@
 			
 				<p:ajax event="rowSelect" listener="#{raumController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="RoomList"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.rid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.rid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
 		 
-		        <p:column headerText="Raumname">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.RName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.RName}" style="width:96%" label="Raumname"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Raumname" sortBy="#{list.RName}">
+		                <h:outputText value="#{list.RName}" />        
 		        </p:column>
 		        
-		        <p:column headerText="Kapazität">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.kapazitaet}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.kapazitaet}" style="width:96%" label="Kapazität"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Kapazität" sortBy="#{list.kapazitaet}">
+		                <h:outputText value="#{list.kapazitaet}" />
 		        </p:column>
 		        
-		        <p:column headerText="Nachbarraum">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.nachbarRaum}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.nachbarRaum}" style="width:96%" label="Nachbarraum"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Nachbarraum" sortBy="#{list.nachbarRaum}">
+		                <h:outputText value="#{list.nachbarRaum}" />
 		        </p:column>
 		        
-		        <p:column headerText="Straße">
+		        <p:column headerText="Straße" sortBy="#{list.location.LCity}">
 		            <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.location.LCity}, #{list.location.LStreet}" /></f:facet>
 		                <f:facet name="input">
@@ -54,7 +39,7 @@
 		            </p:cellEditor>
 		        </p:column>		       
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Raum Editiert Details" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="roomname" value="Raumname: "/>
@@ -77,7 +62,7 @@
 		    </p:dialog> 
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="350">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Raum" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <h:outputLabel for="roomname1" value="Raumname: "/>

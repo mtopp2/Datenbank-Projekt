@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    
+<h:head>
+               <h:outputStylesheet library="css" name="layout.css"/>
+</h:head>
+<h:body>
+     <h:form>
+         <p:growl>
+        	<p:autoUpdate />
+    	</p:growl>
+ 		<p:panelMenu style="width:195px">
+        	<p:submenu label="Abmelden">
+            <p:menuitem value="Abmelden" action="#{loginController.logout()}"  />
+        </p:submenu>
+        <p:separator />
+        		<p:submenu label="Modul" >
+                    <p:menuitem value="Anzeigen" action="/showmodul.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createmodul.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="Account" >
+                    <p:menuitem value="Anzeigen" action="/showaccount.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createaccount.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="Location" >
+                    <p:menuitem value="Anzeigen" action="/showlocation.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createlocation.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="BGruppe" >
+                    <p:menuitem value="Anzeigen" action="/showbenutzergruppe.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createbenutzergruppe.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="Dozenten" >
+                    <p:menuitem value="Anzeigen" action="/showdozenten.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createdozenten.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="Faculty" >
+                    <p:menuitem value="Anzeigen" action="/showfaculty.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createfaculty.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="LV-Art" >
+                    <p:menuitem value="Anzeigen" action="/showlehrveranstaltungsart.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createlehrveranstaltungsart.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="Raum" >
+                    <p:menuitem value="Anzeigen" action="/showraum.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createraum.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="SG-Modul" >
+                    <p:menuitem value="Anzeigen" action="/showsgmodul.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createsgmodul.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="Studiengang" >
+                    <p:menuitem value="Anzeigen" action="/showstudiengang.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createstudiengang.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="SP-Semester" >
+                    <p:menuitem value="Anzeigen" action="/showstundenplansemester.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createstundenplansemester.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+                <p:submenu label="SP-Status" >
+                    <p:menuitem value="Anzeigen" action="/showstundenplanstatus.xhtml"  />
+                    <p:menuitem value="Erstellen" action="/createstundenplanstatus.xhtml"  />                    
+                </p:submenu>
+                <p:separator />
+		</p:panelMenu>
+	</h:form>  
+</h:body>
+</html>

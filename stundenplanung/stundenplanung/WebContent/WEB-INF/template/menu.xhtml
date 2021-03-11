@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+               <h:outputStylesheet library="css" name="layout.css"/>
+    </h:head>
+    <h:body>
+        <h:form>                               
+                <p:growl>
+        	<p:autoUpdate />
+    	</p:growl>
+ 		<p:menu style="width:195px">
+ 		
+ 		<p:submenu label="Einloggen" rendered="#{!loginController.isLoggedIn}" >
+            <p:menuitem value="Anmelden" action="/login.xhtml?faces-redirect=true" />
+            <p:menuitem value="Registrieren" action="/register.xhtml?faces-redirect=true" />
+        </p:submenu>
+        
+        <p:submenu label="Ausloggen" rendered="#{loginController.isLoggedIn}">
+            <p:menuitem value="Abmelden" action="#{loginController.logout()}"  />
+        </p:submenu>
+        
+        <p:submenu label="Anzeigen" >
+            <p:menuitem value="Stundenplan" action="/showspe.xhtml?faces-redirect=true"  />                 
+            <p:menuitem value="Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/showmodul.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Benutzer" rendered="#{(loginController.isLoggedIn and loginController.isAdm)}" action="/showaccount.xhtml?faces-redirect=true"  />                                                               
+            <p:menuitem value="Standort" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showlocation.xhtml?faces-redirect=true"  />
+            <p:menuitem value="BGruppe" rendered="#{(loginController.isLoggedIn and loginController.isAdm)}" action="/showbenutzergruppe.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Dozenten" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showdozenten.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Fakultät" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showfaculty.xhtml?faces-redirect=true"  />
+            <p:menuitem value="LV-Art" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showlehrveranstaltungsart.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Raum" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showraum.xhtml?faces-redirect=true"  />
+			<p:menuitem value="SG-Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showsgmodul.xhtml?faces-redirect=true"  />
+            <p:menuitem value="Studiengang" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showstudiengang.xhtml?faces-redirect=true"  />
+            <p:menuitem value="SP-Semester" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showstundenplansemester.xhtml?faces-redirect=true"  />
+			<p:menuitem value="SP-Status" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp))}" action="/showstundenplanstatus.xhtml?faces-redirect=true"  />                                        
+         </p:submenu>
+                
+		</p:menu>
+        </h:form>
+    </h:body>
+</html>

@@ -169,15 +169,20 @@
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <p:outputLabel for="von" value="Von:" />
-		            <p:datePicker id="von" value="#{scheduleController.event.startDate}" showTime="true" appendTo="@(body)"  />
+		            <p:datePicker id="von" value="#{scheduleController.createWeekdayStart}" timeOnly="true" pattern="HH:mm"/>
 		 
 		            <p:outputLabel for="bis" value="Bis:" />
-		            <p:datePicker id="bis" value="#{scheduleController.event.endDate}" showTime="true" appendTo="@(body)" />
+		            <p:datePicker id="bis" value="#{scheduleController.createWeekdayEnd}" timeOnly="true" pattern="HH:mm"/>
+		            
+		            <p:outputLabel for="weekday" value="Wochentag:" />
+		            <p:selectOneMenu id="weekday" value="#{scheduleController.day}" style="width:100%">
+		            	<f:selectItems value="#{scheduleController.weekDays}" var="weekday" itemValue="#{weekDay}" itemLabel="#{weekDay.label}" />
+		 			</p:selectOneMenu>
 		 			
 		 			<p:outputLabel for="termin" value="Termin:" />
 		            <p:inputText id="termin" value="#{scheduleController.spMeeting}" />
 		        	
-		        	<p:outputLabel for="Sgmodul" value="Sgmodul:" />
+		        	<p:outputLabel for="Sgmodul" value="Modul:" />
 		        	<p:selectOneMenu id="Sgmodul" value="#{scheduleController.sgmodulId}" style="width:100%">
                         <f:selectItems value="#{scheduleController.sgmodulList}" var="sgmodule" itemLabel="#{sgmodule.modul.modName}, #{sgmodule.studiengang.SGName}, #{sgmodule.dozenten.DName}" itemValue="#{sgmodule.sgmid}"/>
                     </p:selectOneMenu>
@@ -192,7 +197,7 @@
                     	<f:selectItems value="#{scheduleController.roomList}" var="rau" itemLabel="#{rau.RName}, #{rau.location.LCity}, #{rau.location.LStreet}" itemValue="#{rau.rid}"/>
 			        </p:selectOneMenu>
 			        
-			        <p:outputLabel for="sps" value="Stundenplansemester:" />
+			        <p:outputLabel for="sps" value="Semester:" />
 			        <p:selectOneMenu id="sps" value="#{scheduleController.spsId}" style="width:100%">
                     	<f:selectItems value="#{scheduleController.spsList}" var="sps" itemLabel="#{sps.SPSemester}, #{sps.SPJahr}" itemValue="#{sps.spsid}"/>
 			        </p:selectOneMenu>
@@ -211,15 +216,20 @@
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <p:outputLabel for="von1" value="Von:" />               		 
-               		<p:datePicker id="von1" value="#{scheduleController.eventSelected.SPEStartZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)"  />
+               		<p:datePicker id="von1" value="#{scheduleController.createWeekdayStart}" timeOnly="true" pattern="HH:mm"/>
 		 
 		            <p:outputLabel for="bis1" value="Bis:" />
-               		<p:datePicker id="bis1" value="#{scheduleController.eventSelected.SPEEndZeit}" pattern="yyyy/MM/dd" showTime="true" appendTo="@(body)" />
+               		<p:datePicker id="bis1" value="#{scheduleController.createWeekdayEnd}" timeOnly="true" pattern="HH:mm"/>
+               		
+               		<p:outputLabel for="weekday" value="Wochentag:" />
+		            <p:selectOneMenu id="weekday" value="#{scheduleController.day}" style="width:100%">
+		            	<f:selectItems value="#{scheduleController.weekDays}" var="weekday" itemValue="#{weekDay}" itemLabel="#{weekDay.label}" />
+		 			</p:selectOneMenu>
 		 			
 		 			<p:outputLabel for="termin1" value="Termin:" />
 		            <p:inputText id="termin1" value="#{scheduleController.eventSelected.SPTermin}" />
 		        	
-		        	<p:outputLabel for="Sgmodul1" value="Sgmodul:" />
+		        	<p:outputLabel for="Sgmodul1" value="Modul:" />
 		        	<p:selectOneMenu id="Sgmodul1" value="#{scheduleController.sgmodulId}" style="width:100%">
                         <f:selectItems value="#{scheduleController.sgmodulList}" var="sgmodule" itemLabel="#{sgmodule.modul.modName}, #{sgmodule.studiengang.SGName}, #{sgmodule.dozenten.DName}" itemValue="#{sgmodule.sgmid}"/>
                     </p:selectOneMenu>
@@ -234,7 +244,7 @@
                     	<f:selectItems value="#{scheduleController.roomList}" var="rau" itemLabel="#{rau.RName}, #{rau.location.LCity}, #{rau.location.LStreet}" itemValue="#{rau.rid}" />
 			        </p:selectOneMenu>
 			        
-			        <p:outputLabel for="sps1" value="Stundenplansemester:" />
+			        <p:outputLabel for="sps1" value="Semester:" />
 			        <p:selectOneMenu id="sps1" value="#{scheduleController.spsId}" style="width:100%">
                     	<f:selectItems value="#{scheduleController.spsList}" var="sps" itemLabel="#{sps.SPSemester}, #{sps.SPJahr}" itemValue="#{sps.spsid}"/>
 			        </p:selectOneMenu>

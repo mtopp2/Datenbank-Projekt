@@ -17,8 +17,7 @@ import javax.persistence.*;
 	@NamedQuery(name="Account.findByAccName", query = "SELECT a FROM Account a WHERE a.accName = :accName"),
 	@NamedQuery(name="Account.findByAccID", query = "SELECT a FROM Account a WHERE a.accID = :accID"),
 	@NamedQuery(name="Account.findByAccEmail", query = "SELECT a FROM Account a WHERE a.accEmail = :accEmail"),
-	@NamedQuery(name="Account.findByAccPwd", query = "SELECT a FROM Account a WHERE a.accPwd = :accPwd"),
-	@NamedQuery(name="Account.updateAccount", query="UPDATE Account a SET a.accID = :accID, a.accName = :accName, a.accEmail = :accEmail, a.accPwd = :accPwd  WHERE a.accID = :accID")})
+	@NamedQuery(name="Account.findByAccPwd", query = "SELECT a FROM Account a WHERE a.accPwd = :accPwd")})
 
 public class Account implements Serializable {
 	private static final long serialVersionUID = 1L;

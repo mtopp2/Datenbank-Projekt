@@ -236,7 +236,16 @@ public class RegisterController implements Serializable {
                 newUser.setBenutzergruppe(findBGID());
                 //Dropdown Menü
                 newUser.setFaculty(findFac(facultyName));
-                accFacadeLocal.create(newUser);
+                try {
+                	accFacadeLocal.create(newUser);
+                }
+                catch (Exception e) {
+                    try {
+                        ut.rollback();
+                    } 
+                    catch (IllegalStateException | SecurityException | SystemException ex) {
+                    }
+                }
             } 
             else {
                 FacesMessage message = new FacesMessage("Account bereits vorhanden");

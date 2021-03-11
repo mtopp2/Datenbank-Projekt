@@ -147,6 +147,14 @@ public class ScheduleController implements Serializable {
     
     private boolean showWeekends = false;
     
+    Date weekdayStart;
+    Date weekdayEnd;
+    
+    Date createWeekdayStart;
+    Date createWeekdayEnd;
+    
+    weekDay day;
+    
     //--------------------------------------------------------------
     
     public void updateDb() {
@@ -365,6 +373,9 @@ public class ScheduleController implements Serializable {
             sps2List.add(sps22.getSPJahr());
         }
         
+        
+        
+        
         spSemesterSelection = sps1List.get(1);
         spYearSelection = sps2List.get(1);
         spSemester = findSPSelection(spSemesterSelection, spYearSelection);
@@ -384,8 +395,20 @@ public class ScheduleController implements Serializable {
         
         try{
         	
-            eventSelected.setSPEStartZeit(asDate(event.getStartDate()));
-        	eventSelected.setSPEEndZeit(asDate(event.getEndDate()));
+        	weekdayStart = getWeekdayDate(day);
+        	weekdayStart.setHours(createWeekdayStart.getHours());
+        	weekdayStart.setMinutes(createWeekdayStart.getMinutes());
+        	weekdayStart.setSeconds(createWeekdayStart.getSeconds());
+
+        	weekdayEnd = getWeekdayDate(day);
+        	weekdayEnd.setHours(createWeekdayEnd.getHours());
+        	weekdayEnd.setMinutes(createWeekdayEnd.getMinutes());
+        	weekdayEnd.setSeconds(createWeekdayEnd.getSeconds());
+        	
+            eventSelected.setSPEStartZeit(weekdayStart);
+        	eventSelected.setSPEEndZeit(weekdayEnd);
+        	eventSelected.setWochentag(day.getLabel());
+
         	eventSelected.setSPTermin(spMeeting);
         	eventSelected.setSgmodul(findSgm(sgmodulId));
         	eventSelected.setLehrveranstaltungsart(findLva(teName));
@@ -426,8 +449,21 @@ public class ScheduleController implements Serializable {
 
     	try{
             em.find(Stundenplaneintrag.class, eventSelected.getSpid());            
-            eventSelected.setSPEStartZeit(eventSelected.getSPEStartZeit());
-            eventSelected.setSPEEndZeit(eventSelected.getSPEEndZeit());
+            weekdayStart = getWeekdayDate(day);
+        	weekdayStart.setHours(createWeekdayStart.getHours());
+        	weekdayStart.setMinutes(createWeekdayStart.getMinutes());
+        	weekdayStart.setSeconds(createWeekdayStart.getSeconds());
+
+        	weekdayEnd = getWeekdayDate(day);
+        	weekdayEnd.setHours(createWeekdayEnd.getHours());
+        	weekdayEnd.setMinutes(createWeekdayEnd.getMinutes());
+        	weekdayEnd.setSeconds(createWeekdayEnd.getSeconds());
+        	
+            eventSelected.setSPEStartZeit(weekdayStart);
+        	eventSelected.setSPEEndZeit(weekdayEnd);
+        	eventSelected.setWochentag(day.getLabel());
+            
+            
             eventSelected.setSPTermin(eventSelected.getSPTermin());
             eventSelected.setSgmodul(findSgm(sgmodulId));
             eventSelected.setLehrveranstaltungsart(findLva(teName));
@@ -493,6 +529,12 @@ public class ScheduleController implements Serializable {
         teName = eventSelected.getLehrveranstaltungsart().getLvname();
         roomId = eventSelected.getRaum().getRid();
         spsId = eventSelected.getStundenplansemester().getSpsid();
+        
+        //day.label = eventSelected.getWochentag();
+        day = weekDay.valueOfLabel(eventSelected.getWochentag());
+        createWeekdayStart = eventSelected.getSPEStartZeit();
+        createWeekdayEnd = eventSelected.getSPEEndZeit();
+        
     }
     
     //Neue Events hinzufügen
@@ -501,6 +543,9 @@ public class ScheduleController implements Serializable {
         
         localTime = selectEvent.getObject();
         localTime2 = selectEvent.getObject().plusHours(1);
+        
+        createWeekdayStart = convertToDateViaInstant(localTime);
+        createWeekdayEnd = convertToDateViaInstant(localTime2);
         
         event = DefaultScheduleEvent.builder()
                 .title("")
@@ -517,7 +562,7 @@ public class ScheduleController implements Serializable {
         eventSelected = (Stundenplaneintrag) event.getScheduleEvent().getData();
         startTime = eventSelected.getSPEStartZeit();
         endTime = eventSelected.getSPEEndZeit();
-        
+        //day = weekDay.valueOfLabel(eventSelected.getWochentag());
         
         long dura = event.getDeltaAsDuration().getSeconds();
         dura = dura * 1000;
@@ -527,6 +572,9 @@ public class ScheduleController implements Serializable {
         long sum1 = endTime.getTime() + dura;
         Date date2 = new Date(sum1);
         
+        SimpleDateFormat simpleDateformat = new SimpleDateFormat("EEEE");
+        day = weekDay.valueOfLabel(simpleDateformat.format(date1));
+        
         String msg;
         EntityManager em;
         em = emf.createEntityManager();
@@ -535,6 +583,8 @@ public class ScheduleController implements Serializable {
                 em.find(Stundenplaneintrag.class, eventSelected.getSpid());
                 eventSelected.setSPEStartZeit(date1);
                 eventSelected.setSPEEndZeit(date2);
+                
+                eventSelected.setWochentag(day.getLabel());
                 //Zeitstempel
                 Date date= new Date();
                 long time = date.getTime();
@@ -920,6 +970,12 @@ public class ScheduleController implements Serializable {
 	      .atZone(ZoneId.systemDefault())
 	      .toLocalDateTime();
 	}
+	
+	Date convertToDateViaInstant(LocalDateTime dateToConvert) {
+	    return java.util.Date
+	      .from(dateToConvert.atZone(ZoneId.systemDefault())
+	      .toInstant());
+	}
 
 	public LocalDateTime getLocalTime() {
 		return localTime;
@@ -1052,6 +1108,114 @@ public class ScheduleController implements Serializable {
 		this.spYearSelection = spYearSelection;
 	}
 	
+	//---------------------------------------------------------------------------------
 	
+	public Date getWeekdayStart() {
+		return weekdayStart;
+	}
 
+	public void setWeekdayStart(Date weekdayStart) {
+		this.weekdayStart = weekdayStart;
+	}
+
+	public Date getWeekdayEnd() {
+		return weekdayEnd;
+	}
+
+	public void setWeekdayEnd(Date weekdayEnd) {
+		this.weekdayEnd = weekdayEnd;
+	}
+	
+	public enum weekDay {
+		Montag("Montag"), Dienstag("Dienstag"), Mittwoch("Mittwoch"), Donnerstag("Donnerstag"), Freitag("Freitag"), Samstag("Samstag");
+		 
+		private String label;
+
+	    private weekDay(String label) {
+	        this.label = label;
+	    }
+
+	    public String getLabel() {
+	        return label;
+	    }
+	    
+	    public static weekDay valueOfLabel(String label) {
+		    for (weekDay e : values()) {
+		        if (e.label.equals(label)) {
+		            return e;
+		        }
+		    }
+		    return null;
+		}
+	}
+	
+	public static Date getWeekdayDate(weekDay weekDay) {
+	    Calendar calendar = Calendar.getInstance();
+	    
+	    switch(weekDay) {
+	    case Montag:
+	    	while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
+		        calendar.add(Calendar.DATE, +1);
+		    }
+	    	break;
+	    case Dienstag:
+	    	while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.TUESDAY) {
+		        calendar.add(Calendar.DATE, +1);
+		    }
+	    	break;
+	    case Mittwoch:
+	    	while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.WEDNESDAY) {
+		        calendar.add(Calendar.DATE, +1);
+		    }
+	    	break;
+	    case Donnerstag:
+	    	while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.THURSDAY) {
+		        calendar.add(Calendar.DATE, +1);
+		    }
+	    	break;
+	    case Freitag:
+	    	while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.FRIDAY) {
+		        calendar.add(Calendar.DATE, +1);
+		    }
+	    	break;
+	    case Samstag:
+	    	while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY) {
+		        calendar.add(Calendar.DATE, +1);
+		    }
+	    	break;
+	    default:
+            break;
+	    
+	    }
+	    return calendar.getTime();
+	}
+
+	public weekDay getDay() {
+		return day;
+	}
+
+	public void setDay(weekDay day) {
+		this.day = day;
+	}
+	
+	public weekDay[] getWeekDays() {
+        return weekDay.values();
+    }
+	
+	public Date getCreateWeekdayStart() {
+		return createWeekdayStart;
+	}
+
+	public void setCreateWeekdayStart(Date createWeekdayStart) {
+		this.createWeekdayStart = createWeekdayStart;
+	}
+
+	public Date getCreateWeekdayEnd() {
+		return createWeekdayEnd;
+	}
+
+	public void setCreateWeekdayEnd(Date createWeekdayEnd) {
+		this.createWeekdayEnd = createWeekdayEnd;
+	}
+	
 }

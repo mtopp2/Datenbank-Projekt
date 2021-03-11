@@ -168,6 +168,7 @@ public class ScheduleControllerCopie implements Serializable {
 	        this.speNew = new Stundenplaneintrag();
 	        speNew.setSPEStartZeit(spe.getSPEStartZeit());
 	        speNew.setSPEEndZeit(spe.getSPEEndZeit());
+	        speNew.setWochentag(spe.getWochentag());
 	        speNew.setSPTermin(spe.getSPTermin());
 	        speNew.setSgmodul(spe.getSgmodul());
 	        speNew.setLehrveranstaltungsart(spe.getLehrveranstaltungsart());

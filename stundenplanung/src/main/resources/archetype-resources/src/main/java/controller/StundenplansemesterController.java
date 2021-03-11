@@ -77,9 +77,11 @@ public class StundenplansemesterController implements Serializable {
 	private Integer scheduleCalendarWeek;
 	private String scheduleSemesterSection;
 	private Date startDate;
+	private Date endDate;
 	private boolean scheduleCalendarWeekOk = false;
 	private boolean scheduleSemesterSectionOk = false;
 	private boolean startDateOk = false;
+	private boolean endDateOk = false;
 	
 	List<Stundenplansemester> scheduleSemesterList;
 	private int scheduleSemesterId;
@@ -166,6 +168,21 @@ public class StundenplansemesterController implements Serializable {
             FacesContext.getCurrentInstance().addMessage("StundenplansemesterForm:startDatum_reg", message);
 	    }
 	}
+	
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		if(endDate!=null){
+			this.endDate = endDate;
+			endDateOk=true;
+	    }
+		else{
+	    	FacesMessage message = new FacesMessage("Startdatum konnte nicht gesetzt werden.");
+            FacesContext.getCurrentInstance().addMessage("StundenplansemesterForm:endDatum_reg", message);
+	    }
+	}
 
 	public List<Stundenplansemester> getScheduleSemesterList() {
 		return scheduleSemesterList;
@@ -199,12 +216,13 @@ public class StundenplansemesterController implements Serializable {
 		sps.setSPJahr(scheduleYear);
 		sps.setSPKw(scheduleCalendarWeek);
 		sps.setStartDatum(startDate);
+		sps.setEndDatum(endDate);
 		sps.setStundenplanstatus(findSps(scheduleSemesterId));
 		stundenplansemesterFacadeLocal.create(sps);
 	}
 	
 	public void createDoStundenplansemester() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
-		if(scheduleSemesterSectionOk == true && scheduleCalendarWeekOk == true && startDateOk) {
+		if(scheduleSemesterSectionOk == true && scheduleCalendarWeekOk == true && startDateOk && endDateOk) {
 			createStundenplansemester();
 			scheduleSemesterList = getStundenplansemesterList();
 		}	
@@ -270,6 +288,7 @@ public class StundenplansemesterController implements Serializable {
         scheduleSemester.setSPJahr(scheduleSemesterSelected.getSPJahr());
         scheduleSemester.setSPKw(scheduleSemesterSelected.getSPKw());
         scheduleSemester.setStartDatum(scheduleSemesterSelected.getStartDatum());
+        scheduleSemester.setEndDatum(scheduleSemesterSelected.getEndDatum());
         scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterId));
         stundenplansemesterFacadeLocal.edit(scheduleSemester);
       	scheduleSemesterList = getStundenplansemesterList();

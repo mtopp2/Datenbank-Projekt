@@ -16,36 +16,20 @@
 		       <p:ajax event="rowSelect" listener="#{benutzergruppeController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="BenutzergruppeListe"/>
 		 
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.groupID}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.groupID}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
+		        
 		 
-		        <p:column headerText="Benutzergruppename">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.BGName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.BGName}" style="width:96%" label="Benutzergruppename"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Benutzergruppename" sortBy="#{list.BGName}">
+		                <h:outputText value="#{list.BGName}" />
 		        </p:column>
 		        
-		        <p:column headerText="Benutzergruppekürzel">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.BGShortName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.BGShortName}" style="width:96%" label="Benutzergruppekürzel"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Benutzergruppekürzel" sortBy="#{list.BGShortName}">		            
+		                <h:outputText value="#{list.BGShortName}" />		                
 		        </p:column>
 		        
-		        <p:column headerText="Benutzergruppeid">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.BGRechte}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.BGRechte}" style="width:96%" label="Benutzergruppeid"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Benutzergruppeid" sortBy="#{list.BGRechte}">
+		                <h:outputText value="#{list.BGRechte}" />		                
 		        </p:column>
-		        
-		       	 
-		       
+      
 		    </p:dataTable>
 
 		    
@@ -59,8 +43,12 @@
                     <h:inputText id="userGroupShortName_reg" value="#{benutzergruppeController.userGroupSelected.BGShortName}" ></h:inputText>
                     
                     <h:outputLabel for="userGroupRights_reg" value="Rechte: "/>
-                    <h:inputText id="userGroupRights_reg" value="#{benutzergruppeController.userGroupSelected.BGRechte}" ></h:inputText>
-                    
+                    <p:selectOneMenu id="userGroupRights_reg" value="#{benutzergruppeController.userGroupSelected.BGRechte}" >
+                    	<f:selectItem itemValue="16" itemLabel="16"/>
+                    	<f:selectItem itemValue="32" itemLabel="32"/>
+                    	<f:selectItem itemValue="64" itemLabel="64"/>
+                    	<f:selectItem itemValue="96" itemLabel="96"/>
+                    </p:selectOneMenu> 
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{benutzergruppeController.addBenutzergruppe()}" update=":form:BenutzergruppeListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
 		 			<p:commandButton value="Löschen" update=":form:BenutzergruppeListe" actionListener="#{benutzergruppeController.deleteBenutzergruppe()}" oncomplete="PF('eventEditDialog').hide();"/>
 		        </h:panelGrid>
@@ -86,7 +74,12 @@
                     </h:panelGrid>
                     <h:outputLabel styleClass="label" style="font-size:12pt" for="userGroupRights_reg" value="Rechte: "/>
                     <h:panelGrid columns="3">
-                    	<h:inputText id="userGroupRights_reg" styleClass="form-control" value="#{benutzergruppeController.userGroupRights}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                    	<p:selectOneMenu id="userGroupRights_reg" styleClass="form-control" value="#{benutzergruppeController.userGroupRights}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden.">
+                    	<f:selectItem itemValue="16" itemLabel="16"/>
+                    	<f:selectItem itemValue="32" itemLabel="32"/>
+                    	<f:selectItem itemValue="64" itemLabel="64"/>
+                    	<f:selectItem itemValue="96" itemLabel="96"/>
+                    	</p:selectOneMenu>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="userGroupRights_reg" style="color: red"/>
                     </h:panelGrid>

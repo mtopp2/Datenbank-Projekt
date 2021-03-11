@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
+			<ui:define name="content">
+            <div>
+                <div class="row">
+                    <div                   
+                        class="col col-md-4 col-md-offset-4"
+                        style="background: whitesmoke">
+                    <h:outputLabel      
+                        style="color: whitesmoke"
+                        value=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4 col-md-offset-4"
+                         style="background: whitesmoke">
+                         <h:form  id="StundenplanstatusForm">                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="SPSTBezeichnung_reg" 
+                                value="Stundenplanstatus Bezeichnung: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="SPSTBezeichnung_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplanstatusController.SPSTBezeichnung}" 
+                                    required = "true"  
+                                    requiredMessage="Eine Stundenplanstatus Beteichnung muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="SPSTBezeichnung_reg" style="color: red"/>
+                            </h:panelGrid>                                                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="SPSTHint_reg" 
+                                value="Stundenplanstatus Hinweis: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="SPSTHint_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplanstatusController.SPSTHint}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Stundenplanstatus Hinweis muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="SPSTHint_reg" style="color: red"/>
+                            </h:panelGrid>
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="PColor_reg" 
+                                value="Farbe "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="PColor_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplanstatusController.PColor}" 
+                                    required = "true"  
+                                    requiredMessage="Eine Farbe muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="PColor_reg" style="color: red"/>
+                            </h:panelGrid>
+                            <h:panelGrid>
+                                <h:commandButton   
+                                    id="submit"
+                                    type="submit"
+                                    styleClass="btn btn-primary" 
+                                    value="Hinzufügen" 
+                                    style="margin-top: 10px" 
+                                    action="#{stundenplanstatusController.createDoStundenplanstatus()}"/>
+                            </h:panelGrid> 
+                            <h:message for="submit"/>
+                    	</h:form>
+                    </div>
+                </div>
+        	</div>
+        	</ui:define>
+		</ui:composition>
+    </h:body>
+</html>

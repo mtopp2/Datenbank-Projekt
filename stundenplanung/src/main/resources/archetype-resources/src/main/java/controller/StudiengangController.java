@@ -58,7 +58,7 @@ public class StudiengangController implements Serializable {
 	@Inject 
 	private Studiengang course;
 	private Faculty faculty;
-	private Stundenplansemester spSemester;
+	
 	
 	@EJB
 	private StudiengangFacadeLocal studiengangFacadeLocal;
@@ -70,9 +70,9 @@ public class StudiengangController implements Serializable {
     }
  
     List<Faculty> facultyList ;
-    List<Stundenplansemester> spsList ;
     
-
+    
+    
     private int facultyID;
     private int semester;
 	private String courseShort;
@@ -90,7 +90,8 @@ public class StudiengangController implements Serializable {
 
 	public void setFacultyID(int facultyID) {
 		this.facultyID = facultyID;
-	}	
+	}
+	
 
 	public Studiengang getCourse() {
 		return course;
@@ -108,13 +109,6 @@ public class StudiengangController implements Serializable {
 		this.faculty = faculty;
 	}
 	
-	public Stundenplansemester getSpSemester() {
-		return spSemester;
-	}
-
-	public void setSpSemester(Stundenplansemester spSemester) {
-		this.spSemester = spSemester;
-	}
 
 	public String getCourseName() {
 		return courseName;
@@ -181,13 +175,15 @@ public class StudiengangController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createStudiengang() {
+	public void createStudiengang() throws Exception  {
+		EntityManager em = emf.createEntityManager();
 		Studiengang bg = new Studiengang();  
 		bg.setSGName(courseName);
 		bg.setSGKurz(courseShort);
 		bg.setSemester(semester);
 		bg.setFaculty(findFac(facultyID));
 		studiengangFacadeLocal.create(bg);
+		em.close();
 	}
 	
 	public void createDoStudiengang() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -213,13 +209,6 @@ public class StudiengangController implements Serializable {
 		return query.getResultList();
 	}
 	
-	public List<Stundenplansemester> getSpsList(){
-		EntityManager em = emf.createEntityManager();
-		TypedQuery<Stundenplansemester> query = em.createNamedQuery("Stundenplansemester.findAll", Stundenplansemester.class);
-		spsList = query.getResultList();
-		return query.getResultList();
-	}
-	
 	
 	
 	public void onRowSelect(SelectEvent<Studiengang> e) {
@@ -229,6 +218,7 @@ public class StudiengangController implements Serializable {
         courseSelected = e.getObject();
         
         facultyID = courseSelected.getFaculty().getFbid();
+        
          
         
     }
@@ -240,9 +230,9 @@ public class StudiengangController implements Serializable {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Studiengang> q = em.createNamedQuery("Studiengang.findBySgid",Studiengang.class);
         q.setParameter("sgid", courseSelected.getSgid());
-        course = (Studiengang)q.getSingleResult();
+        course = (Studiengang)q.getSingleResult();        
         studiengangFacadeLocal.remove(course);
-		em.close();
+	    em.close();
     }
     
     private Faculty findFac(int facultyID) {
@@ -257,30 +247,18 @@ public class StudiengangController implements Serializable {
         }
         return faculty;
     }
-    
-    private Stundenplansemester findSP(int sm) {
-        try{
-            EntityManager em = emf.createEntityManager(); 
-            TypedQuery<Stundenplansemester> query
-                = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
-            query.setParameter("spsid", sm);
-            spSemester = (Stundenplansemester)query.getSingleResult();
-        }
-        catch(Exception e){   
-        }
-        return spSemester;
-    }
+   
     
     public void addRoom(){
-        EntityManager em = emf.createEntityManager();
-        em.find(Studiengang.class, courseSelected.getSgid());
-        course.setSgid(courseSelected.getSgid());
-        course.setSGName(courseSelected.getSGName());
-        course.setSGKurz(courseSelected.getSGKurz());
-        course.setSemester(courseSelected.getSemester());
-        course.setFaculty(findFac(facultyID));
-        studiengangFacadeLocal.edit(course);
-      	courseList = getStudiengangList();
-      	em.close();
+
+	        EntityManager em = emf.createEntityManager();
+	        em.find(Studiengang.class, courseSelected.getSgid());
+	        course.setSgid(courseSelected.getSgid());
+	        course.setSGName(courseSelected.getSGName());
+	        course.setSGKurz(courseSelected.getSGKurz());
+	        course.setSemester(courseSelected.getSemester());
+	        course.setFaculty(findFac(facultyID));
+	        studiengangFacadeLocal.edit(course);
+	        courseList = getStudiengangList();
     }
 }

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>
+		    <p:commandButton value="Pruefcode Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+			<p:dataTable id="CodeList" var="list" value="#{pruefcodeController.codeList}" editable="true" selectionMode="single" selection="#{pruefcodeController.codeSelected}" rowKey="#{list.pcid}" >
+		        
+		        <p:ajax event="rowSelect" listener="#{pruefcodeController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="CodeList"/>
+		 
+	           
+	           
+	           
+	           <p:column headerText="Studiengang" sortBy="#{list.studiengang.SGName}">
+		           <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.studiengang.faculty.facName}, #{list.studiengang.SGName}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.studiengang.faculty.facName}, #{list.studiengang.SGName}" style="width:100%">
+		                        <f:selectItems value="#{pruefcodeController.courseList}" var="#{studiengang.sgid}" itemLabel="#{studiengang.sgid}" itemValue="#{studiengang.sgid}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        	 
+		        <p:column headerText="Prüfcode" sortBy="#{list.prCode}">
+		                <h:outputText value="#{list.prCode}" />
+		        </p:column>
+		        
+		        <p:column headerText="Vertiefungsrichtung" sortBy="#{list.vertiefungsrichtungShortName}">
+		        		<h:outputText value="#{list.vertiefungsrichtungShortName}" />		               
+		        </p:column>
+		        
+		        <p:column headerText="Modulart" sortBy="#{list.pflichtOderWahl}">
+		                <h:outputText value="#{list.pflichtOderWahl}" />		                
+		        </p:column>
+		        
+		    </p:dataTable>
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Prüfcode Editiert Details" showEffect="clip" hideEffect="clip" width="800">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 			
+			        
+		            <h:outputLabel for="prüfcode" value="Prüfcode: "/>
+                    <h:inputText id="prüfcode" value="#{pruefcodeController.codeSelected.prCode}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="vertiefungsrichtung" value="Vertiefungsrichtung: "/>
+                    <h:inputText id="vertiefungsrichtung" value="#{pruefcodeController.codeSelected.vertiefungsrichtungShortName}" ></h:inputText>  
+                    
+                    <h:outputLabel for="modulart" value="Modulart (P/W): "/>
+                    <h:inputText id="modulart" value="#{pruefcodeController.codeSelected.pflichtOderWahl}" ></h:inputText> 
+                    
+                    <p:outputLabel for="studiengang" value="Studiengang: " />
+			        <p:selectOneMenu id="studiengang" value="#{pruefcodeController.courseId}" style="width:100%">
+                    	<f:selectItems value="#{pruefcodeController.courseList}" var="course" itemLabel="#{course.faculty.facName}, #{course.SGName}" itemValue="#{course.sgid}"/>
+			        </p:selectOneMenu>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{pruefcodeController.addPruefcode()}" update=":form:CodeList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:CodeList" actionListener="#{pruefcodeController.deletePruefcode()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		 </h:form>
+		 
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Pruefcode" showEffect="clip" hideEffect="clip" width="800">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		 			<h:outputLabel for="pruefcode1" value="Pruefcode: "/>
+                    <h:inputText id="pruefcode1" value="#{pruefcodeController.verifyCode}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="vertiefungsrichtung1" value="Vertiefungsrichtung: "/>
+                    <h:inputText id="vertiefungsrichtung1" value="#{pruefcodeController.specializationShort}" ></h:inputText>
+                    
+                    <h:outputLabel for="modulart1" value="Modulart (P/W): "/>
+                    <h:inputText id="modulart1" value="#{pruefcodeController.dutyOrChoice}" ></h:inputText>
+			        
+			        <p:outputLabel for="studiengang1" value="Studiengang: " />
+			        <p:selectOneMenu id="studiengang1" value="#{pruefcodeController.courseId}" style="width:100%">
+                    	<f:selectItems value="#{pruefcodeController.courseList}" var="course" itemLabel="#{course.faculty.facName}, #{course.SGName}" itemValue="#{course.sgid}"/>
+			        </p:selectOneMenu>
+			        
+		            
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{pruefcodeController.createDoPruefcode}" update=":form:CodeList" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

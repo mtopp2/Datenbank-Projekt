@@ -9,7 +9,7 @@ import model.Modul;
 @Local
 public interface ModulFacadeLocal {
 	
-void create(Modul modul);
+	void create(Modul modul);
 	
 	void edit(Modul modul);
 	

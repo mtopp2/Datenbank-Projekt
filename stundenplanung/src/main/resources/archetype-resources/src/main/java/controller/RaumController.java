@@ -173,13 +173,24 @@ public class RaumController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createRoom() {
+	public void createRoom() throws Exception  {
+		EntityManager em = emf.createEntityManager();
 		Raum rau = new Raum();  
 		rau.setRName(roomName);
 		rau.setKapazitaet(capacity);
 		rau.setNachbarRaum(roomNeighbor);
 		rau.setLocation(findLoc(locationId));
-	    raumFacadeLocal.create(rau);
+		try {
+	        raumFacadeLocal.create(rau);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+		em.close();
 	}
 	
 	public void createDoRoom() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -217,13 +228,23 @@ public class RaumController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteRoom() {
+    public void deleteRoom() throws Exception {
         roomList.remove(roomSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Raum> q = em.createNamedQuery("Raum.findByRid",Raum.class);
         q.setParameter("rid", roomSelected.getRid());
         room = (Raum)q.getSingleResult();
-        this.raumFacadeLocal.remove(room);
+        
+        try {
+        	this.raumFacadeLocal.remove(room);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
 		em.close();
     }
     
@@ -241,6 +262,8 @@ public class RaumController implements Serializable {
     }
     
     public void addRoom(){
+   	 try {
+
         EntityManager em = emf.createEntityManager();
         em.find(Raum.class, roomSelected.getRid());
         room.setRid(roomSelected.getRid());
@@ -249,8 +272,15 @@ public class RaumController implements Serializable {
         room.setNachbarRaum(roomSelected.getNachbarRaum());
         room.setLocation(findLoc(locationId));
         raumFacadeLocal.edit(room);
-        roomList = getRaumList();
-		em.close();
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+   	roomList = getRaumList();
    }
   
 }

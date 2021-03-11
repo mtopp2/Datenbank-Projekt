@@ -164,12 +164,23 @@ public class BenutzergruppeController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createBenutzergruppe() {
+	public void createBenutzergruppe() throws Exception  {
+		EntityManager em = emf.createEntityManager();
 		Benutzergruppe bg = new Benutzergruppe();  
 		bg.setBGName(userGroupName);    
 		bg.setBGShortName(userGroupShortName);      
 		bg.setBGRechte(userGroupRights);
-		userGroupFacadeLocal.create(bg);
+		try {
+			userGroupFacadeLocal.create(bg);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+		em.close();
 	}
 	
 	public void createDoBenutzergruppe() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -195,13 +206,23 @@ public class BenutzergruppeController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
-    public void deleteBenutzergruppe() {
+    public void deleteBenutzergruppe() throws Exception {
         userGroupList.remove(userGroupSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Benutzergruppe> q = em.createNamedQuery("Benutzergruppe.findByID",Benutzergruppe.class);
         q.setParameter("groupID", userGroupSelected.getGroupID());
         userGroup = (Benutzergruppe)q.getSingleResult();
-        userGroupFacadeLocal.remove(userGroup);
+        
+        try {
+        	userGroupFacadeLocal.remove(userGroup);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
 		em.close();
     }
     
@@ -214,6 +235,7 @@ public class BenutzergruppeController implements Serializable {
     }
     
     public void addBenutzergruppe(){
+    	 try {
  	        EntityManager em = emf.createEntityManager();
  	        em.find(Benutzergruppe.class, userGroupSelected.getGroupID());
  	        userGroup.setGroupID(userGroupSelected.getGroupID());
@@ -221,6 +243,14 @@ public class BenutzergruppeController implements Serializable {
  	        userGroup.setBGShortName(userGroupSelected.getBGShortName());
  	        userGroup.setBGRechte(userGroupSelected.getBGRechte());
  	        userGroupFacadeLocal.edit(userGroup);
+ 	    }
+ 	    catch (Exception e) {
+ 	        try {
+ 	            ut.rollback();
+ 	        } 
+ 	        catch (IllegalStateException | SecurityException | SystemException ex) {
+ 	        }
+ 	    }
     }
    // ---------------------------------------------------------------------------------------------------------------------
     

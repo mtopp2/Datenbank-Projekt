@@ -15,31 +15,24 @@
 			<p:dataTable id="ModulListe" var="list" value="#{modulController.modulList}" selection="#{modulController.modulSelected}" selectionMode="single" rowKey="#{list.modID}" >
 		        
 		 		<p:ajax event="rowSelect" listener="#{modulController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ModulListe"/>
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.modID}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.modID}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
+		        
 		 
-		        <p:column headerText="Modulname">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.modName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.modName}" style="width:96%" label="Modulname"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Modulname" sortBy="#{list.modName}">
+		                <h:outputText value="#{list.modName}" />
 		        </p:column>
 		        
-		        <p:column headerText="Modulkürzel">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.modKuerzel}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.modKuerzel}" style="width:96%" label="Modulkürzel"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Modulkürzel" sortBy="#{list.modKuerzel}">
+		                <h:outputText value="#{list.modKuerzel}" />
 		        </p:column>
 		        
-		        <p:column headerText="Prüfcodeid">
+		        <p:column headerText="Prüfcodeid" sortBy="#{list.pruefcode.prCode}">
 		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.pcid}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.pcid}" style="width:96%" label="Prüfcodeid"/></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.pruefcode.prCode}" /></f:facet>
+		                <f:facet name="input">
+		                    <h:selectOneMenu value="#{list.pruefcode.prCode}" style="width:100%">
+		                        <f:selectItems value="#{modulController.codeList}" var="pruefcode" itemLabel="#{pruefcode.pcid}" itemValue="#{pruefcode.pcid}" />
+		                    </h:selectOneMenu>
+		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		        
@@ -55,8 +48,11 @@
                     <h:outputLabel for="modulShortName_reg" value="Kürzel: "/>
                     <h:inputText id="modulShortName_reg" value="#{modulController.modulSelected.modKuerzel}" ></h:inputText>
                     
-                    <h:outputLabel for="pcid_reg" value="Prüfcode: "/>
-                    <h:inputText id="pcid_reg" value="#{modulController.modulSelected.pcid}" ></h:inputText>
+                    
+                    <p:outputLabel for="pruefcode" value="Pruefcode: " />
+			        <p:selectOneMenu id="pruefcode" value="#{modulController.pcId}" style="width:100%">
+                    	<f:selectItems value="#{modulController.codeList}" var="code" itemLabel="#{code.prCode}" itemValue="#{code.pcid}"/>
+			        </p:selectOneMenu>
                     
                     <p:commandButton id="submit" type="submit" value="Speichern" action="#{modulController.addModul()}" update=":form:ModulListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
 		 			<p:commandButton value="Löschen" update=":form:ModulListe" actionListener="#{modulController.deleteModul()}" oncomplete="PF('eventEditDialog').hide();"/>
@@ -81,10 +77,10 @@
                     	<h:messages for="modulShortName_reg" style="color: red"/>
                     </h:panelGrid>
                     <h:outputLabel styleClass="label" style="font-size:12pt" for="pcid_reg" value="Prüfcode: "/>
-                    <h:panelGrid columns="3">
-                    	<h:inputText id="pcid_reg" styleClass="form-control" value="#{modulController.pcId}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
-                   		<h:outputLabel value="" style="margin: 10px;"/>
-                    	<h:messages for="pcid_reg" style="color: red"/>
+                    <h:panelGrid columns="3">                 
+			        	<p:selectOneMenu id="pcid_reg" value="#{modulController.pcId}" style="width:100%">
+                    	<f:selectItems value="#{modulController.codeList}" var="code" itemLabel="#{code.prCode}" itemValue="#{code.pcid}"/>
+			        	</p:selectOneMenu>
                     </h:panelGrid>
                     <p:commandButton id="submit" value="Hinzufügen" actionListener="#{modulController.createDoModul}" oncomplete="PF('eventDialog').hide();" update=":form:ModulListe"/>		 			
 		 			<p:commandButton id="reset" type="reset" value="Reset" />

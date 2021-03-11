@@ -15,16 +15,10 @@
 		        
 		        <p:ajax event="rowSelect" listener="#{sgmodulController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="SgmodulList"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.sgmid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.sgmid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
 	           
-	           <p:column headerText="Modul">
+	           <p:column headerText="Modul" sortBy="#{list.modul.modID}">
 		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.modul.modID}, #{list.modul.modName}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.modul.modName}" /></f:facet>
 		                <f:facet name="input">
 		                    <h:selectOneMenu value="#{list.modul.modID}, #{list.modul.modName}" style="width:100%">
 		                        <f:selectItems value="#{sgmodulController.moduleList}" var="#{modul.modID}" itemLabel="#{modul.modID}" itemValue="#{modul.modID}" />
@@ -33,7 +27,7 @@
 		            </p:cellEditor>
 		        </p:column>
 	           
-	           <p:column headerText="Studiengang">
+	           <p:column headerText="Studiengang" sortBy="#{list.studiengang.SGName}">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.studiengang.faculty.facName}, #{list.studiengang.SGName}" /></f:facet>
 		                <f:facet name="input">
@@ -44,32 +38,26 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        <p:column headerText="Dozenten">
+		        <p:column headerText="Dozenten" sortBy="#{list.dozenten.DName}">
 		           <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.dozenten.DVorname}, #{list.dozenten.DName}" /></f:facet>
+		                <f:facet name="output"><h:outputText value="#{list.dozenten.DName}, #{list.dozenten.DVorname}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.dozenten.DVorname}, #{list.dozenten.DName}" style="width:100%">
+		                    <h:selectOneMenu value="#{list.dozenten.DName}, #{list.dozenten.DVorname}" style="width:100%">
 		                        <f:selectItems value="#{sgmodulController.professorList}" var="#{dozenten.did}" itemLabel="#{dozenten.did}" itemValue="#{dozenten.did}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
 		            </p:cellEditor>
 		        </p:column>
 		 
-		        <p:column headerText="Modul Semester">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.modSemester}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.modSemester}" style="width:96%" label="modulSemester"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Modul Semester" sortBy="#{list.modSemester}">
+		                <h:outputText value="#{list.modSemester}" />	                
 		        </p:column>
 		        
-		        <p:column headerText="Studiengang Notiz">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.SGMNotiz}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.SGMNotiz}" style="width:96%" label="SGMNotiz"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Studiengang Notiz" sortBy="#{list.SGMNotiz}">
+		                <h:outputText value="#{list.SGMNotiz}" />
 		        </p:column>
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip" width="800">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Modul Editiert Details" showEffect="clip" hideEffect="clip" width="800">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 			
 		 			<p:outputLabel for="modul" value="Modul: " />
@@ -84,7 +72,7 @@
 			        
 			        <p:outputLabel for="dozent" value="Dozent: " />
 			        <p:selectOneMenu id="dozent" value="#{sgmodulController.professorId}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DVorname}, #{prof.DName}" itemValue="#{prof.did}"/>
+                    	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DName}, #{prof.DVorname}" itemValue="#{prof.did}"/>
 			        </p:selectOneMenu>
 		 			
 		            <h:outputLabel for="modulSemester" value="Modul Semester: "/>
@@ -99,7 +87,7 @@
 		    </p:dialog>
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip" width="800">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Modul" showEffect="clip" hideEffect="clip" width="800">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
 		            <p:outputLabel for="modul1" value="Modul: " />
@@ -114,7 +102,7 @@
 			        
 			        <p:outputLabel for="dozent1" value="Dozent: " />
 			        <p:selectOneMenu id="dozent1" value="#{sgmodulController.professorId}" style="width:100%">
-                    	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DVorname}, #{prof.DName}" itemValue="#{prof.did}"/>
+                    	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DName}, #{prof.DVorname}" itemValue="#{prof.did}"/>
 			        </p:selectOneMenu>
 		 			
 		            <h:outputLabel for="modulSemester1" value="Modul Semester: "/>

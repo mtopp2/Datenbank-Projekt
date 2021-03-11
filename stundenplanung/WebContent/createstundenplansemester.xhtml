@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+		<ui:composition template="WEB-INF/template/master.xhtml" >
+		<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
+			<ui:define name="content">
+            <div>
+                <div class="row">
+                    <div                   
+                        class="col col-md-4 col-md-offset-4"
+                        style="background: whitesmoke">
+                    <h:outputLabel      
+                        style="color: whitesmoke"
+                        value=""/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-md-4 col-md-offset-4"
+                         style="background: whitesmoke">
+                         <h:form id="StundenplansemesterForm">                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="SPSemester_reg" 
+                                value="Stundenplansemester: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="SPSemester_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplansemesterController.SPSemester}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Stundenplansemester muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="SPSemester_reg" style="color: red"/>
+                            </h:panelGrid>                                                        
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="SPJahr_reg" 
+                                value="Stundenplanjahr: "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="SPJahr_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplansemesterController.SPJahr}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Stundenplanjahr muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="SPJahr_reg" style="color: red"/>
+                            </h:panelGrid>
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="SPKw_reg" 
+                                value="Stundenplankalenderwoche "/>
+                            <h:panelGrid        
+                                columns="3">
+                                <h:inputText                                     
+                                    id="SPKw_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplansemesterController.SPKw}" 
+                                    required = "true"  
+                                    requiredMessage="Eine Stundenplankalenderwoche muss eingegeben werden.">
+                                </h:inputText>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="SPKw_reg" style="color: red"/>
+                            </h:panelGrid>
+                            
+                            <h:outputLabel      
+                                styleClass="label" 
+                                style="font-size:12pt; color:black;"
+                                for="startDatum_reg" 
+                                value="Startdatum"/>
+                            <h:panelGrid        
+                                columns="3">
+                                <!-- <h:inputText
+                                	type = "date"                                     
+                                    id="startDatum_reg"     
+                                    styleClass="form-control"                                 
+                                    value="#{stundenplansemesterController.startDatum}" 
+                                    required = "true"  
+                                    requiredMessage="Ein Startdatum muss eingegeben werden.">
+                                </h:inputText>-->
+                                <p:datePicker 
+	                                id="startDatum_reg" 
+	                                value="#{stundenplansemesterController.startDatum}" 
+	                                locale="de" 
+	                                pattern="dd.MM.yyyy"
+	                                required = "true"  
+                                    requiredMessage="Ein Startdatum muss eingegeben werden."/>
+                                <h:outputLabel   
+                                    value="" 
+                                    style="margin: 10px;"/>
+                                <h:messages for="startDatum_reg" style="color: red"/>
+                            </h:panelGrid>
+                            
+                            <h:outputLabel     
+	                            styleClass="label" 
+	                            style="font-size:12pt; color:black;"
+	                            for="spst_reg" 
+	                            value="SPSTBezeichnung: "/>
+	                        <h:panelGrid        
+	                            columns="3">
+	                            <h:selectOneMenu
+	                                styleClass="form-control" 
+	                                id="spst_reg"
+	                                required="true"
+	                                requiredMessage="Bitte eine Straße zu dem Standort auswählen:"
+	                                value="#{stundenplansemesterController.SPSTBezeichnung}">
+	                                <f:selectItem
+	                                    itemLabel="-----"
+	                                    noSelectionOption="true"/>
+	                                    <f:selectItems
+	                                        value="#{stundenplansemesterController.stundenplanstatusListe}"/>
+	                               </h:selectOneMenu>
+	                            <h:outputLabel     
+	                                value="" 
+	                                style="margin: 10px;"/>
+	                            <h:message for="SPSTBezeichnung_reg" style="color: red"/>
+	                        </h:panelGrid>
+                            <h:panelGrid>
+                                <h:commandButton   
+                                    id="submit"
+                                    type="submit"
+                                    styleClass="btn btn-primary" 
+                                    value="Hinzufügen" 
+                                    style="margin-top: 10px" 
+                                    action="#{stundenplansemesterController.createDoStundenplansemester()}"/>
+                            </h:panelGrid> 
+                            <h:message for="submit"/>
+                    	</h:form>
+                    </div>
+                </div>
+        	</div>
+        	</ui:define>
+		</ui:composition>
+    </h:body>
+</html>

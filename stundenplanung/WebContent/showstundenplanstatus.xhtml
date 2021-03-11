@@ -16,38 +16,23 @@
 			
 		        <p:ajax event="rowSelect" listener="#{stundenplanstatusController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="StundenplanstatusListe"/>
 		 
-		        <p:column headerText="Id">
-	               <p:cellEditor>
-	                   <f:facet name="output"><h:outputText value="#{list.spstid}" /></f:facet>
-	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.spstid}" style="width:96%"/></f:facet>
-	               </p:cellEditor>
-	           </p:column>
 		 
-		        <p:column headerText="Stundenplanstatus Bezeichnung">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.SPSTBezeichnung}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.SPSTBezeichnung}" style="width:96%" label="SPSTBezeichnung"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Stundenplanstatus Bezeichnung" sortBy="#{list.SPSTBezeichnung}">
+		                <h:outputText value="#{list.SPSTBezeichnung}" />
 		        </p:column>
 		        
-		        <p:column headerText="Stundenplanstatus Hinweis">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.SPSTHint}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.SPSTHint}" style="width:96%" label="SPSTHint"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Stundenplanstatus Hinweis" sortBy="#{list.SPSTHint}">
+		                <h:outputText value="#{list.SPSTHint}" />
 		        </p:column>
 		        
-		        <p:column headerText="Stundenplanstatus Farbe">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.PColor}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.PColor}" style="width:96%" label="PColor"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Stundenplanstatus Farbe" sortBy="#{list.PColor}">
+		                <h:outputText value="#{list.PColor}" />
 		        </p:column>
 		        
 		        		 
 		       
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Status Editiert Details" showEffect="clip" hideEffect="clip">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Stundenplanstatus Editiert Details" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            

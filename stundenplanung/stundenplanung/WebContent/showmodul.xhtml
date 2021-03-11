@@ -1,0 +1,99 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+	<!--  	<ui:define name="menu">       <ui:include src="WEB-INF/template/eingeloggt.xhtml"/> </ui:define> -->
+		<ui:define name="content">
+		<h:form id="form">
+		    <p:growl id="msgs" showDetail="true"/>   
+		    <p:commandButton value="Modul hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />
+			<p:dataTable id="ModulListe" var="list" value="#{modulController.modulList}" selection="#{modulController.modulSelected}" selectionMode="single" rowKey="#{list.modID}" >
+		        
+		 		<p:ajax event="rowSelect" listener="#{modulController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ModulListe"/>
+		        <p:column headerText="Id">
+	               <p:cellEditor>
+	                   <f:facet name="output"><h:outputText value="#{list.modID}" /></f:facet>
+	                   <f:facet name="input"><p:inputText id="modelInput" value="#{list.modID}" style="width:96%"/></f:facet>
+	               </p:cellEditor>
+	           </p:column>
+		 
+		        <p:column headerText="Modulname">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.modName}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.modName}" style="width:96%" label="Modulname"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Modulkürzel">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.modKuerzel}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.modKuerzel}" style="width:96%" label="Modulkürzel"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        <p:column headerText="Prüfcodeid">
+		            <p:cellEditor>
+		                <f:facet name="output"><h:outputText value="#{list.pcid}" /></f:facet>
+		                <f:facet name="input"><p:inputText value="#{list.pcid}" style="width:96%" label="Prüfcodeid"/></f:facet>
+		            </p:cellEditor>
+		        </p:column>
+		        
+		        	 
+		       
+		    </p:dataTable>
+		     <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Modul Editiert Details" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventEditDetails" columns="2">
+		 
+		            <h:outputLabel for="modulName_reg" value="Modul: "/>
+                    <h:inputText id="modulName_reg" value="#{modulController.modulSelected.modName}" ></h:inputText>                                                  
+                    
+                    <h:outputLabel for="modulShortName_reg" value="Kürzel: "/>
+                    <h:inputText id="modulShortName_reg" value="#{modulController.modulSelected.modKuerzel}" ></h:inputText>
+                    
+                    <h:outputLabel for="pcid_reg" value="Prüfcode: "/>
+                    <h:inputText id="pcid_reg" value="#{modulController.modulSelected.pcid}" ></h:inputText>
+                    
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{modulController.addModul()}" update=":form:ModulListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:ModulListe" actionListener="#{modulController.deleteModul()}" oncomplete="PF('eventEditDialog').hide();"/>
+		        </h:panelGrid>
+		    </p:dialog>
+		     
+		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Modul" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		 
+		            <h:outputLabel styleClass="label" style="font-size:12pt" for="modulName_reg" value="Modul: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="modulName_reg" styleClass="form-control" value="#{modulController.modulName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="modulName_reg" style="color: red"/>
+                    </h:panelGrid>                                                        
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="modulShortName_reg" value="Kürzel: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="modulShortName_reg" styleClass="form-control" value="#{modulController.modulShort}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="modulShortName_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <h:outputLabel styleClass="label" style="font-size:12pt" for="pcid_reg" value="Prüfcode: "/>
+                    <h:panelGrid columns="3">
+                    	<h:inputText id="pcid_reg" styleClass="form-control" value="#{modulController.pcId}" required = "true" requiredMessage="Ein Kürzel muss eingegeben werden."></h:inputText>
+                   		<h:outputLabel value="" style="margin: 10px;"/>
+                    	<h:messages for="pcid_reg" style="color: red"/>
+                    </h:panelGrid>
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{modulController.createDoModul}" oncomplete="PF('eventDialog').hide();" update=":form:ModulListe"/>		 			
+		 			<p:commandButton id="reset" type="reset" value="Reset" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		   
+		 </h:form>
+		 </ui:define>
+	</ui:composition>
+</h:body>
+</html>

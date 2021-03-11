@@ -15,27 +15,25 @@
 			
 		        <p:ajax event="rowSelect" listener="#{facultyController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="FacultyList"/>
 		 
-		        <p:column headerText="Fachbereich">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.facName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.facName}" style="width:96%" label="Fakultät"/></f:facet>
-		            </p:cellEditor>
+		 
+		        <p:column headerText="Fachbereich" sortBy="#{list.facName}">    
+		                <h:outputText value="#{list.facName}" />    
 		        </p:column>
 		        
-		        <p:column headerText="Fachbereichskürzel">
-		            <p:cellEditor>
-		                <f:facet name="output"><h:outputText value="#{list.facShortName}" /></f:facet>
-		                <f:facet name="input"><p:inputText value="#{list.facShortName}" style="width:96%" label="Fakultät kürzel"/></f:facet>
-		            </p:cellEditor>
+		        <p:column headerText="Fachbereichkürzel" sortBy="#{list.facShortName}">		          
+		                <h:outputText value="#{list.facShortName}" />    
 		        </p:column>
-		        		        
+		        
+		        
+		        
+		        
 		    </p:dataTable>
 		     
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Fachbereich Editiert Details" showEffect="clip" hideEffect="clip" width="500">
+		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Fachbereich Editiert Details" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
-		            <h:outputLabel for="facName_reg" value="Fakultät: "/>
-                    <h:inputText id="facName_reg" value="#{facultyController.facultySelected.facName}" size="63"></h:inputText>                                                  
+		            <h:outputLabel for="facName_reg" value="Fachbereich: "/>
+                    <h:inputText id="facName_reg" value="#{facultyController.facultySelected.facName}" ></h:inputText>                                                  
                     
                     <h:outputLabel for="facShortName_reg" value="Kürzel: "/>
                     <h:inputText id="facShortName_reg" value="#{facultyController.facultySelected.facShortName}" ></h:inputText>
@@ -47,12 +45,12 @@
 		     
 		 </h:form>
 		 <h:form id="eventDetailsForm">
-		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fachbereich" showEffect="clip" hideEffect="clip" width="530">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fachbereich" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
-		            <h:outputLabel styleClass="label" style="font-size:12pt" for="facName_reg" value="Fakultät: "/>
+		            <h:outputLabel styleClass="label" style="font-size:12pt" for="facName_reg" value="Fachbereich: "/>
                     <h:panelGrid columns="3">
-                    	<h:inputText id="facName_reg" styleClass="form-control" value="#{facultyController.facultyName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden." size="63"></h:inputText>
+                    	<h:inputText id="facName_reg" styleClass="form-control" value="#{facultyController.facultyName}" required = "true" requiredMessage="Eine Fakultät muss eingegeben werden."></h:inputText>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="facName_reg" style="color: red"/>
                     </h:panelGrid>                                                        

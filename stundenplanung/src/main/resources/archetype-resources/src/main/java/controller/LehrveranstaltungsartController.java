@@ -156,12 +156,23 @@ public class LehrveranstaltungsartController implements Serializable {
     }
 	  
 	private UIComponent reg;  
-	public void createLehrveranstaltungsart() {
+	public void createLehrveranstaltungsart() throws Exception  {
+		EntityManager em = emf.createEntityManager();
 		Lehrveranstaltungsart lva = new Lehrveranstaltungsart();  
 		lva.setLvname(teachingEventName);
 		lva.setLvdauer(teachingEventLength);     
 		lva.setLvkurz(teachingEventShort);
-		teachingEventFacadeLocal.create(lva);
+		try {
+			teachingEventFacadeLocal.create(lva);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
+		em.close();
 	}
 	
 	public void createDoLehrveranstaltungsart() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
@@ -191,14 +202,22 @@ public class LehrveranstaltungsartController implements Serializable {
     }
     
     public void addLehrveranstaltungsart(){
-        EntityManager em = emf.createEntityManager();
-        em.find(Lehrveranstaltungsart.class, teachingEventSelected.getLvid());
-        teachingEvent.setLvid(teachingEventSelected.getLvid());
-        teachingEvent.setLvname(teachingEventSelected.getLvname());
-        teachingEvent.setLvdauer(teachingEventSelected.getLvdauer());
-        teachingEvent.setLvkurz(teachingEventSelected.getLvkurz());
-        teachingEventFacadeLocal.edit(teachingEvent);
-		em.close();
+    	 try {
+ 	        EntityManager em = emf.createEntityManager();
+ 	        em.find(Lehrveranstaltungsart.class, teachingEventSelected.getLvid());
+ 	        teachingEvent.setLvid(teachingEventSelected.getLvid());
+ 	        teachingEvent.setLvname(teachingEventSelected.getLvname());
+ 	        teachingEvent.setLvdauer(teachingEventSelected.getLvdauer());
+ 	        teachingEvent.setLvkurz(teachingEventSelected.getLvkurz());
+ 	        teachingEventFacadeLocal.edit(teachingEvent);
+ 	    }
+ 	    catch (Exception e) {
+ 	        try {
+ 	            ut.rollback();
+ 	        } 
+ 	        catch (IllegalStateException | SecurityException | SystemException ex) {
+ 	        }
+ 	    }
     }
 	
 	
@@ -210,7 +229,17 @@ public class LehrveranstaltungsartController implements Serializable {
         TypedQuery<Lehrveranstaltungsart> q = em.createNamedQuery("Lehrveranstaltungsart.findByLvid",Lehrveranstaltungsart.class);
         q.setParameter("lvid", teachingEventSelected.getLvid());
         teachingEvent = (Lehrveranstaltungsart)q.getSingleResult();
-        teachingEventFacadeLocal.remove(teachingEvent);
+        
+        try {
+        	teachingEventFacadeLocal.remove(teachingEvent);
+	    }
+	    catch (Exception e) {
+	        try {
+	            ut.rollback();
+	        } 
+	        catch (IllegalStateException | SecurityException | SystemException ex) {
+	        }
+	    }
 		em.close();
     }
 	

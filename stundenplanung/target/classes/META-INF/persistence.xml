@@ -15,6 +15,7 @@
 		<class>model.Stundenplaneintrag</class>
 		<class>model.Stundenplansemester</class>
 		<class>model.Stundenplanstatus</class>
+		<class>model.Pruefcode</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 	</persistence-unit>
 </persistence>

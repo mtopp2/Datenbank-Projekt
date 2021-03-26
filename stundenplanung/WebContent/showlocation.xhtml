@@ -13,7 +13,7 @@
 		    <p:commandButton value="Standort Hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />
 			<p:dataTable id="LocationList" var="list" value="#{locationController.locationList}" selectionMode="single" selection="#{locationController.locationSelected}" rowKey="#{list.lid}">
 			
-        		<p:ajax event="rowSelect" listener="#{locationController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LocationList"/>
+        		<p:ajax event="rowSelect" listener="#{locationController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LocationList"/>
 		 
 		 
 		        <p:column headerText="Stadt" sortBy="#{list.LCity}">
@@ -25,7 +25,9 @@
 		        </p:column> 		 
 		       
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Standort Editiert Details" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="lCity_reg" value="Stadt: "/>
@@ -34,8 +36,9 @@
                     <h:outputLabel for="lStreet_reg" value="Straße: "/>
                     <h:inputText id="lStreet_reg" value="#{locationController.locationSelected.LStreet}" ></h:inputText>
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{locationController.addLocation()}" update=":form:LocationList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:LocationList" actionListener="#{locationController.deleteLocation()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{locationController.addLocation()}" update=":form:LocationList :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:LocationList :form:msgs" actionListener="#{locationController.deleteLocation()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog> 
 		 </h:form>
@@ -43,20 +46,20 @@
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Standort" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventDetails" columns="2">
 		 
-		            <h:outputLabel styleClass="label" style="font-size:12pt; color:black;" for="lCity_reg" value="Stadt: "/>
+		            <h:outputLabel styleClass="label" style="font-size:12pt;" for="lCity_reg" value="Stadt: "/>
                     <h:panelGrid columns="3">
                     	<h:inputText id="lCity_reg" styleClass="form-control" value="#{locationController.locationCity}" required = "true" requiredMessage="Eine Stadt muss eingegeben werden."></h:inputText>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="modName_reg" style="color: red"/>
                     </h:panelGrid>                                                        
-                    <h:outputLabel styleClass="label" style="font-size:12pt; color:black;" for="lStreet_reg" value="Straße: "/>
+                    <h:outputLabel styleClass="label" style="font-size:12pt;" for="lStreet_reg" value="Straße: "/>
                     <h:panelGrid columns="3">
                     	<h:inputText id="lStreet_reg" styleClass="form-control" value="#{locationController.locationStreet}" required = "true" requiredMessage="Eine Straße muss eingegeben werden."></h:inputText>
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="lStreet_reg" style="color: red"/>
                     </h:panelGrid>
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{locationController.createDoLocation}" update=":form:LocationList" oncomplete="PF('eventDialog').hide();" />		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{locationController.createDoLocation}" update=":form:LocationList :form:msgs" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

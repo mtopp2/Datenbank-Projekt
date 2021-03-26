@@ -13,14 +13,14 @@
 		    <p:commandButton value="Studiengangmodul Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="SgmodulList" var="list" value="#{sgmodulController.sgmodulList}" editable="true" selectionMode="single" selection="#{sgmodulController.sgmodulSelected}" rowKey="#{list.sgmid}" >
 		        
-		        <p:ajax event="rowSelect" listener="#{sgmodulController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="SgmodulList"/>
+		        <p:ajax event="rowSelect" listener="#{sgmodulController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="SgmodulList"/>
 		 
 	           
 	           <p:column headerText="Modul" sortBy="#{list.modul.modID}">
 		           <p:cellEditor>
 		                <f:facet name="output"><h:outputText value="#{list.modul.modName}" /></f:facet>
 		                <f:facet name="input">
-		                    <h:selectOneMenu value="#{list.modul.modID}, #{list.modul.modName}" style="width:100%">
+		                    <h:selectOneMenu value="#{list.modul.modName}" style="width:100%">
 		                        <f:selectItems value="#{sgmodulController.moduleList}" var="#{modul.modID}" itemLabel="#{modul.modID}" itemValue="#{modul.modID}" />
 		                    </h:selectOneMenu>
 		                </f:facet>
@@ -57,7 +57,9 @@
 		                <h:outputText value="#{list.SGMNotiz}" />
 		        </p:column>
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Modul Editiert Details" showEffect="clip" hideEffect="clip" width="800">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Modul Editiert Details" showEffect="clip" hideEffect="clip" width="800">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 			
 		 			<p:outputLabel for="modul" value="Modul: " />
@@ -79,10 +81,11 @@
                     <h:inputText id="modulSemester" value="#{sgmodulController.sgmodulSelected.modSemester}" ></h:inputText>                                                  
                     
                     <h:outputLabel for="studiengangNotiz" value="Studiengang Notiz: "/>
-                    <h:inputText id="studiengangNotiz" value="#{sgmodulController.sgmodulSelected.SGMNotiz}" ></h:inputText>  
+                    <h:inputTextarea id="studiengangNotiz" value="#{sgmodulController.sgmodulSelected.SGMNotiz}" row = "10" col = "10"></h:inputTextarea>  
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{sgmodulController.addSgmodul()}" update=":form:SgmodulList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:SgmodulList" actionListener="#{sgmodulController.deleteSgmodul()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{sgmodulController.addSgmodul()}" update=":form:SgmodulList :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:SgmodulList :form:msgs" actionListener="#{sgmodulController.deleteSgmodul()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
 		 </h:form>
@@ -92,16 +95,19 @@
 		 
 		            <p:outputLabel for="modul1" value="Modul: " />
 			        <p:selectOneMenu id="modul1" value="#{sgmodulController.moduleId}" style="width:100%">
+			        	<f:selectItem itemLabel="-----" noSelectionOption="true"/>
                     	<f:selectItems value="#{sgmodulController.moduleList}" var="modul" itemLabel="#{modul.modID}, #{modul.modName}" itemValue="#{modul.modID}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="studiengang1" value="Studiengang: " />
 			        <p:selectOneMenu id="studiengang1" value="#{sgmodulController.courseId}" style="width:100%">
+			        	<f:selectItem itemLabel="-----" noSelectionOption="true"/>
                     	<f:selectItems value="#{sgmodulController.courseList}" var="course" itemLabel="#{course.faculty.facName}, #{course.SGName}" itemValue="#{course.sgid}"/>
 			        </p:selectOneMenu>
 			        
 			        <p:outputLabel for="dozent1" value="Dozent: " />
 			        <p:selectOneMenu id="dozent1" value="#{sgmodulController.professorId}" style="width:100%">
+			        	<f:selectItem itemLabel="-----" noSelectionOption="true"/>
                     	<f:selectItems value="#{sgmodulController.professorList}" var="prof" itemLabel="#{prof.DName}, #{prof.DVorname}" itemValue="#{prof.did}"/>
 			        </p:selectOneMenu>
 		 			
@@ -109,10 +115,10 @@
                     <h:inputText id="modulSemester1" value="#{sgmodulController.moduleSemester}" ></h:inputText>                                                  
                     
                     <h:outputLabel for="studiengangNotiz1" value="Studiengang Notiz: "/>
-                    <h:inputText id="studiengangNotiz1" value="#{sgmodulController.sgmodulNote}" ></h:inputText>
+                    <h:inputTextarea id="studiengangNotiz1" value="#{sgmodulController.sgmodulNote}" row = "10" col = "10"></h:inputTextarea>
 		            
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{sgmodulController.createDoSgmodul}" update=":form:SgmodulList" oncomplete="PF('eventDialog').hide();" />		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{sgmodulController.createDoSgmodul}" update=":form:SgmodulList :form:msgs" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

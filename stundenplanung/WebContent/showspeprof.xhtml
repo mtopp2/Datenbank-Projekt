@@ -43,6 +43,9 @@
 	                            process="@parent"
 	                            update=":idForm"
 	                            oncomplete="PF('myschedule').update();"/>
+               	<p:commandButton value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+			        <p:printer target="schedule1"/>
+			    </p:commandButton>
           	</h:panelGrid>
           	<h:panelGrid id="buttons2" columns="2">
                     <h:outputText value="Dieser Stundenplan hat den Status: " style="white-space: pre;font-size:15px;" escape="false"></h:outputText>

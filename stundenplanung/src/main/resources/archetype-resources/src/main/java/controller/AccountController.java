@@ -2,8 +2,7 @@ package controller;
 import model.Benutzergruppe;
 import model.Account;
 import model.Faculty;
-import model.Raum;
-import model.Sgmodul;
+
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -11,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.logging.Level;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -20,27 +19,16 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.RowEditEvent;
-import org.primefaces.event.SelectEvent;
-import com.sun.javafx.logging.Logger;
-import org.primefaces.event.CellEditEvent;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import controller.MessageForPrimefaces;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import org.primefaces.event.SelectEvent;
+
 import javax.ejb.EJB;
 import EJB.AccountFacadeLocal;
 
@@ -71,6 +59,9 @@ public class AccountController implements Serializable {
     ArrayList<String> facultyList = new ArrayList<>();
     ArrayList<String> userGroupList = new ArrayList<>();
 	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
 		accountList = getAccountListAll();
@@ -104,6 +95,7 @@ public class AccountController implements Serializable {
 	
 	private Account accountSelected;
 	
+	// Getter und Setter
 	public Account getAccountSelected() {
 		return accountSelected;
 	}
@@ -162,7 +154,7 @@ public class AccountController implements Serializable {
 			accountEmailOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Accountemail bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Accountemail ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("AccountForm:accEmail_reg", message);
 	    }
 	}
@@ -172,27 +164,29 @@ public class AccountController implements Serializable {
 	}
 	  
 	public void setAccountName(String accountName) {
-	    if(accountName!=null){
-	        this.accountName = accountName;
-	        accountNameOk=true;
-	    }
-	    else{
-	    	FacesMessage message = new FacesMessage("Accountname bereits vorhanden.");
-            FacesContext.getCurrentInstance().addMessage("AccountForm:accName_reg", message);
-	    }
+		if(accountName!=null){
+            if(checkName(accountName)==false){
+                this.accountName = accountName;
+                accountNameOk=true;
+            }
+		    else{
+		    	FacesMessage message = new FacesMessage("Accountname ist bereits vorhanden.");
+	            FacesContext.getCurrentInstance().addMessage("AccountForm:accName_reg", message);
+		    }
+		}
 	}
 	  
 	public String getAccountPassword() {
 		return accountPassword;
 	}
 	  
-	public void setAccPwd(String accountPassword) {
+	public void setAccountPassword(String accountPassword) {
 		if(accountPassword!=null){
 	        this.accountPassword = accountPassword;
 	        accountPasswordOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("PWD bereits vorhanden.");
+	    	FacesMessage message = new FacesMessage("Passwort ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("AccountForm:accPwd_reg", message);
 	    }
 	}
@@ -231,7 +225,9 @@ public class AccountController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
-	public void createAccount() throws Exception  {
+	// Erstellen eines Accounteintrags
+	/*public void createAccount() throws Exception  {
+	 * String msg;
 		EntityManager em = emf.createEntityManager();
 		Account acc = new Account();  
 		acc.setAccName(accountName);
@@ -241,33 +237,41 @@ public class AccountController implements Serializable {
 		acc.setFaculty(findFac(facultyName));
 		try {
 			accFacadeLocal.create(acc);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	       msg = "Eintrag wurde nicht erstellt.";
+           addMessage("messages", msg);
 	    }
 		em.close();
 	}
 	
+	// Schaut ob Accountname, Accountpasswort und Accountemail gesetzt worden sind, danach wird der Eintrag erstellt und zum Schluß wird die Liste aktualisiert.
 	public void createDoAccount() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(accountNameOk == true && accountPasswordOk == true && accountEmailOk) {
 			createAccount();
 			accountList = getAccountListAll();
 		}
-	}
+	}*/
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// 
+	/**
+	 * Laden der Accountliste
+	 * @return
+	 */
 	public List<Account> getAccountListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Account> query = em.createNamedQuery("Account.findAll", Account.class);
-		accountList = query.getResultList();
 		return query.getResultList();
 	}
 	
+	/**
+	 * Ausgewählte Zeile wird in accountSelected gespeichert sowie die Fremdschlüssel
+	 * @param e
+	 */
 	public void onRowSelect(SelectEvent<Account> e) {
     	FacesMessage msg = new FacesMessage("Account ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -281,7 +285,12 @@ public class AccountController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Löschen eines Accounteintrags
+     * @throws Exception
+     */
     public void deleteAccount() throws Exception {
+    	String msg;
     	accountList.remove(accountSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Account> q = em.createNamedQuery("Account.findByAccID",Account.class);
@@ -290,18 +299,24 @@ public class AccountController implements Serializable {
         
         try {
         	accFacadeLocal.remove(account);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	       
 	    }
 		em.close();
     }
     
    // ---------------------------------------------------------------------------------------------------------------------
+
+    /**
+     * Finden einer Benutzergruppe anhand des Benutzerguppennamens
+     * @param bg
+     * @return
+     */
     private Benutzergruppe findBG(String bg) {
     	try{
             EntityManager em = emf.createEntityManager(); 
@@ -315,6 +330,11 @@ public class AccountController implements Serializable {
         return userGroup;
     }
     
+    /**
+     * Finden des Fachbereichs anhand des Fachbereichsnamens
+     * @param fac
+     * @return
+     */
     private Faculty findFac(String fac) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -328,9 +348,13 @@ public class AccountController implements Serializable {
         return faculty;
     }
     
+    /**
+     * Bearbeiten des Accounts
+     */
     public void addAccount(){
+    	String msg;
+    	EntityManager em = emf.createEntityManager();
       	 try {
-	        EntityManager em = emf.createEntityManager();
 	        em.find(Account.class, accountSelected.getAccID());
 	        account.setAccID(accountSelected.getAccID());
 	        account.setAccName(accountSelected.getAccName());
@@ -339,25 +363,89 @@ public class AccountController implements Serializable {
 	        account.setBenutzergruppe(findBG(userGroupName));
             account.setFaculty(findFac(facultyName));
             accFacadeLocal.edit(account);
+            msg = "Eintrag wurde bearbeitet.";
+            addMessage("messages", msg);
    	    }
    	    catch (Exception e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
+   	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
    	    }
       	accountList = getAccountListAll();
+      	em.close();
       }
 	
 	  
-	//Nachrichten an die View senden
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
-  
-  
-  
-  
+	
+	//-------------------------------------------------------------------------------
+	
+	/**
+	 * Erstellt einen Benutzer, vorher wird geschaut, ob der Benutzer schon vorhanden ist.
+	 * @throws Exception
+	 */
+	public void registerUser2() throws Exception  {
+		String msg;
+        EntityManager em = emf.createEntityManager();
+        List<Account> user_temp = new ArrayList<>();   
+        try {
+            TypedQuery<Account> queryGet = em.createNamedQuery("Account.findByAccName", Account.class).setParameter("accName", this.accountName);   
+            user_temp = queryGet.getResultList();  
+        } 
+        catch (Exception e) {
+        }
+        if (user_temp.isEmpty()) {  
+            Account newUser = new Account();  
+            newUser.setAccName(accountName);    
+            newUser.setAccPwd(accountPassword);      
+            newUser.setAccEmail(accountEmail);
+            newUser.setBenutzergruppe(findBG(userGroupName));
+            //Dropdown Menü
+            newUser.setFaculty(findFac(facultyName));
+            try {
+            	accFacadeLocal.create(newUser);
+            	msg = "Eintrag wurde erstellt.";
+                addMessage("messages", msg);
+            }
+            catch (Exception e) {
+            	msg = "Eintrag wurde nicht erstellt.";
+                addMessage("messages", msg);
+            }
+        } 
+        else {
+            msg = "Account ist bereits vorhanden.";
+            addMessage("messages", msg);
+        }
+        accountList = getAccountListAll();
+        em.close();
+	}
+	
+    /**
+     * Überprüfen ob der Name schon vergeben ist.
+     * @param uName
+     * @return
+     */
+    private boolean checkName(String uName) {
+        boolean found = false;
+        try{
+            EntityManager em = emf.createEntityManager(); 
+            TypedQuery<Account> query
+                = em.createNamedQuery("Account.findByBname",Account.class);
+            query.setParameter("accName", uName);
+            account = (Account)query.getSingleResult();
+            found=true; //Account gefunden!
+        }
+        catch(Exception e){   
+        }
+        return found;
+    }
+
+	
 }

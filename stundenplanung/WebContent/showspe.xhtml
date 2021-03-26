@@ -40,25 +40,32 @@
 	            <p:commandButton 
 							 value="Filtern"
 	                         process="@parent"
-	                         actionListener="#{scheduleController.loadModule}"
-	                         update=":idForm"
-	                         oncomplete="PF('myschedule1').update();PF('myschedule2').update();PF('myschedule3').update();PF('myschedule4').update();PF('myschedule5').update();PF('myschedule6').update();" />
+	                         actionListener="#{scheduleController.loadSchedule}"
+	                         update=":idForm :printDetailsForm"/>
+			    <p:commandButton 
+			    				value="Drucken" 
+			    				id="ajax"  
+			    				type="button" 
+			    				editable="true" 
+			    				update=":printDetailsForm" 
+			    				onclick="PF('printDialog').show();" 
+			    				style="margin-right:20px;" 
+			    				styleClass="ui-priority-primary" />
 	        	</h:panelGrid>
 	        	<h:panelGrid id="buttons1" columns="1">
 	        		<p:commandButton 
 	        					value="Wochenenden"
 	  						 	actionListener="#{scheduleController.weekendChange}"
 	                            process="@parent"
-	                            update=":idForm"
-	                            oncomplete="PF('myschedule1').update();PF('myschedule2').update();PF('myschedule3').update();PF('myschedule4').update();PF('myschedule5').update();PF('myschedule6').update();" />
+	                            update=":idForm"/>
 	        	</h:panelGrid>
 	        	<h:panelGrid id="buttons2" columns="2">
                     <h:outputText value="Dieser Stundenplan hat den Status: " style="white-space: pre;font-size:15px;" escape="false"></h:outputText>
                     <h:outputText value="#{scheduleController.spSemester.stundenplanstatus.SPSTBezeichnung}" style="white-space: pre;font-size:15px;"  escape="false"></h:outputText>
 	        	</h:panelGrid>
 	        	<h:panelGroup id="panelgroup">
-			        
-			        <h1>Semester 1</h1>
+			    <h:panelGroup id="panelgroup1" rendered="#{scheduleController.show1}">
+			    	<h1>Semester 1</h1>
 			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
 					    <f:convertDateTime pattern="dd.MM.yyyy" />
 					</h:outputText>
@@ -75,7 +82,9 @@
 			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			 			
 			        </p:schedule>
-			        <h1>Semester 2</h1>
+			    </h:panelGroup>
+			    <h:panelGroup id="panelgroup2" rendered="#{scheduleController.show2}">
+			    	<h1>Semester 2</h1>
 			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
 					    <f:convertDateTime pattern="dd.MM.yyyy" />
 					</h:outputText>
@@ -92,6 +101,8 @@
 			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			 			
 			        </p:schedule>
+			    </h:panelGroup>
+			    <h:panelGroup id="panelgroup3" rendered="#{scheduleController.show3}">    
 			        <h1>Semester 3</h1>
 			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
 					    <f:convertDateTime pattern="dd.MM.yyyy" />
@@ -109,7 +120,9 @@
 			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			 			
 			        </p:schedule>
-			        <h1>Semester 4</h1>
+		        </h:panelGroup>
+		        <h:panelGroup id="panelgroup4" rendered="#{scheduleController.show4}">
+		        	<h1>Semester 4</h1>
 			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
 					    <f:convertDateTime pattern="dd.MM.yyyy" />
 					</h:outputText>
@@ -125,8 +138,10 @@
 			           	<p:ajax event="eventMove" listener="#{scheduleController.onEventMove}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			 			
-			        </p:schedule>
-			        <h1>Semester 5</h1>
+			        </p:schedule>  
+			    </h:panelGroup>    
+			    <h:panelGroup id="panelgroup5" rendered="#{scheduleController.show5}">
+			    	<h1>Semester 5</h1>
 			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
 					    <f:convertDateTime pattern="dd.MM.yyyy" />
 					</h:outputText>
@@ -143,7 +158,9 @@
 			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			 			
 			        </p:schedule>
-			        <h1>Semester 6</h1>
+			    </h:panelGroup>  
+			    <h:panelGroup id="panelgroup6" rendered="#{scheduleController.show6}">
+			    	<h1>Semester 6</h1>
 			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
 					    <f:convertDateTime pattern="dd.MM.yyyy" />
 					</h:outputText>
@@ -160,9 +177,47 @@
 			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
 			 
 			        </p:schedule> 
+			    </h:panelGroup>
+			    <h:panelGroup id="panelgroup7" rendered="#{scheduleController.show7}">
+			    	<h1>Semester 7</h1>
+			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
+					    <f:convertDateTime pattern="dd.MM.yyyy" />
+					</h:outputText>
+					<h:outputText value=" - " style="white-space: pre;font-size:20px;" escape="false">
+					</h:outputText>
+					<h:outputText value="#{scheduleController.spSemester.endDatum}" style="white-space: pre;font-size:20px;" escape="false">
+					    <f:convertDateTime pattern="dd.MM.yyyy" />
+					</h:outputText>
+			        <p:schedule id="schedule7" value="#{scheduleController.events[7]}" widgetVar="myschedule7" allDaySlot="false" showWeekends="#{scheduleController.showWeekends}" axisFormat="H:mm" slotMinutes="15" slotDuration="00:15:00" minTime="08:00:00" maxTime="20:00:00" locale="de" timeZone="Europe/Berlin" view="agendaWeek" leftHeaderTemplate="" rightHeaderTemplate="timeGridWeek,timeGridDay" centerHeaderTemplate = "" columnHeaderFormat="timeGridWeek:{weekday: 'long'}">
+						
+			            <p:ajax event="dateSelect" listener="#{scheduleController.onDateSelect}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update=":eventDetailsForm:eventDialog" oncomplete="PF('eventDialog').show();" />
+			            <p:ajax event="eventSelect" listener="#{scheduleController.onEventSelect}" update=":eventDetailsEditForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" />
+			           	<p:ajax event="eventMove" listener="#{scheduleController.onEventMove}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
+			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
+			 
+			        </p:schedule> 
+			    </h:panelGroup>
+			    <h:panelGroup id="panelgroup8" rendered="#{scheduleController.show8}">
+			    	<h1>Semester 8</h1>
+			        <h:outputText value="#{scheduleController.spSemester.startDatum}" style="white-space: pre;font-size:20px;"  escape="false">
+					    <f:convertDateTime pattern="dd.MM.yyyy" />
+					</h:outputText>
+					<h:outputText value=" - " style="white-space: pre;font-size:20px;" escape="false">
+					</h:outputText>
+					<h:outputText value="#{scheduleController.spSemester.endDatum}" style="white-space: pre;font-size:20px;" escape="false">
+					    <f:convertDateTime pattern="dd.MM.yyyy" />
+					</h:outputText>
+			        <p:schedule id="schedule8" value="#{scheduleController.events[8]}" widgetVar="myschedule8" allDaySlot="false" showWeekends="#{scheduleController.showWeekends}" axisFormat="H:mm" slotMinutes="15" slotDuration="00:15:00" minTime="08:00:00" maxTime="20:00:00" locale="de" timeZone="Europe/Berlin" view="agendaWeek" leftHeaderTemplate="" rightHeaderTemplate="timeGridWeek,timeGridDay" centerHeaderTemplate = "" columnHeaderFormat="timeGridWeek:{weekday: 'long'}">
+						
+			            <p:ajax event="dateSelect" listener="#{scheduleController.onDateSelect}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update=":eventDetailsForm:eventDialog" oncomplete="PF('eventDialog').show();" />
+			            <p:ajax event="eventSelect" listener="#{scheduleController.onEventSelect}" update=":eventDetailsEditForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" />
+			           	<p:ajax event="eventMove" listener="#{scheduleController.onEventMove}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
+			           	<p:ajax event="eventResize" listener="#{scheduleController.onEventResize}" disabled="#{!(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" update="messages" />
+			 
+			        </p:schedule> 
+			    </h:panelGroup>
 		        </h:panelGroup>
 			</p:panel>
-			<!-- <p:resizable for="panel_Calendar" minWidth="1030" maxWidth="1530" minHeight="536" maxHeight="720"/> -->
 		</h:form>
 		<h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Event Details" showEffect="clip" hideEffect="clip" width="600">
@@ -205,8 +260,8 @@
 			        <p:outputLabel for="studentNumber" value="Studierendenanzahl:" />
 		            <p:inputText id="studentNumber" value="#{scheduleController.studentNumber}" />
 		 			
-		 			<p:commandButton id="addButton" value="Speichern" actionListener="#{scheduleController.addEvent}" oncomplete="PF('myschedule1').update();PF('myschedule2').update();PF('myschedule3').update();PF('myschedule4').update();PF('myschedule5').update();PF('myschedule6').update();PF('eventDialog').hide();" />
-		            <p:commandButton id="reset" type="reset" value="Reset" />
+		 			<p:commandButton id="addButton" value="Speichern" process="@parent" update=":idForm" actionListener="#{scheduleController.addEvent}" oncomplete="PF('eventDialog').hide();" />
+		            <p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
 		            
 		        </h:panelGrid>
 		    </p:dialog>    
@@ -252,11 +307,73 @@
 			        <p:outputLabel for="studentNumber1" value="Studierendenanzahl:" />
 		            <p:inputText id="studentNumber1" value="#{scheduleController.eventSelected.studierendenzahl}" />
 		 			
-		 			<p:commandButton id="addButton1" value="Speichern" actionListener="#{scheduleController.editEvent}" oncomplete="PF('myschedule1').update();PF('myschedule2').update();PF('myschedule3').update();PF('myschedule4').update();PF('myschedule5').update();PF('myschedule6').update();PF('eventEditDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
-		            <p:commandButton id="reset1" type="reset" value="Reset" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}" />
+		 			<p:commandButton id="addButton1" value="Speichern" process="@parent" update=":idForm" actionListener="#{scheduleController.editEvent}" oncomplete="PF('eventEditDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
 		            
-		            <p:commandButton value="Löschen" process="@parent" update=":idForm" actionListener="#{scheduleController.deleteEvent()}" oncomplete="PF('myschedule1').update();PF('myschedule2').update();PF('myschedule3').update();PF('myschedule4').update();PF('myschedule5').update();PF('myschedule6').update();PF('eventEditDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
-                    <p:commandButton value="Abbrechen" process="@parent" update=":idForm" oncomplete="PF('eventEditDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
+		            <p:commandButton value="Löschen" process="@parent" update=":idForm" actionListener="#{scheduleController.deleteEvent()}" oncomplete="PF('eventEditDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
+                    <p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isRzp or loginController.isSgl))}"/>
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
+		<h:form id="printDetailsForm">
+		    <p:dialog id="printDialog" widgetVar="printDialog" header="Drucker" showEffect="clip" hideEffect="clip" width="250">
+		        <h:panelGrid id="printEventDetails" columns="2">
+		 			
+		 			<h:panelGroup id="panelgroup11" rendered="#{scheduleController.show1}">
+			            <p:outputLabel for="Semester1" value="Semester 1: " />               		 
+	               		<p:commandButton id="Semester1" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup1"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup22" rendered="#{scheduleController.show2}">
+					    <p:outputLabel for="Semester2" value="Semester 2: " />               		 
+	               		<p:commandButton id="Semester2" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup2"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup33" rendered="#{scheduleController.show3}">
+					    <p:outputLabel for="Semester3" value="Semester 3: " />               		 
+	               		<p:commandButton id="Semester3" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup3"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup44" rendered="#{scheduleController.show4}">
+					    <p:outputLabel for="Semester4" value="Semester 4: " />               		 
+	               		<p:commandButton id="Semester4" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup4"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup55" rendered="#{scheduleController.show5}">
+					    <p:outputLabel for="Semester5" value="Semester 5: " />               		 
+	               		<p:commandButton id="Semester5" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup5"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup66" rendered="#{scheduleController.show6}">
+					    <p:outputLabel for="Semester6" value="Semester 6: " />               		 
+	               		<p:commandButton id="Semester6" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup6"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup77" rendered="#{scheduleController.show7}">
+					    <p:outputLabel for="Semester7" value="Semester 7: " />               		 
+	               		<p:commandButton id="Semester7" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup7"/>
+					    </p:commandButton>
+				    </h:panelGroup>
+				    
+				    <h:panelGroup id="panelgroup88" rendered="#{scheduleController.show8}">
+					    <p:outputLabel for="Semester8" value="Semester 8: " />               		 
+	               		<p:commandButton id="Semester8" value="Drucken" type="button" styleClass="p-d-block p-shadow-2 p-mb-3">
+	                		<p:printer target=":idForm:panelgroup8"/>
+					    </p:commandButton>
+				    </h:panelGroup>
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

@@ -1,7 +1,7 @@
 package controller;
 
 import model.Modul;
-import model.Raum;
+
 import model.Dozenten;
 import model.Studiengang;
 import model.Sgmodul;
@@ -10,7 +10,7 @@ import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -20,7 +20,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -30,14 +30,12 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
 
-import EJB.ModulFacadeLocal;
+
 import EJB.SgModulFacadeLocal;
 
-import javax.faces.bean.ManagedBean;
-import controller.MessageForPrimefaces;
 
 /**
 *
@@ -64,6 +62,9 @@ public class SgmodulController implements Serializable {
 	@EJB
 	private SgModulFacadeLocal sgModulFacadeLocal;
 	
+	/**
+	 * Initilisierung
+	 */
 	@PostConstruct
     public void init() {
 		sgmodulList = getSgmodulListAll();
@@ -108,7 +109,7 @@ public class SgmodulController implements Serializable {
 	
 	private Sgmodul sgmodulSelected;
 	
-	
+	// Getter und Setter
 	public String getSgmodulNote() {
 		return sgmodulNote;
 	}
@@ -230,8 +231,14 @@ public class SgmodulController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	/**
+	 * Erstellen eines Studiengangmoduls
+	 * @throws Exception
+	 */
 	public void createSgmodul() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Sgmodul sgm = new Sgmodul();  
 		sgm.setSGMNotiz(sgmodulNote);
@@ -241,34 +248,48 @@ public class SgmodulController implements Serializable {
 		sgm.setStudiengang(findSg(courseId));
 		try {
 			sgModulFacadeLocal.create(sgm);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
 	    }
 		em.close();
 	}
 	
+	/**
+	 * Erstellt ein Studiengangsmodul und aktualisiert dann die Liste
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoSgmodul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 			createSgmodul();
 			sgmodulList = getSgmodulListAll();
-	
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Laden der Studiengangmodulliste
+	 * @return
+	 */
 	public List<Sgmodul> getSgmodulListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Sgmodul> query = em.createNamedQuery("Sgmodul.findAll", Sgmodul.class);
-		sgmodulList = query.getResultList();
 		return query.getResultList();
 	}
 	
-	
-	
+	 
+	/**
+	 * Ausgewählte Zeile in sgmodulSelected speichern mit den ganzen Fremdschlüsseln
+	 * @param e
+	 */
 	public void onRowSelect(SelectEvent<Sgmodul> e) {
     	FacesMessage msg = new FacesMessage("Studiengangmodul ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -283,7 +304,12 @@ public class SgmodulController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Löschen eines Studiengangmoduls
+     * @throws Exception
+     */
     public void deleteSgmodul() throws Exception {
+    	String msg;
     	sgmodulList.remove(sgmodulSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Sgmodul> q = em.createNamedQuery("Sgmodul.findBySgmid",Sgmodul.class);
@@ -291,20 +317,25 @@ public class SgmodulController implements Serializable {
         sgmodul = (Sgmodul)q.getSingleResult();
         
         try {
-        	sgModulFacadeLocal.remove(sgmodul); 
+        	sgModulFacadeLocal.remove(sgmodul);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	    	
 	    }
 		em.close();
     }
     
    //----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Finden eines Moduls anhand der ID
+     * @param mod
+     * @return
+     */
     private Modul findMod(int mod) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -318,6 +349,11 @@ public class SgmodulController implements Serializable {
         return module;
     }
     
+    /**
+     * Finden eines Studiengangs anhand der ID
+     * @param sg
+     * @return
+     */
     private Studiengang findSg(int sg) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -331,6 +367,11 @@ public class SgmodulController implements Serializable {
         return course;
     }
     
+    /**
+     * Finden eines Dozenten anhand der ID
+     * @param doz
+     * @return
+     */
     private Dozenten findDoz(int doz) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -346,10 +387,14 @@ public class SgmodulController implements Serializable {
     
    //----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Bearbeiten eines Studiengangmoduls
+     * 
+     */
     public void addSgmodul(){
+    	EntityManager em = emf.createEntityManager();
+    	String msg;
       	 try {
-      		
-	        EntityManager em = emf.createEntityManager();
 	        em.find(Sgmodul.class, sgmodulSelected.getSgmid());
 	        sgmodul.setSgmid(sgmodulSelected.getSgmid());
 	        sgmodul.setModSemester(sgmodulSelected.getModSemester());
@@ -358,15 +403,25 @@ public class SgmodulController implements Serializable {
 	        sgmodul.setDozenten(findDoz(professorId));
 	        sgmodul.setStudiengang(findSg(courseId));
 	        sgModulFacadeLocal.edit(sgmodul);
+	        msg = "Eintrag wurde bearbeitet.";
+            addMessage("messages", msg);
    	    }
    	    catch (Exception e) {
-   	        try {
-   	            ut.rollback();
-   	        } 
-   	        catch (IllegalStateException | SecurityException | SystemException ex) {
-   	        }
+   	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
    	    }
       	sgmodulList = getSgmodulListAll();
+      	em.close();
       }
+    
+  	/**
+  	 * Nachrichten an die View senden
+  	 * @param loginformidName
+  	 * @param msg
+  	 */
+  	private void addMessage(String loginformidName, String msg) {
+  	   FacesMessage message = new FacesMessage(msg);
+  	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+  	}
     
 }

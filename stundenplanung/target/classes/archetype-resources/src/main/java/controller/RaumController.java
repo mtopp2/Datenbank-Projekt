@@ -62,6 +62,7 @@ public class RaumController implements Serializable {
 	@EJB
 	private RaumFacadeLocal raumFacadeLocal;
 	
+	// Initialisierung
 	@PostConstruct
     public void init() {
         roomList = getRaumList();
@@ -81,10 +82,7 @@ public class RaumController implements Serializable {
 	
 	private Raum roomSelected;
 	
-	
-	
-	
-	
+	// Getter und Setter
 	public int getLocationId() {
 		return locationId;
 	}
@@ -172,8 +170,11 @@ public class RaumController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	// Erstellen eines Raumes
 	public void createRoom() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Raum rau = new Raum();  
 		rau.setRName(roomName);
@@ -182,17 +183,18 @@ public class RaumController implements Serializable {
 		rau.setLocation(findLoc(locationId));
 		try {
 	        raumFacadeLocal.create(rau);
+	        msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+	        
 	    }
 		em.close();
 	}
 	
+	// Schaut ob Raumname und Kapazität gesetzt worden ist, danach wird der Raum erstellt und zum Schluß wird die Liste aktualisiert.
 	public void createDoRoom() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(roomNameOk == true && capacityOk == true) {
 			createRoom();
@@ -202,20 +204,21 @@ public class RaumController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// Laden der Raumliste
 	public List<Raum> getRaumList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Raum> query = em.createNamedQuery("Raum.findAll", Raum.class);
-		roomList = query.getResultList();
 		return query.getResultList();
 	}
 	
+	// Laden der Standortsliste
 	public List<Location> getLocationList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Location> query = em.createNamedQuery("Location.findAll", Location.class);
-		locationList = query.getResultList();
-		return locationList;
+		return query.getResultList();
 	}
 	
+	// Ausgewählte Zeile wird in roomSelected gespeichert, sowie der Fremdschlüssel
 	public void onRowSelect(SelectEvent<Raum> e) {
     	FacesMessage msg = new FacesMessage("Raum ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -228,7 +231,9 @@ public class RaumController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+	// Löscht einen Raum
     public void deleteRoom() throws Exception {
+    	String msg;
         roomList.remove(roomSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Raum> q = em.createNamedQuery("Raum.findByRid",Raum.class);
@@ -237,17 +242,18 @@ public class RaumController implements Serializable {
         
         try {
         	this.raumFacadeLocal.remove(room);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	        
 	    }
 		em.close();
     }
     
+    // Finden eines Standortes anhand der ID
     private Location findLoc(int locationId) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -261,26 +267,34 @@ public class RaumController implements Serializable {
         return location;
     }
     
+    // Bearbeiten eines Raumes
     public void addRoom(){
-   	 try {
-
-        EntityManager em = emf.createEntityManager();
-        em.find(Raum.class, roomSelected.getRid());
-        room.setRid(roomSelected.getRid());
-        room.setRName(roomSelected.getRName());
-        room.setKapazitaet(roomSelected.getKapazitaet());
-        room.setNachbarRaum(roomSelected.getNachbarRaum());
-        room.setLocation(findLoc(locationId));
-        raumFacadeLocal.edit(room);
-	    }
-	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
-	    }
-   	roomList = getRaumList();
+    	EntityManager em = emf.createEntityManager();
+    	String msg;
+	   	 try {
+	        em.find(Raum.class, roomSelected.getRid());
+	        room.setRid(roomSelected.getRid());
+	        room.setRName(roomSelected.getRName());
+	        room.setKapazitaet(roomSelected.getKapazitaet());
+	        room.setNachbarRaum(roomSelected.getNachbarRaum());
+	        room.setLocation(findLoc(locationId));
+	        raumFacadeLocal.edit(room);
+	        msg = "Eintrag wurde bearbeitet.";
+	        addMessage("messages", msg);
+		    }
+		    catch (Exception e) {
+		    	msg = "Eintrag wurde nicht bearbeitet.";
+	            addMessage("messages", msg);
+		    }
+	   	roomList = getRaumList();
+	   	em.close();
    }
+    
+	//Nachrichten an die View senden
+	private void addMessage(String loginformidName, String msg) {
+	   FacesMessage message = new FacesMessage(msg);
+	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+	}
+    
   
 }

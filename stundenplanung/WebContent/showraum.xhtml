@@ -13,7 +13,7 @@
 		    <p:commandButton value="Raum Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="RoomList" var="list" value="#{raumController.roomList}" editable="true" selectionMode="single" selection="#{raumController.roomSelected}" rowKey="#{list.rid}">
 			
-				<p:ajax event="rowSelect" listener="#{raumController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="RoomList"/>
+				<p:ajax event="rowSelect" listener="#{raumController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="RoomList"/>
 		 
 		 
 		        <p:column headerText="Raumname" sortBy="#{list.RName}">
@@ -39,7 +39,9 @@
 		            </p:cellEditor>
 		        </p:column>		       
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Raum Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Raum Editiert Details" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="roomname" value="Raumname: "/>
@@ -56,10 +58,11 @@
                     	<f:selectItems value="#{raumController.locationList}" var="loc" itemLabel="#{loc.LCity}, #{loc.LStreet}" itemValue="#{loc.lid}"/>
 			        </p:selectOneMenu>
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{raumController.addRoom()}" update=":form:RoomList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:RoomList" actionListener="#{raumController.deleteRoom()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{raumController.addRoom()}" update=":form:RoomList :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:RoomList :form:msgs" actionListener="#{raumController.deleteRoom()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
-		    </p:dialog> 
+		    </p:dialog>
 		 </h:form>
 		 <h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Raum" showEffect="clip" hideEffect="clip" width="350">
@@ -76,11 +79,12 @@
                     
                     <p:outputLabel for="room1" value="Straße: " />
 			        <p:selectOneMenu id="room1" value="#{raumController.locationId}" style="width:100%">
+			        	<f:selectItem itemLabel="-----" noSelectionOption="true"/>
                     	<f:selectItems value="#{raumController.locationList}" var="loc" itemLabel="#{loc.LCity}, #{loc.LStreet}" itemValue="#{loc.lid}"/>
 			        </p:selectOneMenu>
 		            
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{raumController.createDoRoom}" update=":form:RoomList" oncomplete="PF('eventDialog').hide();" />		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{raumController.createDoRoom}" update=":form:RoomList :form:msgs" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

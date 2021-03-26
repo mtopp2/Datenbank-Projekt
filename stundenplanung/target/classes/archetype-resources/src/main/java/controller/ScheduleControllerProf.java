@@ -79,6 +79,7 @@ public class ScheduleControllerProf implements Serializable{
 	private Dozenten professor;
 	private Stundenplansemester spSemester;
 	
+	// Initialisierung
 	@PostConstruct
 	public void init() {
         selection();
@@ -111,6 +112,7 @@ public class ScheduleControllerProf implements Serializable{
     
     //-------------------------------------------------------------------------------------------------
 	
+    // Toggelt die showWeekend Variable
     public void weekendChange() {
     	if (showWeekends == false) {
     		showWeekends = true;
@@ -119,6 +121,7 @@ public class ScheduleControllerProf implements Serializable{
     	}
     }
     
+    // Laden aller Listen aus der Datenbank
 	public void selection() {
 		EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Dozenten.findAll");
@@ -153,11 +156,13 @@ public class ScheduleControllerProf implements Serializable{
         spsId = spSemester.getSpsid();
 	}
 	
-public void loadModule() {
+	// Leeren aller Events und anschließend neu laden
+	public void loadModule() {
         lazyEventModel.clear();
         eventLoader();
 	}
 	
+	// Laden der Events
 	public void eventLoader() {        
         try{/* Laden der Datenbank*/
         	spSemester = findSPSelection(spSemesterSelection, spYearSelection);
@@ -196,6 +201,7 @@ public void loadModule() {
 	
 	//-------------------------------------------------------------------------------------------------
 	
+	// Umwandlung von Date to LocalDateTime
 	public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 	    return dateToConvert.toInstant()
 	      .atZone(ZoneId.systemDefault())
@@ -273,6 +279,7 @@ public void loadModule() {
 		this.showWeekends = showWeekends;
 	}
 	
+	// Finden des Stundenplansemesters durch Stundenplansemester und Stundenplansemesterjahr
 	private Stundenplansemester findSPSelection(String sps,int sm) {
         try{
             EntityManager em = emf.createEntityManager(); 

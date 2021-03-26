@@ -13,7 +13,7 @@
 		    <p:commandButton value="Fachbereich Hinzugügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="FacultyList" var="list" value="#{facultyController.facultyList}" selectionMode="single" selection="#{facultyController.facultySelected}"  rowKey="#{list.fbid}">
 			
-		        <p:ajax event="rowSelect" listener="#{facultyController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="FacultyList"/>
+		        <p:ajax event="rowSelect" listener="#{facultyController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="FacultyList"/>
 		 
 		 
 		        <p:column headerText="Fachbereich" sortBy="#{list.facName}">    
@@ -24,12 +24,10 @@
 		                <h:outputText value="#{list.facShortName}" />    
 		        </p:column>
 		        
-		        
-		        
-		        
 		    </p:dataTable>
-		     
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Fachbereich Editiert Details" showEffect="clip" hideEffect="clip">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Fachbereich Editiert Details" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="facName_reg" value="Fachbereich: "/>
@@ -38,11 +36,11 @@
                     <h:outputLabel for="facShortName_reg" value="Kürzel: "/>
                     <h:inputText id="facShortName_reg" value="#{facultyController.facultySelected.facShortName}" ></h:inputText>
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{facultyController.addFaculty()}" update=":form:FacultyList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:FacultyList" actionListener="#{facultyController.deleteFaculty()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{facultyController.addFaculty()}" update=":form:FacultyList :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:FacultyList :form:msgs" actionListener="#{facultyController.deleteFaculty()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
-		     
 		 </h:form>
 		 <h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Fachbereich" showEffect="clip" hideEffect="clip">
@@ -61,8 +59,8 @@
                     	<h:messages for="facShortName_reg" style="color: red"/>
                     </h:panelGrid>
                     
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{facultyController.createDoFaculty}" update=":form:FacultyList" oncomplete="PF('eventDialog').hide();"/>		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{facultyController.createDoFaculty}" update=":form:FacultyList :form:msgs" oncomplete="PF('eventDialog').hide();"/>		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

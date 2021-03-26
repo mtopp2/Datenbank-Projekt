@@ -16,7 +16,8 @@ import java.util.List;
 @NamedQuery(name="Studiengang.findBySgid", query="SELECT s FROM Studiengang s WHERE s.sgid = :sgid"),
 @NamedQuery(name="Studiengang.findBySGKurz", query="SELECT s FROM Studiengang s WHERE s.SGKurz = :SGKurz"),
 @NamedQuery(name="Studiengang.findBySGName", query="SELECT s FROM Studiengang s WHERE s.SGName = :SGName"),
-@NamedQuery(name="Studiengang.findBySemester", query="SELECT s FROM Studiengang s WHERE s.semester = :semester")})
+@NamedQuery(name="Studiengang.findBySemester", query="SELECT s FROM Studiengang s WHERE s.semester = :semester"),
+@NamedQuery(name="Studiengang.findBySGNameAndFacName", query="SELECT s FROM Studiengang s JOIN s.faculty f WHERE s.SGName = :SGName AND f.facName = :facName")})
 
 public class Studiengang implements Serializable {
 	private static final long serialVersionUID = 1L;

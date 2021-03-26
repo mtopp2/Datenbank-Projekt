@@ -10,10 +10,10 @@
 		<ui:define name="content">
 		<h:form id="form">
 		    <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
-		    <p:commandButton value="Benutzer Hinzufügen" id="ajax" update="msgs" action="/register.xhtml" style="margin-right:20px;" styleClass="ui-priority-primary" />   
+		    <p:commandButton value="Benutzer Hinzufügen" type="button" id="ajax" editable="true"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="AccountList" var="list" value="#{accountController.accountList}" editable="true" selectionMode="single" selection="#{accountController.accountSelected}" rowKey="#{list.accID}">
 			
-				<p:ajax event="rowSelect" listener="#{accountController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="AccountList"/>
+				<p:ajax event="rowSelect" listener="#{accountController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="AccountList"/>
 		 
 		 
 		        <p:column headerText="Benutzername" sortBy="#{list.accName}">
@@ -50,7 +50,10 @@
 		            </p:cellEditor>
 		        </p:column>
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Benutzer Editiert Details" showEffect="clip" hideEffect="clip" width="600">
+		    
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Benutzer Editiert Details" showEffect="clip" hideEffect="clip" width="600">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="accountName" value="Benutzername: "/>
@@ -72,11 +75,66 @@
                     	<f:selectItems value="#{accountController.facultyList}" />
 			        </p:selectOneMenu>
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{accountController.addAccount()}" update=":form:AccountList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{accountController.addAccount()}" update=":form:AccountList :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
 		 			<p:commandButton value="Löschen" update=":form:AccountList" actionListener="#{accountController.deleteAccount()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
 		 </h:form>
+		 <h:form id="eventDetailsForm">
+		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Benutzer" showEffect="clip" hideEffect="clip">
+		        <h:panelGrid id="eventDetails" columns="2">
+		        
+                     <h:outputLabel styleClass="label" style="font-size:12pt;" for="idName" value="Benutzername: "/>
+                     <h:panelGrid columns="3">
+                         <h:inputText id="idName_reg" styleClass="form-control" value="#{accountController.accountName}" required = "true" requiredMessage="Bitte einen Benutzernamen eingeben">
+                         </h:inputText>
+                         <h:outputLabel value="" style="margin: 10px;"/>
+                         <h:message for="idName_reg" style="color: red"/>
+                     </h:panelGrid>
+                     <h:outputLabel styleClass="label" style="font-size:12pt;" for="idPwd" value="Passwort: "/>
+                     <h:panelGrid columns="3">
+                         <h:inputSecret id="idPwd_reg" styleClass="form-control" value="#{accountController.accountPassword}" required = "true" requiredMessage="Bitte ein Passwort eingeben">
+                         </h:inputSecret>
+                         <h:outputLabel value="" style="margin: 10px;"/>
+                         <h:message for="idPwd_reg" style="color: red"/>
+                     </h:panelGrid>
+                     <h:outputLabel styleClass="label" style="font-size:12pt;" for="idEmail" value="Email: "/>
+                     <h:panelGrid columns="3">
+                         <h:inputText id="idMail_reg" styleClass="form-control" value="#{accountController.accountEmail}" required = "true" requiredMessage="Bitte eine Email Adresse angeben">
+                         </h:inputText>
+                         <h:outputLabel value="" style="margin: 10px;"/>
+                         <h:message for="idMail_reg" style="color: red"/>
+                     </h:panelGrid>
+                     
+                     <h:outputLabel styleClass="label" style="font-size:12pt;" for="bg" value="Benutzergruppe: "/>
+                     <h:panelGrid columns="3">
+                         <h:selectOneMenu styleClass="form-control" id="bg" required="true" requiredMessage="Bitte eine Benutzergruppe wählen" value="#{accountController.userGroupName}">
+                             <f:selectItem itemLabel="-----" noSelectionOption="true"/>
+                                 <f:selectItems value="#{accountController.userGroupList}"/>
+                            </h:selectOneMenu>
+                         <h:outputLabel value="" style="margin: 10px;"/>
+                         <h:message for="bg" style="color: red"/>
+                     </h:panelGrid>
+                     
+                     
+                     <h:outputLabel styleClass="label" style="font-size:12pt;" for="Gruppe" value="Fachbereich: "/>
+                     <h:panelGrid columns="3">
+                         <h:selectOneMenu styleClass="form-control" id="Gruppe" required="true" requiredMessage="Bitte einen Fachbereich wählen" value="#{accountController.facultyName}">
+                             <f:selectItem itemLabel="-----" noSelectionOption="true"/>
+                                 <f:selectItems value="#{accountController.facultyList}"/>
+                            </h:selectOneMenu>
+                         <h:outputLabel value="" style="margin: 10px;"/>
+                         <h:message for="Gruppe" style="color: red"/>
+                     </h:panelGrid>
+
+	        
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{accountController.registerUser2()}" update=":form :form:msgs" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
+		            
+		        </h:panelGrid>
+		    </p:dialog>    
+		</h:form>
 		 </ui:define>
 	</ui:composition>
 </h:body>

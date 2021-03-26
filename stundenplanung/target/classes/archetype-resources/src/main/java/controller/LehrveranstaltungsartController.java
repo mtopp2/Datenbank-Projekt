@@ -62,6 +62,7 @@ public class LehrveranstaltungsartController implements Serializable {
 	@EJB
 	private LehrveranstaltungsartFacadeLocal teachingEventFacadeLocal;
 	
+	// Initialisierung
 	@PostConstruct
     public void init() {
         teachingEventList = getLehrveranstaltungsartList();
@@ -78,6 +79,7 @@ public class LehrveranstaltungsartController implements Serializable {
 	
 	private Lehrveranstaltungsart teachingEventSelected;
 
+	// Getter und Setter
 	public Lehrveranstaltungsart getTeachingEvent() {
 		return teachingEvent;
 	}
@@ -155,8 +157,11 @@ public class LehrveranstaltungsartController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	// Erstellen eines Lehrveranstaltungseintrags
 	public void createLehrveranstaltungsart() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Lehrveranstaltungsart lva = new Lehrveranstaltungsart();  
 		lva.setLvname(teachingEventName);
@@ -164,17 +169,18 @@ public class LehrveranstaltungsartController implements Serializable {
 		lva.setLvkurz(teachingEventShort);
 		try {
 			teachingEventFacadeLocal.create(lva);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+	        
 	    }
 		em.close();
 	}
 	
+	// Erstellen des Lehrveranstaltungseintrags und danach wird die Liste aktualisiert.
 	public void createDoLehrveranstaltungsart() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		//if(teachingEventNameOk == true && teachingEventLengthOk == true && teachingEventShortOk == true) {
 			createLehrveranstaltungsart();
@@ -185,14 +191,14 @@ public class LehrveranstaltungsartController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// Lehrveranstaltungsliste wird geladen
 	public List<Lehrveranstaltungsart> getLehrveranstaltungsartList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Lehrveranstaltungsart> query = em.createNamedQuery("Lehrveranstaltungsart.findAll", Lehrveranstaltungsart.class);
-		teachingEventList = query.getResultList();
 		return query.getResultList();
 	}
 	
-	
+	// Ausgewählte Zeile wird in teachingEventSelected gespeichert
 	public void onRowSelect(SelectEvent<Lehrveranstaltungsart> e) {
     	FacesMessage msg = new FacesMessage("Lehrveranstaltungsart ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -201,29 +207,34 @@ public class LehrveranstaltungsartController implements Serializable {
         
     }
     
+	// Bearbeiten eines Lehrveranstaltungseintrags
     public void addLehrveranstaltungsart(){
+    	String msg;
+    	EntityManager em = emf.createEntityManager();
     	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Lehrveranstaltungsart.class, teachingEventSelected.getLvid());
- 	        teachingEvent.setLvid(teachingEventSelected.getLvid());
- 	        teachingEvent.setLvname(teachingEventSelected.getLvname());
- 	        teachingEvent.setLvdauer(teachingEventSelected.getLvdauer());
- 	        teachingEvent.setLvkurz(teachingEventSelected.getLvkurz());
- 	        teachingEventFacadeLocal.edit(teachingEvent);
+ 	       em.find(Lehrveranstaltungsart.class, teachingEventSelected.getLvid());
+ 	       teachingEvent.setLvid(teachingEventSelected.getLvid());
+ 	       teachingEvent.setLvname(teachingEventSelected.getLvname());
+ 	       teachingEvent.setLvdauer(teachingEventSelected.getLvdauer());
+ 	       teachingEvent.setLvkurz(teachingEventSelected.getLvkurz());
+ 	       teachingEventFacadeLocal.edit(teachingEvent);
+ 	       msg = "Eintrag wurde bearbeitet.";
+           addMessage("messages", msg);
  	    }
  	    catch (Exception e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+ 	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
+    	teachingEventList = getLehrveranstaltungsartList();
+    	em.close();
     }
 	
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    // Löschen eines Lehrveranstaltungseintrags
     public void deleteLehrveranstaltungsart() throws Exception {
+    	String msg;
         teachingEventList.remove(teachingEventSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Lehrveranstaltungsart> q = em.createNamedQuery("Lehrveranstaltungsart.findByLvid",Lehrveranstaltungsart.class);
@@ -232,16 +243,22 @@ public class LehrveranstaltungsartController implements Serializable {
         
         try {
         	teachingEventFacadeLocal.remove(teachingEvent);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	        
 	    }
 		em.close();
     }
+    
+	//Nachrichten an die View senden
+	private void addMessage(String loginformidName, String msg) {
+	   FacesMessage message = new FacesMessage(msg);
+	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+	}
 	
 	
 }

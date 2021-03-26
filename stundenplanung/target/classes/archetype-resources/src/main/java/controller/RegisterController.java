@@ -54,6 +54,7 @@ public class RegisterController implements Serializable {
     private Faculty faculty;
     private Benutzergruppe userGroup;
     ArrayList<String> facultyList = new ArrayList<>();
+    ArrayList<String> userGroupList = new ArrayList<>();
     
     @EJB
 	private AccountFacadeLocal accFacadeLocal;
@@ -69,16 +70,26 @@ public class RegisterController implements Serializable {
             Faculty fac =(Faculty)FListitem;
             facultyList.add(fac.getFacName());
         }
+        Query query = em.createNamedQuery("Benutzergruppe.findAll");
+        List BList = query.getResultList();
+        for (Object BListitem : BList)
+        {
+            Benutzergruppe bg =(Benutzergruppe)BListitem;
+            userGroupList.add(bg.getBGName());
+        }
     }
 
     private String accountPassword;
     private String accountName;
     private String facultyName;
     private String accountEmail;
+    private String userGroupName;
     private boolean accountNameOk=false;
     private boolean accountPasswordOk = false;
     private boolean accountEmailOk = false;
     private boolean registerOk = false;
+    
+   
     
     
 
@@ -195,9 +206,28 @@ public class RegisterController implements Serializable {
         this.userGroup = userGroup;
     }
     
-    //weitere Methoden
+    public ArrayList<String> getUserGroupList() {
+		return userGroupList;
+	}
+
+
+	public void setUserGroupList(ArrayList<String> userGroupList) {
+		this.userGroupList = userGroupList;
+	}
+
+
+	public String getUserGroupName() {
+		return userGroupName;
+	}
+
+
+	public void setUserGroupName(String userGroupName) {
+		this.userGroupName = userGroupName;
+	}
     
-    //Beim drücken des Register Buttons auf registerUser leiten wenn alle Eingaben IO
+    //weitere Methoden
+	
+//Beim drücken des Register Buttons auf registerUser leiten wenn alle Eingaben IO
    public String register_button() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
        if(accountNameOk==true && accountPasswordOk==true && accountEmailOk==true){
            registerUser();
@@ -248,11 +278,12 @@ public class RegisterController implements Serializable {
                 }
             } 
             else {
-                FacesMessage message = new FacesMessage("Account bereits vorhanden");
+                FacesMessage message = new FacesMessage("Account ist bereits vorhanden");
                 FacesContext.getCurrentInstance().addMessage("registerform:idName_reg", message);
             }
             em.close();
     }
+    
     
     //Überprüfen ob der Name schon vergeben ist.
     private boolean checkName(String uName) {
@@ -270,7 +301,7 @@ public class RegisterController implements Serializable {
         return found;
     }
     
-    
+    // Setzen einer Benutzergruppe auf Nobody
     private Benutzergruppe findBGID() {
         try{
         	EntityManager em;
@@ -285,6 +316,7 @@ public class RegisterController implements Serializable {
         }
         return userGroup;
     }
+    
     
     private Faculty findFac(String fac) {
         try{

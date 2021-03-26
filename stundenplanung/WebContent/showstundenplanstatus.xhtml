@@ -14,25 +14,25 @@
 		    <p:commandButton value="Stundenplanstatus hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />  
 			<p:dataTable id="StundenplanstatusListe" var="list" value="#{stundenplanstatusController.scheduleStatusList}" selection="#{stundenplanstatusController.statusSelected}" selectionMode="single" rowKey="#{list.spstid}" >
 			
-		        <p:ajax event="rowSelect" listener="#{stundenplanstatusController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="StundenplanstatusListe"/>
+		        <p:ajax event="rowSelect" listener="#{stundenplanstatusController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="StundenplanstatusListe"/>
 		 
 		 
-		        <p:column headerText="Stundenplanstatus Bezeichnung" sortBy="#{list.SPSTBezeichnung}">
+		        <p:column headerText="Bezeichnung" sortBy="#{list.SPSTBezeichnung}">
 		                <h:outputText value="#{list.SPSTBezeichnung}" />
 		        </p:column>
 		        
-		        <p:column headerText="Stundenplanstatus Hinweis" sortBy="#{list.SPSTHint}">
+		        <p:column headerText="Hinweis" sortBy="#{list.SPSTHint}">
 		                <h:outputText value="#{list.SPSTHint}" />
 		        </p:column>
 		        
-		        <p:column headerText="Stundenplanstatus Farbe" sortBy="#{list.PColor}">
+		        <p:column headerText="Farbe" sortBy="#{list.PColor}">
 		                <h:outputText value="#{list.PColor}" />
 		        </p:column>
 		        
-		        		 
-		       
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Stundenplanstatus Editiert Details" showEffect="clip" hideEffect="clip">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Stundenplanstatus" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            
@@ -46,11 +46,11 @@
                     <h:inputText id="statusColor_reg" value="#{stundenplanstatusController.statusSelected.PColor}" ></h:inputText>                                                  
                     
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{stundenplanstatusController.addStundenplanstatus()}" update=":form:StundenplanstatusListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:StundenplanstatusListe" actionListener="#{stundenplanstatusController.deleteStundenplanstatus()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{stundenplanstatusController.addStundenplanstatus()}" update=":form:StundenplanstatusListe :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:StundenplanstatusListe :form:msgs" actionListener="#{stundenplanstatusController.deleteStundenplanstatus()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
-		     
 		 </h:form>
 		 <h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Stundenplanstatus" showEffect="clip" hideEffect="clip">
@@ -75,8 +75,8 @@
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="statusColor_reg" style="color: red"/>
                     </h:panelGrid>
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{stundenplanstatusController.createDoStundenplanstatus}" oncomplete="PF('eventDialog').hide();" update=":form:StundenplanstatusListe"/>		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{stundenplanstatusController.createDoStundenplanstatus}" oncomplete="PF('eventDialog').hide();" update=":form:StundenplanstatusListe :form:msgs"/>		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>

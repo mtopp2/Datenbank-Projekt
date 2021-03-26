@@ -27,10 +27,7 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import javax.faces.bean.ManagedBean;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import EJB.AccountFacadeLocal;
 
@@ -54,12 +51,16 @@ public class RegisterController implements Serializable {
     private Faculty faculty;
     private Benutzergruppe userGroup;
     ArrayList<String> facultyList = new ArrayList<>();
+    ArrayList<String> userGroupList = new ArrayList<>();
     
     @EJB
 	private AccountFacadeLocal accFacadeLocal;
 
     
-    @PostConstruct /* Initialisiere bei Anwendungsstart */
+    /**
+     * Initialisiere bei Anwendungsstart
+     */
+    @PostConstruct
     public void init(){
         EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Faculty.findAll");
@@ -69,16 +70,26 @@ public class RegisterController implements Serializable {
             Faculty fac =(Faculty)FListitem;
             facultyList.add(fac.getFacName());
         }
+        Query query = em.createNamedQuery("Benutzergruppe.findAll");
+        List BList = query.getResultList();
+        for (Object BListitem : BList)
+        {
+            Benutzergruppe bg =(Benutzergruppe)BListitem;
+            userGroupList.add(bg.getBGName());
+        }
     }
 
     private String accountPassword;
     private String accountName;
     private String facultyName;
     private String accountEmail;
+    private String userGroupName;
     private boolean accountNameOk=false;
     private boolean accountPasswordOk = false;
     private boolean accountEmailOk = false;
     private boolean registerOk = false;
+    
+   
     
     
 
@@ -195,10 +206,39 @@ public class RegisterController implements Serializable {
         this.userGroup = userGroup;
     }
     
-    //weitere Methoden
+    public ArrayList<String> getUserGroupList() {
+		return userGroupList;
+	}
+
+
+	public void setUserGroupList(ArrayList<String> userGroupList) {
+		this.userGroupList = userGroupList;
+	}
+
+
+	public String getUserGroupName() {
+		return userGroupName;
+	}
+
+
+	public void setUserGroupName(String userGroupName) {
+		this.userGroupName = userGroupName;
+	}
     
-    //Beim drücken des Register Buttons auf registerUser leiten wenn alle Eingaben IO
-   public String register_button() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
+    //weitere Methoden
+	
+   /**
+    * Beim drücken des Register Buttons auf registerUser leiten wenn alle Eingaben IO
+    * @return
+    * @throws SecurityException
+    * @throws SystemException
+    * @throws NotSupportedException
+    * @throws RollbackException
+    * @throws HeuristicMixedException
+    * @throws HeuristicRollbackException
+    * @throws Exception
+    */
+	public String register_button() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
        if(accountNameOk==true && accountPasswordOk==true && accountEmailOk==true){
            registerUser();
            accountName="";
@@ -216,8 +256,13 @@ public class RegisterController implements Serializable {
         return"register.xhtml";
    }
 
-    //Eingegebene Daten an die Datenbank übermitteln
-    private UIComponent reg;    
+
+    private UIComponent reg;   
+    
+    /**
+     * Eingegebene Daten an die Datenbank übermitteln
+     * @throws Exception
+     */
     public void registerUser() throws Exception  {
             EntityManager em = emf.createEntityManager();
             List<Account> user_temp = new ArrayList<>();   
@@ -248,13 +293,18 @@ public class RegisterController implements Serializable {
                 }
             } 
             else {
-                FacesMessage message = new FacesMessage("Account bereits vorhanden");
+                FacesMessage message = new FacesMessage("Account ist bereits vorhanden");
                 FacesContext.getCurrentInstance().addMessage("registerform:idName_reg", message);
             }
             em.close();
     }
     
-    //Überprüfen ob der Name schon vergeben ist.
+    
+    /**
+     * Überprüfen ob der Name schon vergeben ist.
+     * @param uName
+     * @return
+     */
     private boolean checkName(String uName) {
         boolean found = false;
         try{
@@ -270,7 +320,10 @@ public class RegisterController implements Serializable {
         return found;
     }
     
-    
+    /**
+     * Setzen einer Benutzergruppe auf Nobody
+     * @return
+     */
     private Benutzergruppe findBGID() {
         try{
         	EntityManager em;
@@ -286,6 +339,12 @@ public class RegisterController implements Serializable {
         return userGroup;
     }
     
+    
+    /**
+     * Finden eines Fachbereichs anhand des Fachbereichsnamen
+     * @param fac
+     * @return
+     */
     private Faculty findFac(String fac) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -299,8 +358,12 @@ public class RegisterController implements Serializable {
         return faculty;
     }
     
-    //Nachrichten an die View senden
-     private void addMessage(String loginformidName, String msg) {
+     /**
+      * Nachrichten an die View senden
+     * @param loginformidName
+     * @param msg
+     */
+    private void addMessage(String loginformidName, String msg) {
         FacesMessage message = new FacesMessage(msg);
         FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
     }

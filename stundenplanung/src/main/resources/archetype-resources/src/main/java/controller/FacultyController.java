@@ -1,16 +1,16 @@
 package controller;
 
-import model.Account;
+
 import model.Faculty;
-import model.Location;
-import model.Modul;
+
+
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.List;
 
-import java.util.logging.Level;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -23,9 +23,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+
 import javax.persistence.TypedQuery;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -34,13 +34,9 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
-import com.sun.javafx.logging.Logger;
-import org.primefaces.event.CellEditEvent;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import controller.MessageForPrimefaces;
+
 
 /**
 *
@@ -64,7 +60,9 @@ public class FacultyController implements Serializable {
 	@EJB
 	private FacultyFacadeLocal facFacadeLocal;
 	
-	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
         facultyList = getFacultyListAll();
@@ -78,12 +76,11 @@ public class FacultyController implements Serializable {
 	private boolean facultyNameOk = false;
 	private boolean facultyShortNameOk = false;
 	
-	
 	List<Faculty> facultyList;
-	
 	
 	private Faculty facultySelected;
 	
+	// Getter und Setter
 	public Faculty getFacultySelected() {
 		return facultySelected;
 	}
@@ -91,8 +88,6 @@ public class FacultyController implements Serializable {
 	public void setFacultySelected(Faculty facultySelected) {
 		this.facultySelected = facultySelected;
 	}
-	
-	
 	  
     public List<Faculty> getFacultyList() {
         return facultyList;
@@ -116,7 +111,7 @@ public class FacultyController implements Serializable {
 			facultyNameOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Faculty bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Fachbereichsname ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("FacultyList:facName_reg", message);
 	    }
 	}
@@ -131,7 +126,7 @@ public class FacultyController implements Serializable {
 	        facultyShortNameOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("Facultykürzel bereits vorhanden.");
+	    	FacesMessage message = new FacesMessage("Fachbereichskürzel ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("FacultyList:facShortName_reg", message);
 	    }
 	}
@@ -145,25 +140,41 @@ public class FacultyController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	/**
+	 * Erstellen eines Fachbereichs
+	 * @throws Exception
+	 */
 	public void createFaculty() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Faculty fac = new Faculty();  
 		fac.setFacName(facultyName);    
 		fac.setFacShortName(facultyShortName);      
 		try {
 			facFacadeLocal.create(fac);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+	       
 	    }
 		em.close();
 	}
 	
+	/**
+	 * Schaut ob Fachbereichsname und Fachbereichskurzform gesetzt worden sind, danach wird der Eintrag erstellt und zum Schluß wird die Liste aktualisiert.
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoFaculty() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(facultyNameOk == true && facultyShortNameOk == true ) {
 			createFaculty();
@@ -172,20 +183,25 @@ public class FacultyController implements Serializable {
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
-	
+
+	/**
+	 * Laden der Fachbereichsliste
+	 * @return
+	 */
 	public List<Faculty> getFacultyListAll(){		
 		List<Faculty> listFac;
 		listFac = facFacadeLocal.findAll();
 		return listFac;
 	}
 	
-	
-	
-	
-	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Löschen eines Fachbereichseintrags
+     * @throws Exception
+     */
     public void deleteFaculty() throws Exception {
+    	String msg;
         facultyList.remove(facultySelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Faculty> q = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
@@ -194,18 +210,21 @@ public class FacultyController implements Serializable {
         
         try {
         	this.facFacadeLocal.remove(faculty);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (Exception ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	        
 	    }       
 		em.close();
     }
-    
-    
+     
+    /**
+     * Ausgewählte Zeile wird in facultySelected gespeichert.
+     * @param e
+     */
     public void onRowSelect(SelectEvent<Faculty> e) {
     	FacesMessage msg = new FacesMessage("Fakultät ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -214,37 +233,40 @@ public class FacultyController implements Serializable {
         
     }
     
+    /**
+     * Bearbeiten eines Fachbereichseintrags
+     */
     public void addFaculty(){
-    	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Faculty.class, facultySelected.getFbid());
- 	        faculty.setFbid(facultySelected.getFbid());
- 	        faculty.setFacName(facultySelected.getFacName());
- 	        faculty.setFacShortName(facultySelected.getFacShortName());
- 	        facFacadeLocal.edit(faculty);
+    	EntityManager em = emf.createEntityManager();
+    	String msg;
+    	 try { 
+ 	       em.find(Faculty.class, facultySelected.getFbid());
+ 	       faculty.setFbid(facultySelected.getFbid());
+ 	       faculty.setFacName(facultySelected.getFacName());
+ 	       faculty.setFacShortName(facultySelected.getFacShortName());
+ 	       facFacadeLocal.edit(faculty);
+ 	       msg = "Eintrag wurde bearbeitet.";
+           addMessage("messages", msg);
  	    }
- 	    catch (SecurityException | IllegalStateException e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+ 	    catch (Exception e) {
+ 	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
+    	facultyList = getFacultyListAll();
+    	em.close();
     }
     
-    
-    
    // ---------------------------------------------------------------------------------------------------------------------
-    
-	
 	  
-	//Nachrichten an die View senden
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
-  
-  
-  
+
   
 }

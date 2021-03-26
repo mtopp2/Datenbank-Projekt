@@ -14,9 +14,9 @@ import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
-import javax.annotation.PostConstruct;
+
+
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -26,18 +26,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+
 import javax.persistence.TypedQuery;
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.SelectEvent;
+
 
 import EJB.AccountFacadeLocal;
-
-import javax.faces.bean.ManagedBean;
-
-
-//import javax.faces.bean.SessionScoped;
 
 /**
  *
@@ -45,7 +40,6 @@ import javax.faces.bean.ManagedBean;
  */
 
 @Named(value = "loginController")
-//@ManagedBean(name="LoginController")
 @SessionScoped
 public class LoginController implements Serializable {
 	//Serial Version ID Es kann sein, dass man die nicht braucht.
@@ -93,8 +87,7 @@ public class LoginController implements Serializable {
 	private boolean accountPasswordOk2 = false;
  
     
-//Getter und Setter Methoden
-	
+	//Getter und Setter Methoden
 	public String getAccountPassword1() {
 		return accountPassword1;
 	}
@@ -208,7 +201,7 @@ public class LoginController implements Serializable {
                 this.accountName = accountName;
             }
             else{
-                FacesMessage message = new FacesMessage("Account nicht vorhanden");
+                FacesMessage message = new FacesMessage("Account nicht vorhanden.");
                 FacesContext.getCurrentInstance().addMessage("loginForm:idName_login", message);
                 //String msg = "Account nicht vorhanden";
                 //addMessage("idName_login", msg);
@@ -227,7 +220,7 @@ public class LoginController implements Serializable {
                 isLoggedIn = true;
             }
             else{
-                FacesMessage message = new FacesMessage("Passwort Falsch");
+                FacesMessage message = new FacesMessage("Passwort ist Falsch.");
                 FacesContext.getCurrentInstance().addMessage("loginForm:idPwd_login", message);
                 //String msg="Password Falsch";
                 //addMessage("idPwd_login",msg);
@@ -275,12 +268,15 @@ public class LoginController implements Serializable {
         this.logOutPerformed = logOutPerformed;
     }
     
+
+    //Weitere Methoden
     
-    
-    
-//Weitere Methoden
-    
-    //Überprüfen ob der User mit dem eingebenen Namen vorhanden ist
+    //
+    /**
+     * Überprüfen ob der User mit dem eingebenen Namen vorhanden ist
+     * @param uName
+     * @return
+     */
     private boolean findUser(String uName) {
         boolean found = false;
         try{
@@ -296,7 +292,11 @@ public class LoginController implements Serializable {
         return found;
     }
     
-    
+    /**
+     * Finden einer Benutzergruppe anhand der ID
+     * @param id
+     * @return
+     */
     private Benutzergruppe findBGID(int id) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -310,7 +310,11 @@ public class LoginController implements Serializable {
         return userGroup;
     }
     
-    //Überprüfen ob das eingebene Passwort zum einegeben Namen passt
+    /**
+     * Überprüfen ob das eingebene Passwort zum einegeben Namen passt
+     * @param password
+     * @return
+     */
     private boolean checkPwd(String password) {
         boolean found = false;
         if(nameFound==true){
@@ -326,7 +330,10 @@ public class LoginController implements Serializable {
         return found; 
     }   
     
-    //Was beim drücken des login Buttons passieren soll
+    /**
+     * Was beim drücken des login Buttons passieren soll
+     * @return
+     */
     public String login(){
         String returnvalue;
         if(isLoggedIn==true){
@@ -338,7 +345,11 @@ public class LoginController implements Serializable {
         return returnvalue;
     }
       
-    //Beim drücken des Logout Buttons
+    //
+    /**
+     * Beim drücken des Logout Buttons
+     * @return
+     */
     public String logout(){
         accountName="";
         if(isLoggedIn==true){
@@ -352,7 +363,11 @@ public class LoginController implements Serializable {
 		return "/index.xhtml";
     }
       
-    //Message an die View senden
+    /**
+     * Message an die View senden
+     * @param loginformidName
+     * @param msg
+     */
     private void addMessage(String loginformidName, String msg) {
         FacesMessage message = new FacesMessage(msg);
         FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
@@ -362,7 +377,11 @@ public class LoginController implements Serializable {
     //---------------------------------------------------------------------------------------------
     
     
-	
+	/**
+	 * Finden eines Accounts anhand des Accountnamen
+	 * @param accName
+	 * @return
+	 */
 	private Account findAcc(String accName) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -377,7 +396,9 @@ public class LoginController implements Serializable {
     }
 	
 
-	
+	/**
+	 * Passwort ändern
+	 */
 	public void changePassword(){
 		account = findAcc(accountName);
 		EntityManager em = emf.createEntityManager();
@@ -387,7 +408,10 @@ public class LoginController implements Serializable {
 		em.close();		  
 	}
 	
-	
+	/**
+	 * Passwort überprüfen auf Übereinstimmung
+	 * @return
+	 */
 	public String changePasswordOk() {
 		String returnvalue = "";
 		try {

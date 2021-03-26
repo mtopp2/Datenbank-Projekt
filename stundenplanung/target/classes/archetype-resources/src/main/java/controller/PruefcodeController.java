@@ -74,6 +74,7 @@ public class PruefcodeController implements Serializable {
 	@EJB
 	private PruefcodeFacadeLocal pruefcodeFacadeLocal;
 	
+	// Initialisierung
 	@PostConstruct
     public void init() {
         codeList = getCodeListAll();
@@ -95,12 +96,11 @@ public class PruefcodeController implements Serializable {
 	private int verifyCode;
 	private String specializationShort;
 
-	
 	List<Pruefcode> codeList;
-	
 	
 	private Pruefcode codeSelected;
 	
+	// Getter und Setter
 	public Pruefcode getCodeSelected() {
 		return codeSelected;
 	}
@@ -177,8 +177,11 @@ public class PruefcodeController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	// Erstellen eines Prüfcodeeintrag
 	public void createPruefcode() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Pruefcode pCode = new Pruefcode();  
 		pCode.setPflichtOderWahl(dutyOrChoice);    
@@ -187,17 +190,17 @@ public class PruefcodeController implements Serializable {
 		pCode.setStudiengang(findSg(courseId));
 		try {
 			pruefcodeFacadeLocal.create(pCode);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
 	    }
 		em.close();
 	}
 	
+	// Erstellt einen Prüfcodeeintrag und danach wird die Liste aktualisiert
 	public void createDoPruefcode() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 			createPruefcode();
 			codeList = getCodeListAll();
@@ -206,20 +209,18 @@ public class PruefcodeController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// Laden der Prüfcodeliste
 	public List<Pruefcode> getCodeListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Pruefcode> query = em.createNamedQuery("Pruefcode.findAll", Pruefcode.class);
-		codeList = query.getResultList();
 		return query.getResultList();
 	}
 	
-	
-	
-	
-	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+	// Löschen eines Prüfcodes
     public void deletePruefcode() throws Exception {
+    	String msg;
         codeList.remove(codeSelected);
         EntityManager em = emf.createEntityManager();
         TypedQuery<Pruefcode> q = em.createNamedQuery("Pruefcode.findByPcid",Pruefcode.class);
@@ -228,18 +229,18 @@ public class PruefcodeController implements Serializable {
         
         try {
         	pruefcodeFacadeLocal.remove(code);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
 	    }
         
 		em.close();
     }
     
+    // Ausgewählte Zeile wird in codeSelected gespeichert sowie der Fremdschlüssel
     public void onRowSelect(SelectEvent<Pruefcode> e) {
     	FacesMessage msg = new FacesMessage("Pruefcode ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -249,28 +250,30 @@ public class PruefcodeController implements Serializable {
         
     }
     
+    // Bearbeiten eines Prüfcodeeintrages
     public void addPruefcode(){
-    	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Pruefcode.class, codeSelected.getPcid());
- 	        code.setPflichtOderWahl(codeSelected.getPflichtOderWahl());
- 	        code.setPrCode(codeSelected.getPrCode());
- 	        code.setVertiefungsrichtungShortName(codeSelected.getVertiefungsrichtungShortName());
- 	        code.setPcid(codeSelected.getPcid());
- 	        code.setStudiengang(findSg(courseId));
- 	        pruefcodeFacadeLocal.edit(code);
+    	String msg;
+    	EntityManager em = emf.createEntityManager();
+    	 try { 
+	       em.find(Pruefcode.class, codeSelected.getPcid());
+	       code.setPflichtOderWahl(codeSelected.getPflichtOderWahl());
+	       code.setPrCode(codeSelected.getPrCode());
+	       code.setVertiefungsrichtungShortName(codeSelected.getVertiefungsrichtungShortName());
+	       code.setPcid(codeSelected.getPcid());
+	       code.setStudiengang(findSg(courseId));
+	       pruefcodeFacadeLocal.edit(code);
+ 	       msg = "Eintrag wurde bearbeitet.";
+           addMessage("messages", msg);
  	    }
  	    catch (Exception e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+ 	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
     	 codeList = getCodeListAll();
+    	 em.close();
     }
     
-    
+    // Finden eines Studienganges anhand der ID
     private Studiengang findSg(int sg) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -285,16 +288,12 @@ public class PruefcodeController implements Serializable {
     }
     
    // ---------------------------------------------------------------------------------------------------------------------
-    
-	
 	  
 	//Nachrichten an die View senden
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
-  
-  
-  
+	
   
 }

@@ -14,7 +14,7 @@
 		    <p:commandButton value="Modul hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />
 			<p:dataTable id="ModulListe" var="list" value="#{modulController.modulList}" selection="#{modulController.modulSelected}" selectionMode="single" rowKey="#{list.modID}" >
 		        
-		 		<p:ajax event="rowSelect" listener="#{modulController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ModulListe"/>
+		 		<p:ajax event="rowSelect" listener="#{modulController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ModulListe"/>
 		        
 		 
 		        <p:column headerText="Modulname" sortBy="#{list.modName}">
@@ -36,14 +36,14 @@
 		            </p:cellEditor>
 		        </p:column>
 		        
-		        	 
-		       
 		    </p:dataTable>
-		     <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Modul Editiert Details" showEffect="clip" hideEffect="clip">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Modul Editiert Details" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="modulName_reg" value="Modul: "/>
-                    <h:inputText id="modulName_reg" value="#{modulController.modulSelected.modName}" ></h:inputText>                                                  
+                    <h:inputText id="modulName_reg" value="#{modulController.modulSelected.modName}"></h:inputText>                                                  
                     
                     <h:outputLabel for="modulShortName_reg" value="Kürzel: "/>
                     <h:inputText id="modulShortName_reg" value="#{modulController.modulSelected.modKuerzel}" ></h:inputText>
@@ -54,11 +54,11 @@
                     	<f:selectItems value="#{modulController.codeList}" var="code" itemLabel="#{code.prCode}" itemValue="#{code.pcid}"/>
 			        </p:selectOneMenu>
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{modulController.addModul()}" update=":form:ModulListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:ModulListe" actionListener="#{modulController.deleteModul()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{modulController.addModul()}" update=":form:ModulListe :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:ModulListe :form:msgs" actionListener="#{modulController.deleteModul()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
-		     
 		 </h:form>
 		 <h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Modul" showEffect="clip" hideEffect="clip">
@@ -79,11 +79,12 @@
                     <h:outputLabel styleClass="label" style="font-size:12pt" for="pcid_reg" value="Prüfcode: "/>
                     <h:panelGrid columns="3">                 
 			        	<p:selectOneMenu id="pcid_reg" value="#{modulController.pcId}" style="width:100%">
-                    	<f:selectItems value="#{modulController.codeList}" var="code" itemLabel="#{code.prCode}" itemValue="#{code.pcid}"/>
+			        		<f:selectItem itemLabel="-----" noSelectionOption="true"/>
+                    		<f:selectItems value="#{modulController.codeList}" var="code" itemLabel="#{code.prCode}" itemValue="#{code.pcid}"/>
 			        	</p:selectOneMenu>
                     </h:panelGrid>
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{modulController.createDoModul}" oncomplete="PF('eventDialog').hide();" update=":form:ModulListe"/>		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{modulController.createDoModul}" oncomplete="PF('eventDialog').hide();" update=":form:ModulListe :form:msgs"/>		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

@@ -13,7 +13,7 @@
 		    <p:commandButton value="Dozent Hinzufügen" id="ajax"  type="button" editable="true" update=":eventDetailsForm:eventDialog" onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="ProfessorList" var="list" value="#{dozentenController.professorList}" editable="true" selectionMode="single" selection="#{dozentenController.professorSelected}" rowKey="#{list.did}" >
 		 
-		 		<p:ajax event="rowSelect" listener="#{dozentenController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ProfessorList"/>
+		 		<p:ajax event="rowSelect" listener="#{dozentenController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="ProfessorList"/>
 		 
 		        <p:column headerText="Name" sortBy="#{list.DName}">
 		                <h:outputText value="#{list.DName}" />		                
@@ -31,9 +31,10 @@
 		                <h:outputText value="#{list.DKurz}" />		                
 		        </p:column>
 		        
-		        
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Dozent Editiert Details" showEffect="clip" hideEffect="clip" width="350">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Dozent Editiert Details" showEffect="clip" hideEffect="clip" width="350">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            <h:outputLabel for="professorName" value="Name: "/>
@@ -49,8 +50,9 @@
                     <h:inputText id="professorShort" value="#{dozentenController.professorSelected.DKurz}" ></h:inputText>
                  
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{dozentenController.addDozent()}" update=":form:ProfessorList" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:ProfessorList" actionListener="#{dozentenController.deleteDozent()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{dozentenController.addDozent()}" update=":form:ProfessorList :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:ProfessorList :form:msgs" actionListener="#{dozentenController.deleteDozent()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
 		 </h:form>
@@ -70,8 +72,8 @@
                     <h:outputLabel for="professorShort1" value="Kürzel: "/>
                     <h:inputText id="professorShort1" value="#{dozentenController.professorShortName}" ></h:inputText>
 		            
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{dozentenController.createDoDozent}" update=":form:ProfessorList" oncomplete="PF('eventDialog').hide();" />		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{dozentenController.createDoDozent}" update=":form:ProfessorList :form:msgs" oncomplete="PF('eventDialog').hide();" />		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>    

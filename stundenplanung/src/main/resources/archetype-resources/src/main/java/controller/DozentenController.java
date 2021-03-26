@@ -1,19 +1,17 @@
 package controller;
 
-import model.Account;
+
 
 import model.Dozenten;
-import model.Location;
-import model.Raum;
-import model.Sgmodul;
+
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.List;
 
-import java.util.logging.Level;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -24,9 +22,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+
 import javax.persistence.TypedQuery;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -35,23 +33,13 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
 
-import com.sun.javafx.logging.Logger;
+
 
 import EJB.DozentenFacadeLocal;
-import EJB.ModulFacadeLocal;
 
-import org.primefaces.event.CellEditEvent;
-//import org.primefaces.event.
-
-
-import javax.faces.bean.ManagedBean;
-//import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
-
-import controller.MessageForPrimefaces;
 
 /**
 *
@@ -76,7 +64,9 @@ public class DozentenController implements Serializable {
 	private DozentenFacadeLocal dozentenFacadeLocal;
 	
 
-	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
 		professorList = getDozentenList();
@@ -91,12 +81,11 @@ public class DozentenController implements Serializable {
 	private boolean professorShortNameOk = false;
 	private boolean professorNameOk = false;
 
-	
-	
 	List<Dozenten> professorList;
 	
 	private Dozenten professorSelected;
 	
+	// Getter und Setter
 	public Dozenten getProfessorSelected() {
 		return professorSelected;
 	}
@@ -104,7 +93,6 @@ public class DozentenController implements Serializable {
 	public void setProfessorSelected(Dozenten professorSelected) {
 		this.professorSelected = professorSelected;
 	}
-	
   
     public List<Dozenten> getProfessorList() {
         return professorList;
@@ -179,16 +167,39 @@ public class DozentenController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	/**
+	 * Erstellen eines Dozenteneintrags
+	 */
 	public void createDozent() {
+		String msg;
 		Dozenten doz = new Dozenten();   
 		doz.setDName(professorName);
 		doz.setDVorname(professorFirstName);
 		doz.setDTitel(professorTitle);
-		doz.setDKurz(professorShortName);   
-	    dozentenFacadeLocal.create(doz);
+		doz.setDKurz(professorShortName);
+		try {
+			dozentenFacadeLocal.create(doz);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
+		}catch(Exception e) {
+			msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+		}
+	    
 	}
 	
+	/**
+	 * Schaut ob Dozentenname und Dozentenküzel gesetzt worden ist, danach wird der Eintrag erstellt und zum Schluß wird die Liste aktualisiert.
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoDozent() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(professorShortNameOk == true && professorNameOk == true) {
 			createDozent();
@@ -198,13 +209,20 @@ public class DozentenController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Laden der Dozentenliste
+	 * @return
+	 */
 	public List<Dozenten> getDozentenList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Dozenten> query = em.createNamedQuery("Dozenten.findAll", Dozenten.class);
-		professorList = query.getResultList();
 		return query.getResultList();
 	}
     
+    /**
+     * Ausgewählte Zeile wird in professorSelected gespeichert
+     * @param e
+     */
     public void onRowSelect(SelectEvent<Dozenten> e) {
     	FacesMessage msg = new FacesMessage("Dozenten ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -215,33 +233,62 @@ public class DozentenController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    // 
+    /**
+     * Löschen eines Dozenteneintrags
+     */
     public void deleteDozent() {
+    	String msg;
     	professorList.remove(professorSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Dozenten> q = em.createNamedQuery("Dozenten.findByDid",Dozenten.class);
         q.setParameter("did", professorSelected.getDid());
         professor = (Dozenten)q.getSingleResult();
-        dozentenFacadeLocal.remove(professor);
+        try {
+        	dozentenFacadeLocal.remove(professor);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
+        
+        }catch(Exception e) {
+        	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+        }
+        
 		em.close();
     }
     
-    
+    /**
+     * Bearbeiten eines Dozenten
+     */
     public void addDozent(){
+    	String msg;
         EntityManager em = emf.createEntityManager();
-        em.find(Dozenten.class, professorSelected.getDid());
-    	professor.setDid(professorSelected.getDid());
-        professor.setDKurz(professorSelected.getDKurz());
-        professor.setDName(professorSelected.getDName());
-        professor.setDVorname(professorSelected.getDVorname());
-        professor.setDTitel(professorSelected.getDTitel());
-        dozentenFacadeLocal.edit(professor);
+        try {
+        	em.find(Dozenten.class, professorSelected.getDid());
+        	professor.setDid(professorSelected.getDid());
+            professor.setDKurz(professorSelected.getDKurz());
+            professor.setDName(professorSelected.getDName());
+            professor.setDVorname(professorSelected.getDVorname());
+            professor.setDTitel(professorSelected.getDTitel());
+            dozentenFacadeLocal.edit(professor);
+        	msg = "Eintrag wurde bearbeitet.";
+            addMessage("messages", msg);
+        }catch(Exception e) {
+        	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
+        }
+        
       	professorList = getDozentenList();
 		em.close();
-      }
+	}
     
    // ---------------------------------------------------------------------------------------------------------------------
 	  
-	//Nachrichten an die View senden
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     

@@ -4,9 +4,9 @@ import model.Location;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.logging.Level;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -15,9 +15,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+
 import javax.persistence.TypedQuery;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -26,11 +26,10 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+
 import javax.ejb.EJB;
 import EJB.LocationFacadeLocal;
 
@@ -56,6 +55,9 @@ public class LocationController implements Serializable {
 	@EJB
 	private LocationFacadeLocal locationFacadeLocal;
 	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
         locationList = getLocationListAll();
@@ -70,7 +72,7 @@ public class LocationController implements Serializable {
 	
 	List<Location> locationList;
 	
-	
+	// Getter und Setter
     public Location getLocation() {
 		return location;
 	}
@@ -101,7 +103,7 @@ public class LocationController implements Serializable {
 			locationCityOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Stadt bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Stadt ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("LocationForm:modKuerzel_reg", message);
 	    }
 	}
@@ -116,7 +118,7 @@ public class LocationController implements Serializable {
 			locationStreetOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Straße bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Straße ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("LocationForm:modKuerzel_reg", message);
 	    }
 	}
@@ -130,24 +132,39 @@ public class LocationController implements Serializable {
     }
 	  
 	private UIComponent reg;
+	
+	/**
+	 * Fügt einen neuen Standort hinzu.
+	 * @throws Exception
+	 */
 	public void createLocation() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Location loc = new Location();  
 		loc.setLCity(locationCity);    
 		loc.setLStreet(locationStreet);      
 		try {
 			locationFacadeLocal.create(loc);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+            msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
 	    }
 		em.close();
 	}
 	
+	/**
+	 * Schaut, ob die Variabeln Stadt und Straße gesetzt worden sind, fügt dann den Eintrag in die Datenbank hinzu und zum Schluß wird die die Liste aktualisiert.
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoLocation() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(locationCityOk == true && locationStreetOk == true) {
 			createLocation();
@@ -156,16 +173,24 @@ public class LocationController implements Serializable {
 		}
 	}
 	
+	/**
+	 * Standortliste wird geladen
+	 * @return
+	 */
 	public List<Location> getLocationListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Location> query = em.createNamedQuery("Location.findAll", Location.class);
-		locationList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Löscht einen Standorteintrag
+     * @throws Exception
+     */
     public void deleteLocation() throws Exception {
+    	String msg;
     	locationList.remove(locationSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Location> q = em.createNamedQuery("Location.findByLid",Location.class);
@@ -174,41 +199,61 @@ public class LocationController implements Serializable {
         
         try {
         	locationFacadeLocal.remove(location);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+            msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
 	    }
 		em.close();
     }
     
     //----------------------------------------------------------------------------------------------------------------------------------------------
+    
+    /**
+     * Die ausgewählte Zeile wird in locationSelected gespeichert.
+     * @param e
+     */
     public void onRowSelect(SelectEvent<Location> e) {
-    	FacesMessage msg = new FacesMessage("Standort ausgewählt");
+    	FacesMessage msg = new FacesMessage("Standort ausgewählt.");
         FacesContext.getCurrentInstance().addMessage(null, msg);
         
         locationSelected = e.getObject();
         
     }
     
+    // 
+    /**
+     * Bearbeitet ein Standorteintrag
+     */
     public void addLocation(){
+    	String msg;
+    	EntityManager em = emf.createEntityManager();
     	 try {
- 	        EntityManager em = emf.createEntityManager();
  	        em.find(Location.class, locationSelected.getLid());
  	        location.setLid(locationSelected.getLid());
  	        location.setLCity(locationSelected.getLCity());
  	        location.setLStreet(locationSelected.getLStreet());
  	        locationFacadeLocal.edit(location);
+ 	        msg = "Eintrag wurde bearbeitet.";
+            addMessage("messages", msg);
  	    }
  	    catch (Exception e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+            msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
+    	locationList = getLocationListAll();
+    	em.close();
     }
+    
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
+	private void addMessage(String loginformidName, String msg) {
+	   FacesMessage message = new FacesMessage(msg);
+	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+	}
 }

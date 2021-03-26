@@ -1,15 +1,15 @@
 package controller;
 
-import model.Raum;
+
 import model.Stundenplansemester;
 import model.Stundenplanstatus;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
@@ -18,9 +18,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+
 import javax.persistence.TypedQuery;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -28,17 +28,9 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
-
-import javax.faces.bean.ManagedBean;
-import controller.MessageForPrimefaces;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-
-import EJB.FacultyFacadeLocal;
 import EJB.StundenplansemesterFacadeLocal;
 
 /**
@@ -64,7 +56,9 @@ public class StundenplansemesterController implements Serializable {
 	@EJB
 	private StundenplansemesterFacadeLocal stundenplansemesterFacadeLocal;
 
-	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
 		scheduleSemesterList = getStundenplansemesterList();
@@ -88,10 +82,7 @@ public class StundenplansemesterController implements Serializable {
 	
 	private Stundenplansemester scheduleSemesterSelected;
 	
-	
-
-	
-
+	// Getter  und Setter
 	public int getScheduleSemesterId() {
 		return scheduleSemesterId;
 	}
@@ -179,7 +170,7 @@ public class StundenplansemesterController implements Serializable {
 			endDateOk=true;
 	    }
 		else{
-	    	FacesMessage message = new FacesMessage("Startdatum konnte nicht gesetzt werden.");
+	    	FacesMessage message = new FacesMessage("Enddatum konnte nicht gesetzt werden.");
             FacesContext.getCurrentInstance().addMessage("StundenplansemesterForm:endDatum_reg", message);
 	    }
 	}
@@ -210,7 +201,12 @@ public class StundenplansemesterController implements Serializable {
     }
 	  
 	private UIComponent reg;  
+	
+	/**
+	 * Erstellt einen Stundenplansemestereintrag
+	 */
 	public void createStundenplansemester() {
+		String msg;
 		Stundenplansemester sps = new Stundenplansemester();
 		sps.setSPSemester(scheduleSemesterSection);
 		sps.setSPJahr(scheduleYear);
@@ -218,9 +214,28 @@ public class StundenplansemesterController implements Serializable {
 		sps.setStartDatum(startDate);
 		sps.setEndDatum(endDate);
 		sps.setStundenplanstatus(findSps(scheduleSemesterId));
-		stundenplansemesterFacadeLocal.create(sps);
+		try {
+			stundenplansemesterFacadeLocal.create(sps);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
+		}catch(Exception e) {
+			msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+		}
+		
+		
 	}
 	
+	/**
+	 * Schaut ob StundenplanSemester, Stundenplankalenderwoche, Startdatum und EndDatum gesetzt worden ist, danach wird der Eintrag erstellt und zum Schluß wird die Liste aktualisiert.
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoStundenplansemester() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(scheduleSemesterSectionOk == true && scheduleCalendarWeekOk == true && startDateOk && endDateOk) {
 			createStundenplansemester();
@@ -230,21 +245,30 @@ public class StundenplansemesterController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Liste des Stundenplansemesters laden
+	 * @return
+	 */
 	public List<Stundenplansemester> getStundenplansemesterList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Stundenplansemester> query = em.createNamedQuery("Stundenplansemester.findAll", Stundenplansemester.class);
-		scheduleSemesterList = query.getResultList();
 		return query.getResultList();
 	}
 	
+	/**
+	 * Liste des Stundenplanstatus laden
+	 * @return
+	 */
 	public List<Stundenplanstatus> getScheduleStatusList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Stundenplanstatus> query = em.createNamedQuery("Stundenplanstatus.findAll", Stundenplanstatus.class);
-		scheduleStatusList = query.getResultList();
 		return query.getResultList();
 	}
 	
-	
+	/**
+	 * Ausgewählte Zeile in scheduleSemeseterSelected speichern
+	 * @param e
+	 */
 	public void onRowSelect(SelectEvent<Stundenplansemester> e) {
     	FacesMessage msg = new FacesMessage("Stundenplansemester ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -257,16 +281,33 @@ public class StundenplansemesterController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Stundenplansemester Eintrag löschen
+     */
     public void deleteStundenplansemester() {
+    	String msg;
     	scheduleSemesterList.remove(scheduleSemesterSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplansemester> q = em.createNamedQuery("Stundenplansemester.findBySpsid",Stundenplansemester.class);
         q.setParameter("spsid", scheduleSemesterSelected.getSpsid());
         scheduleSemester = (Stundenplansemester)q.getSingleResult();
-        stundenplansemesterFacadeLocal.remove(scheduleSemester);
+        try {
+        	stundenplansemesterFacadeLocal.remove(scheduleSemester);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
+        }catch(Exception e) {
+        	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+        }
+        
 		em.close();
     }
     
+    /**
+     * Finden des Stundenplanstatus anhand der Stundenplanstatusid
+     * @param spsId
+     * @return
+     */
     private Stundenplanstatus findSps(int spsId) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -280,7 +321,11 @@ public class StundenplansemesterController implements Serializable {
         return scheduleStatus;
     }
     
+    /**
+     * Bearbeiten des Stundenplansemester
+     */
     public void addStundenPlanSemester(){
+    	String msg;
         EntityManager em = emf.createEntityManager();
         em.find(Stundenplansemester.class, scheduleSemesterSelected.getSpsid());
         scheduleSemester.setSpsid(scheduleSemesterSelected.getSpsid());
@@ -290,9 +335,27 @@ public class StundenplansemesterController implements Serializable {
         scheduleSemester.setStartDatum(scheduleSemesterSelected.getStartDatum());
         scheduleSemester.setEndDatum(scheduleSemesterSelected.getEndDatum());
         scheduleSemester.setStundenplanstatus(findSps(scheduleSemesterId));
-        stundenplansemesterFacadeLocal.edit(scheduleSemester);
+        try {
+        	stundenplansemesterFacadeLocal.edit(scheduleSemester);
+        	msg = "Eintrag wurde bearbeitet.";
+            addMessage("messages", msg);
+        }catch(Exception e) {
+        	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
+        }
+        
       	scheduleSemesterList = getStundenplansemesterList();
       	em.close();
     }
+    
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
+	private void addMessage(String loginformidName, String msg) {
+	   FacesMessage message = new FacesMessage(msg);
+	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+	}
   
 }

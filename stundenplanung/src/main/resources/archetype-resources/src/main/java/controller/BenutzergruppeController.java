@@ -4,10 +4,10 @@ import model.Benutzergruppe;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.util.ArrayList;
+
 import java.util.List;
 
-import java.util.logging.Level;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -17,9 +17,9 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
-import javax.persistence.Query;
+
 import javax.persistence.TypedQuery;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
@@ -28,21 +28,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
-
-import com.sun.javafx.logging.Logger;
-
-import org.primefaces.event.CellEditEvent;
-
-import javax.faces.bean.ManagedBean;
-
-import javax.faces.bean.ViewScoped;
-
-import controller.MessageForPrimefaces;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import EJB.BenutzergruppeFacadeLocal;
 
@@ -69,6 +56,9 @@ public class BenutzergruppeController implements Serializable {
 	@EJB
 	private BenutzergruppeFacadeLocal userGroupFacadeLocal;
 	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
         userGroupList = getBenutzergruppeList();
@@ -85,9 +75,9 @@ public class BenutzergruppeController implements Serializable {
 	
 	List<Benutzergruppe> userGroupList;
 	
-	
 	private Benutzergruppe userGroupSelected;
 	
+	// Getter und Setter
 	public Benutzergruppe getUserGroupSelected() {
 		return userGroupSelected;
 	}
@@ -95,8 +85,6 @@ public class BenutzergruppeController implements Serializable {
 	public void setUserGroupSelected(Benutzergruppe userGroupSelected) {
 		this.userGroupSelected = userGroupSelected;
 	}
-	
-	
 	  
     public List<Benutzergruppe> getUserGroupList() {
         return userGroupList;
@@ -120,7 +108,7 @@ public class BenutzergruppeController implements Serializable {
 			userGroupNameOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Benutzergruppekürzel bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Benutzergruppe ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("BenutzergruppeForm:BGName_reg", message);
 	    }
 	}
@@ -135,7 +123,7 @@ public class BenutzergruppeController implements Serializable {
 	        userGroupShortNameOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("Benutzergruppe bereits vorhanden.");
+	    	FacesMessage message = new FacesMessage("Benutzergruppenkürzel ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("BenutzergruppeForm:BGShortName_reg", message);
 	    }
 	}
@@ -150,7 +138,7 @@ public class BenutzergruppeController implements Serializable {
 	        userGroupRightsOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("BGRechte bereits vorhanden.");
+	    	FacesMessage message = new FacesMessage("Benutzerrechte ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("BenutzergruppeForm:BGRechte_reg", message);
 	    }
 	}
@@ -163,8 +151,14 @@ public class BenutzergruppeController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	/**
+	 * Erstellen eines Benutzergruppeneintrags
+	 * @throws Exception
+	 */
 	public void createBenutzergruppe() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Benutzergruppe bg = new Benutzergruppe();  
 		bg.setBGName(userGroupName);    
@@ -172,17 +166,27 @@ public class BenutzergruppeController implements Serializable {
 		bg.setBGRechte(userGroupRights);
 		try {
 			userGroupFacadeLocal.create(bg);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+	        
 	    }
 		em.close();
 	}
 	
+	/**
+	 * Schaut ob Benutzergruppenname, Benutzergruppenkurzname und Benutzergruppenrechte gesetzt worden ist, danach wird der Benutzergruppeneintrag erstellt und zum Schluß wird die Liste aktualisiert.
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoBenutzergruppe() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(userGroupNameOk == true && userGroupShortNameOk == true && userGroupRightsOk == true) {
 			createBenutzergruppe();
@@ -193,10 +197,13 @@ public class BenutzergruppeController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Laden der Benutzergruppenliste
+	 * @return
+	 */
 	public List<Benutzergruppe> getBenutzergruppeList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Benutzergruppe> query = em.createNamedQuery("Benutzergruppe.findAll", Benutzergruppe.class);
-		userGroupList = query.getResultList();
 		return query.getResultList();
 	}
 	
@@ -206,7 +213,12 @@ public class BenutzergruppeController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Löschen eines Benutzergruppeneintrags
+     * @throws Exception
+     */
     public void deleteBenutzergruppe() throws Exception {
+    	String msg;
         userGroupList.remove(userGroupSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Benutzergruppe> q = em.createNamedQuery("Benutzergruppe.findByID",Benutzergruppe.class);
@@ -215,17 +227,21 @@ public class BenutzergruppeController implements Serializable {
         
         try {
         	userGroupFacadeLocal.remove(userGroup);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	        
 	    }
 		em.close();
     }
     
+    /**
+     * Ausgewählte Zeile wird in userGroupSelected gespeichert
+     * @param e
+     */
     public void onRowSelect(SelectEvent<Benutzergruppe> e) {
     	FacesMessage msg = new FacesMessage("Benutzergruppe ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -234,35 +250,40 @@ public class BenutzergruppeController implements Serializable {
         
     }
     
+    /**
+     * Bearbeiten eines Benutzergruppeneintrags
+     */
     public void addBenutzergruppe(){
-    	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Benutzergruppe.class, userGroupSelected.getGroupID());
- 	        userGroup.setGroupID(userGroupSelected.getGroupID());
- 	        userGroup.setBGName(userGroupSelected.getBGName());
- 	        userGroup.setBGShortName(userGroupSelected.getBGShortName());
- 	        userGroup.setBGRechte(userGroupSelected.getBGRechte());
- 	        userGroupFacadeLocal.edit(userGroup);
+    	EntityManager em = emf.createEntityManager();
+    	String msg;
+    	try {
+ 	       em.find(Benutzergruppe.class, userGroupSelected.getGroupID());
+ 	       userGroup.setGroupID(userGroupSelected.getGroupID());
+ 	       userGroup.setBGName(userGroupSelected.getBGName());
+ 	       userGroup.setBGShortName(userGroupSelected.getBGShortName());
+ 	       userGroup.setBGRechte(userGroupSelected.getBGRechte());
+ 	       userGroupFacadeLocal.edit(userGroup);
+ 	       msg = "Eintrag wurde bearbeitet.";
+           addMessage("messages", msg);
  	    }
  	    catch (Exception e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+ 	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
+    	userGroupList = getBenutzergruppeList();
+    	em.close();
     }
    // ---------------------------------------------------------------------------------------------------------------------
-    
-	
-	  
-		//Nachrichten an die View senden
+
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
-  
-  
-  
-  
+
+	
 }

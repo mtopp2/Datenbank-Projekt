@@ -60,6 +60,7 @@ public class StundenplanstatusController implements Serializable {
 	@EJB
 	private StundenplanstatusFacadeLocal stundenplanstatusFacadeLocal;
 	
+	// Initialisierung
 	@PostConstruct
     public void init() {
 		scheduleStatusList = getStundenplanstatusList();
@@ -77,6 +78,7 @@ public class StundenplanstatusController implements Serializable {
 	
 	private Stundenplanstatus statusSelected;
 
+	// Getter und Setter
 	public Stundenplanstatus getStundenplanstatus() {
 		return stundenplanstatus;
 	}
@@ -94,10 +96,10 @@ public class StundenplanstatusController implements Serializable {
 			this.statusColor = statusColor;
 			statusColorOk = true;
 		}
-		/*else{
-			FacesMessage message = new FacesMessage("Farbe bereits vorhanden.");
+		else{
+			FacesMessage message = new FacesMessage("Farbe ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("StundenplanstatusForm:PColor_reg", message);
-	    }*/
+	    }
 	}
 
 	public String getStatusDescription() {
@@ -109,10 +111,10 @@ public class StundenplanstatusController implements Serializable {
 			this.statusDescription = statusDescription;
 			statusDescriptionOk = true;
 		}
-		/*else{
-			FacesMessage message = new FacesMessage("Bezeichnung bereits vorhanden.");
+		else{
+			FacesMessage message = new FacesMessage("Bezeichnung ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("StundenplanstatusForm:SPSTBezeichnung_reg", message);
-	    }*/
+	    }
 	}
 
 	public String getStatusHint() {
@@ -124,10 +126,10 @@ public class StundenplanstatusController implements Serializable {
 			this.statusHint = statusHint;
 			statusHintOk = true;
 		}
-		/*else{
-			FacesMessage message = new FacesMessage("Hinweis bereits vorhanden.");
+		else{
+			FacesMessage message = new FacesMessage("Hinweis ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("StundenplanstatusForm:SPSTHint_reg", message);
-	    }*/
+	    }
 	}
 
 	public Stundenplanstatus getStatusSelected() {
@@ -150,8 +152,11 @@ public class StundenplanstatusController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	// Erstellen eines Stundenplansemesterstatus Eintrag
 	public void createStundenplanstatus() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Stundenplanstatus sps = new Stundenplanstatus();  
 		sps.setSPSTBezeichnung(statusDescription);
@@ -159,17 +164,17 @@ public class StundenplanstatusController implements Serializable {
 		sps.setPColor(statusColor);
 		try {
 			stundenplanstatusFacadeLocal.create(sps);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	            msg = "Eintrag wurde nicht erstellt.";
+	            addMessage("messages", msg);
 	    }
 		em.close();
 	}
 	
+	// Schaut ob Studenplanstatusbezeichnung, StundenplanstatusHinweis und Stundenplanstausfarbe gesetzt ist, danach wird der Eintrag erstellt und zum Schluß die Liste aktualisiert.
 	public void createDoStundenplanstatus() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(statusDescriptionOk == true && statusHintOk == true && statusColorOk == true) {
 			createStundenplanstatus();
@@ -180,63 +185,73 @@ public class StundenplanstatusController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// Laden der Stundenplanstatusliste
 	public List<Stundenplanstatus> getStundenplanstatusList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Stundenplanstatus> query = em.createNamedQuery("Stundenplanstatus.findAll", Stundenplanstatus.class);
-		scheduleStatusList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	
-	
+	// Ausgewählte Zeile in statusSelected speichern
 	 public void onRowSelect(SelectEvent<Stundenplanstatus> e) {
-	    	FacesMessage msg = new FacesMessage("Stundenplanstatus ausgewählt");
+	    	FacesMessage msg = new FacesMessage("Stundenplanstatus ausgewählt.");
 	        FacesContext.getCurrentInstance().addMessage(null, msg);
 	        
 	        statusSelected = e.getObject();
 	        
 	    }
 	    
+	 // Bearbeiten eines Stundenplanstatuseintrag
 	    public void addStundenplanstatus(){
-	    	 try {
-	 	        EntityManager em = emf.createEntityManager();
-	 	        em.find(Stundenplanstatus.class, statusSelected.getSpstid());
-	 	        stundenplanstatus.setSpstid(statusSelected.getSpstid());
-	 	        stundenplanstatus.setPColor(statusSelected.getPColor());
-	 	        stundenplanstatus.setSPSTBezeichnung(statusSelected.getSPSTBezeichnung());
-	 	        stundenplanstatus.setSPSTHint(statusSelected.getSPSTHint());
-	 	        stundenplanstatusFacadeLocal.edit(stundenplanstatus);
-	 	    }
-	 	    catch (Exception e) {
-	 	        try {
-	 	            ut.rollback();
-	 	        } 
-	 	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	 	        }
-	 	    }
+	    	String msg;
+ 	        EntityManager em = emf.createEntityManager();
+ 	        em.find(Stundenplanstatus.class, statusSelected.getSpstid());
+ 	        stundenplanstatus.setSpstid(statusSelected.getSpstid());
+ 	        stundenplanstatus.setPColor(statusSelected.getPColor());
+ 	        stundenplanstatus.setSPSTBezeichnung(statusSelected.getSPSTBezeichnung());
+ 	        stundenplanstatus.setSPSTHint(statusSelected.getSPSTHint());
+ 	        try {
+ 	        	stundenplanstatusFacadeLocal.edit(stundenplanstatus);
+ 	        	msg = "Eintrag wurde bearbeitet.";
+	            addMessage("messages", msg);
+ 	        }catch(Exception e) {
+ 	        	msg = "Eintrag wurde nicht bearbeitet.";
+	            addMessage("messages", msg);
+ 	        	
+ 	        }
+ 	       scheduleStatusList = getStundenplanstatusList();
+ 	        em.close();
+	 	    
 	    }
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+	// Löschen eines Stundenplanstatuseintrag
     public void deleteStundenplanstatus() throws Exception {
+    	String msg;
         scheduleStatusList.remove(statusSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplanstatus> q = em.createNamedQuery("Stundenplanstatus.findBySpsid",Stundenplanstatus.class);
         q.setParameter("spstid", statusSelected.getSpstid());
         stundenplanstatus = (Stundenplanstatus)q.getSingleResult();
-        
         try {
         	stundenplanstatusFacadeLocal.remove(stundenplanstatus);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
 	    }
         
 		em.close();
     }
+    
+	//Nachrichten an die View senden
+	private void addMessage(String loginformidName, String msg) {
+	   FacesMessage message = new FacesMessage(msg);
+	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+	}
 
 }

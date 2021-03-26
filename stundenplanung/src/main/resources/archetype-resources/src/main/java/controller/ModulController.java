@@ -1,10 +1,9 @@
 package controller;
 
-import model.Account;
-import model.Faculty;
+
 import model.Modul;
 import model.Pruefcode;
-import model.Studiengang;
+
 
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
@@ -12,7 +11,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import java.util.logging.Level;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -22,7 +21,7 @@ import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -33,23 +32,8 @@ import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
-import org.primefaces.event.RowEditEvent;
+
 import org.primefaces.event.SelectEvent;
-
-import com.sun.javafx.logging.Logger;
-
-import org.primefaces.event.CellEditEvent;
-//import org.primefaces.event.
-
-
-import javax.faces.bean.ManagedBean;
-//import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
-
-import controller.MessageForPrimefaces;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import javax.ejb.EJB;
 import EJB.ModulFacadeLocal;
 
@@ -76,6 +60,9 @@ public class ModulController implements Serializable {
 	@EJB
 	private ModulFacadeLocal modulFacadeLocal;
 	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
     public void init() {
         modulList = getModulListAll();
@@ -98,12 +85,11 @@ public class ModulController implements Serializable {
 	private boolean modulShortOk = false;
 	private boolean modulNameOk = false;
 	
-	
 	List<Modul> modulList;
-	
 	
 	private Modul modulSelected;
 	
+	// Getter und Setter
 	public Modul getModulSelected() {
 		return modulSelected;
 	}
@@ -150,7 +136,7 @@ public class ModulController implements Serializable {
 			modulShortOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Modulkürzel bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Modulkürzel ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("ModulForm:modKuerzel_reg", message);
 	    }
 	}
@@ -165,7 +151,7 @@ public class ModulController implements Serializable {
 	        modulNameOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("Modulname bereits vorhanden.");
+	    	FacesMessage message = new FacesMessage("Modulname ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("ModulForm:modName_reg", message);
 	    }
 	}
@@ -186,8 +172,14 @@ public class ModulController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	/**
+	 * Hinzufügen eines Moduls
+	 * @throws Exception
+	 */
 	public void createModul() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Modul mod = new Modul();  
 		mod.setModName(modulName);    
@@ -195,17 +187,26 @@ public class ModulController implements Serializable {
 		mod.setPruefcode(findCode(pcId));
 		try {
 			modulFacadeLocal.create(mod);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
 	    }
 		em.close();
 	}
 	
+	/**
+	 * Schaut ob Modulname und Modulkürzel gesetzt worden sind, danach wird der Eintrag erstellt und zum Schluß wird die Liste aktualisiert.
+	 * @throws SecurityException
+	 * @throws SystemException
+	 * @throws NotSupportedException
+	 * @throws RollbackException
+	 * @throws HeuristicMixedException
+	 * @throws HeuristicRollbackException
+	 * @throws Exception
+	 */
 	public void createDoModul() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(modulNameOk == true && modulShortOk == true) {
 			createModul();
@@ -215,20 +216,24 @@ public class ModulController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Laden der Modulliste
+	 * @return
+	 */
 	public List<Modul> getModulListAll(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Modul> query = em.createNamedQuery("Modul.findAll", Modul.class);
-		modulList = query.getResultList();
 		return query.getResultList();
 	}
 	
-	
-	
-	
-	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+    /**
+     * Löschen eines Moduls
+     * @throws Exception
+     */
     public void deleteModul() throws Exception {
+    	String msg;
         modulList.remove(modulSelected);
         EntityManager em = emf.createEntityManager();
         TypedQuery<Modul> q = em.createNamedQuery("Modul.findByModID",Modul.class);
@@ -237,18 +242,21 @@ public class ModulController implements Serializable {
         
         try {
         	modulFacadeLocal.remove(modul);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
 	    }
         
 		em.close();
     }
     
+    /**
+     * Die ausgewählte Zeile wird in modulSelected gespeichert sowie der Fremdschlüssel
+     * @param e
+     */
     public void onRowSelect(SelectEvent<Modul> e) {
     	FacesMessage msg = new FacesMessage("Modul ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -258,26 +266,35 @@ public class ModulController implements Serializable {
         
     }
     
+    /**
+     * Bearbeiten eines Moduls
+     */
     public void addModul(){
+    	EntityManager em = emf.createEntityManager();
+    	String msg;
     	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Modul.class, modulSelected.getModID());
- 	        modul.setModID(modulSelected.getModID());
- 	        modul.setModName(modulSelected.getModName());
- 	        modul.setModKuerzel(modulSelected.getModKuerzel());
- 	        modul.setPruefcode(findCode(pcId));
- 	        modulFacadeLocal.edit(modul);
+ 	       em.find(Modul.class, modulSelected.getModID());
+ 	       modul.setModID(modulSelected.getModID());
+ 	       modul.setModName(modulSelected.getModName());
+ 	       modul.setModKuerzel(modulSelected.getModKuerzel());
+ 	       modul.setPruefcode(findCode(pcId));
+ 	       modulFacadeLocal.edit(modul);
+ 	       msg = "Eintrag wurde bearbeitet.";
+           addMessage("messages", msg);
  	    }
  	    catch (Exception e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+ 	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
     	 modulList = getModulListAll();
+    	 em.close();
     }
     
+    /**
+     * Finden eines Prüfcodes anhand der ID
+     * @param pcid
+     * @return
+     */
     private Pruefcode findCode(int pcid) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -291,16 +308,16 @@ public class ModulController implements Serializable {
         return code;
     }
    // ---------------------------------------------------------------------------------------------------------------------
-    
-	
-	  
-	//Nachrichten an die View senden
+
+	/**
+	 * Nachrichten an die View senden
+	 * @param loginformidName
+	 * @param msg
+	 */
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
-  
-  
-  
+	
   
 }

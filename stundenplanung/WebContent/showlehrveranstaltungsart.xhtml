@@ -14,7 +14,7 @@
 		    <p:commandButton value="Lehrveranstaltungsart Hinzufügen" type="button" id="ajax" editable="true" update=":eventDetailsForm:eventDialog"  onclick="PF('eventDialog').show();" style="margin-right:20px;" styleClass="ui-priority-primary" />   
 			<p:dataTable id="LehrveranstaltungsartListe" var="list" value="#{lehrveranstaltungsartController.teachingEventList}" selection="#{lehrveranstaltungsartController.teachingEventSelected}" selectionMode="single" rowKey="#{list.lvid}" >
 			
-		         <p:ajax event="rowSelect" listener="#{lehrveranstaltungsartController.onRowSelect}" update=":form:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LehrveranstaltungsartListe"/>
+		         <p:ajax event="rowSelect" listener="#{lehrveranstaltungsartController.onRowSelect}" update=":eventEditDetailsForm:eventEditDialog" oncomplete="PF('eventEditDialog').show();" process="LehrveranstaltungsartListe"/>
 		 
 		        
 		 
@@ -31,7 +31,9 @@
 		        </p:column>
 		        
 		    </p:dataTable>
-		    <p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Lehrveranstaltungsart Editiert Details" showEffect="clip" hideEffect="clip">
+		 </h:form>
+		 <h:form id="eventEditDetailsForm">
+		 	<p:dialog id="eventEditDialog" widgetVar="eventEditDialog" header="Lehrveranstaltungsart Editiert Details" showEffect="clip" hideEffect="clip">
 		        <h:panelGrid id="eventEditDetails" columns="2">
 		 
 		            
@@ -45,11 +47,11 @@
                     <h:inputText id="teachingEventLength_reg" value="#{lehrveranstaltungsartController.teachingEventSelected.lvdauer}" ></h:inputText>                                                  
                     
                     
-                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{lehrveranstaltungsartController.addLehrveranstaltungsart()}" update=":form:LehrveranstaltungsartListe" oncomplete="PF('eventEditDialog').hide();"/> 		 			
-		 			<p:commandButton value="Löschen" update=":form:LehrveranstaltungsartListe" actionListener="#{lehrveranstaltungsartController.deleteLehrveranstaltungsart()}" oncomplete="PF('eventEditDialog').hide();"/>
+                    <p:commandButton id="submit" type="submit" value="Speichern" action="#{lehrveranstaltungsartController.addLehrveranstaltungsart()}" update=":form:LehrveranstaltungsartListe :form:msgs" oncomplete="PF('eventEditDialog').hide();"/> 		 			
+		 			<p:commandButton value="Löschen" update=":form:LehrveranstaltungsartListe :form:msgs" actionListener="#{lehrveranstaltungsartController.deleteLehrveranstaltungsart()}" oncomplete="PF('eventEditDialog').hide();"/>
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventEditDialog').hide();" />
 		        </h:panelGrid>
 		    </p:dialog>
-		     
 		 </h:form>
 		 <h:form id="eventDetailsForm">
 		    <p:dialog id="eventDialog" widgetVar="eventDialog" header="Lehrveranstaltungsart" showEffect="clip" hideEffect="clip">
@@ -74,8 +76,8 @@
                    		<h:outputLabel value="" style="margin: 10px;"/>
                     	<h:messages for="teachingEventLength_reg" style="color: red"/>
                     </h:panelGrid>
-                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{lehrveranstaltungsartController.createDoLehrveranstaltungsart}" oncomplete="PF('eventDialog').hide();" update=":form:LehrveranstaltungsartListe"/>		 			
-		 			<p:commandButton id="reset" type="reset" value="Reset" />
+                    <p:commandButton id="submit" value="Hinzufügen" actionListener="#{lehrveranstaltungsartController.createDoLehrveranstaltungsart}" oncomplete="PF('eventDialog').hide();" update=":form:LehrveranstaltungsartListe :form:msgs"/>		 			
+		 			<p:commandButton value="Abbrechen" process="@parent" oncomplete="PF('eventDialog').hide();" />
 		            
 		        </h:panelGrid>
 		    </p:dialog>

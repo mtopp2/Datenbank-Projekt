@@ -63,6 +63,7 @@ public class StudiengangController implements Serializable {
 	@EJB
 	private StudiengangFacadeLocal studiengangFacadeLocal;
 	
+	// Initialisierung
 	@PostConstruct
     public void init() {
 		courseList = getStudiengangList();
@@ -84,6 +85,7 @@ public class StudiengangController implements Serializable {
 	
 	private Studiengang courseSelected;
 	
+	// Getter und Setter
 	public int getFacultyID() {
 		return facultyID;
 	}
@@ -120,7 +122,7 @@ public class StudiengangController implements Serializable {
 			courseNameOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("SGName konnte nicht gesetzt werden.");
+	    	FacesMessage message = new FacesMessage("Studiengangsname konnte nicht gesetzt werden.");
             FacesContext.getCurrentInstance().addMessage("StudiengangForm:SGName_reg", message);
 	    }
 	}
@@ -135,7 +137,7 @@ public class StudiengangController implements Serializable {
 			courseShortOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("SGKurz konnte nicht gesetzt werden.");
+	    	FacesMessage message = new FacesMessage("Studiengangskürzel konnte nicht gesetzt werden.");
             FacesContext.getCurrentInstance().addMessage("StudiengangForm:SGKurz_reg", message);
 	    }
 	}
@@ -174,18 +176,30 @@ public class StudiengangController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	// Erstellt einen Studiengangseintrag
 	public void createStudiengang() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Studiengang bg = new Studiengang();  
 		bg.setSGName(courseName);
 		bg.setSGKurz(courseShort);
 		bg.setSemester(semester);
 		bg.setFaculty(findFac(facultyID));
-		studiengangFacadeLocal.create(bg);
+		try {
+			studiengangFacadeLocal.create(bg);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
+		}catch(Exception e) {
+			msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+		}
+		
 		em.close();
 	}
 	
+	// Schaut, ob Studiengangsname und Studiengangskurzform gesetzt ist, danach wird der eintrag in der Datenbank erstellt und zum Schluß wird die Liste aktualisiert.
 	public void createDoStudiengang() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(courseNameOk == true && courseShortOk == true) {
 			createStudiengang();
@@ -195,22 +209,22 @@ public class StudiengangController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// Studiengangsliste wird geladen
 	public List<Studiengang> getStudiengangList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Studiengang> query = em.createNamedQuery("Studiengang.findAll", Studiengang.class);
-		courseList = query.getResultList();
 		return query.getResultList();
 	}
 	
+	// Fachbereichsliste wird geladen
 	public List<Faculty> getFacultyList(){
 		EntityManager em = emf.createEntityManager();
 		TypedQuery<Faculty> query = em.createNamedQuery("Faculty.findAll", Faculty.class);
-		facultyList = query.getResultList();
 		return query.getResultList();
 	}
 	
 	
-	
+	// Die ausgewählte Zeile wird in courseSelected gespeichert
 	public void onRowSelect(SelectEvent<Studiengang> e) {
     	FacesMessage msg = new FacesMessage("Studiengang ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -225,16 +239,27 @@ public class StudiengangController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+	// Löscht einen Studiengang
     public void deleteStudiengang() throws Exception {
+    	String msg;
     	courseList.remove(courseSelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Studiengang> q = em.createNamedQuery("Studiengang.findBySgid",Studiengang.class);
         q.setParameter("sgid", courseSelected.getSgid());
-        course = (Studiengang)q.getSingleResult();        
-        studiengangFacadeLocal.remove(course);
+        course = (Studiengang)q.getSingleResult();
+        try {
+        	studiengangFacadeLocal.remove(course);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
+        }catch(Exception e) {
+        	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+        }
+        
 	    em.close();
     }
     
+    // Findet den bestimmten Fachbereichseintrag anhand der Fachbereichsid
     private Faculty findFac(int facultyID) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -248,9 +273,9 @@ public class StudiengangController implements Serializable {
         return faculty;
     }
    
-    
-    public void addRoom(){
-
+    // Bearbeitet einen Studiengang
+    public void addStudiengang(){
+    		String msg;
 	        EntityManager em = emf.createEntityManager();
 	        em.find(Studiengang.class, courseSelected.getSgid());
 	        course.setSgid(courseSelected.getSgid());
@@ -258,7 +283,22 @@ public class StudiengangController implements Serializable {
 	        course.setSGKurz(courseSelected.getSGKurz());
 	        course.setSemester(courseSelected.getSemester());
 	        course.setFaculty(findFac(facultyID));
-	        studiengangFacadeLocal.edit(course);
+	        try {
+	        	studiengangFacadeLocal.edit(course);
+	        	msg = "Eintrag wurde bearbeitet.";
+	            addMessage("messages", msg);
+	        }catch(Exception e) {
+	        	msg = "Eintrag wurde nicht bearbeitet.";
+	            addMessage("messages", msg);
+	        }
+	        
 	        courseList = getStudiengangList();
+	        em.close();
     }
+    
+	//Nachrichten an die View senden
+	private void addMessage(String loginformidName, String msg) {
+	   FacesMessage message = new FacesMessage(msg);
+	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
+	}
 }

@@ -93,8 +93,7 @@ public class LoginController implements Serializable {
 	private boolean accountPasswordOk2 = false;
  
     
-//Getter und Setter Methoden
-	
+	//Getter und Setter Methoden
 	public String getAccountPassword1() {
 		return accountPassword1;
 	}
@@ -208,7 +207,7 @@ public class LoginController implements Serializable {
                 this.accountName = accountName;
             }
             else{
-                FacesMessage message = new FacesMessage("Account nicht vorhanden");
+                FacesMessage message = new FacesMessage("Account nicht vorhanden.");
                 FacesContext.getCurrentInstance().addMessage("loginForm:idName_login", message);
                 //String msg = "Account nicht vorhanden";
                 //addMessage("idName_login", msg);
@@ -227,7 +226,7 @@ public class LoginController implements Serializable {
                 isLoggedIn = true;
             }
             else{
-                FacesMessage message = new FacesMessage("Passwort Falsch");
+                FacesMessage message = new FacesMessage("Passwort ist Falsch.");
                 FacesContext.getCurrentInstance().addMessage("loginForm:idPwd_login", message);
                 //String msg="Password Falsch";
                 //addMessage("idPwd_login",msg);
@@ -296,7 +295,7 @@ public class LoginController implements Serializable {
         return found;
     }
     
-    
+    // Finden einer Benutzergruppe anhand der ID
     private Benutzergruppe findBGID(int id) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -362,7 +361,7 @@ public class LoginController implements Serializable {
     //---------------------------------------------------------------------------------------------
     
     
-	
+	// Finden eines Accounts anhand des Accountnamen
 	private Account findAcc(String accName) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -377,7 +376,7 @@ public class LoginController implements Serializable {
     }
 	
 
-	
+	// Passwort ändern
 	public void changePassword(){
 		account = findAcc(accountName);
 		EntityManager em = emf.createEntityManager();
@@ -387,7 +386,7 @@ public class LoginController implements Serializable {
 		em.close();		  
 	}
 	
-	
+	// Passwort überprüfen auf Übereinstimmung
 	public String changePasswordOk() {
 		String returnvalue = "";
 		try {

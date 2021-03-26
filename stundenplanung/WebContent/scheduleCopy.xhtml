@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+      
+<h:body>
+	<ui:composition template="WEB-INF/template/master.xhtml" >
+		<ui:define name="content">
+		<h:form id="idForm">
+		<p:growl id="messages" showDetail="true" life="5000" redisplay="true"/>
+			<p:panel id="panel_Calendar" header="Stundenplan Kopierer" styleClass="schedule; p-mb-2" style="width:99,9%; height:100%; overflow-x: auto;">
+			    <h:panelGrid id="buttons" columns="4">
+				    <p:selectOneMenu
+		                        id="spsid"
+		                        value="#{scheduleControllerCopy.spSemesterSelection}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.sps1List}" />
+		            </p:selectOneMenu>
+		            <p:selectOneMenu
+		                        id="spsid1"
+		                        value="#{scheduleControllerCopy.spYearSelection}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.sps2List}" />
+		            </p:selectOneMenu>
+		            <p:selectOneMenu
+		                        id="stgid"
+		                        value="#{scheduleControllerCopy.courseSelection}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.courseList}" />
+		            </p:selectOneMenu>
+		            <p:selectOneMenu
+		                        id="fid"
+		                        value="#{scheduleControllerCopy.facultySelection}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.facultyList}" />
+		            </p:selectOneMenu>
+				</h:panelGrid>
+				<h:outputText value=" --> " style="white-space: pre;font-size:20px;" escape="false"></h:outputText>
+				<h:panelGrid id="buttons1" columns="4">
+				    <p:selectOneMenu
+		                        id="spsid2"
+		                        value="#{scheduleControllerCopy.spSemesterSelection2}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.sps1List2}" />
+		            </p:selectOneMenu>
+		            <p:selectOneMenu
+		                        id="spsid3"
+		                        value="#{scheduleControllerCopy.spYearSelection2}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.sps2List2}" />
+		            </p:selectOneMenu>
+		            <p:selectOneMenu
+		                        id="stgid1"
+		                        value="#{scheduleControllerCopy.courseSelection2}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.courseList2}" />
+		            </p:selectOneMenu>
+		            <p:selectOneMenu
+		                        id="fid1"
+		                        value="#{scheduleControllerCopy.facultySelection2}"
+		                        required="true">
+		                        <f:selectItems value="#{scheduleControllerCopy.facultyList2}" />
+		            </p:selectOneMenu>
+				</h:panelGrid>
+				<h:panelGrid id="buttons2" columns="1">
+	        		<p:commandButton 
+	        					value="Kopieren"
+	  						 	actionListener="#{scheduleControllerCopy.copy}"/>
+	        	</h:panelGrid>
+			</p:panel>
+			</h:form>
+			</ui:define>
+	</ui:composition>
+</h:body>
+</html>

@@ -64,7 +64,7 @@ public class FacultyController implements Serializable {
 	@EJB
 	private FacultyFacadeLocal facFacadeLocal;
 	
-	
+	// Initialisierung
 	@PostConstruct
     public void init() {
         facultyList = getFacultyListAll();
@@ -78,12 +78,11 @@ public class FacultyController implements Serializable {
 	private boolean facultyNameOk = false;
 	private boolean facultyShortNameOk = false;
 	
-	
 	List<Faculty> facultyList;
-	
 	
 	private Faculty facultySelected;
 	
+	// Getter und Setter
 	public Faculty getFacultySelected() {
 		return facultySelected;
 	}
@@ -91,8 +90,6 @@ public class FacultyController implements Serializable {
 	public void setFacultySelected(Faculty facultySelected) {
 		this.facultySelected = facultySelected;
 	}
-	
-	
 	  
     public List<Faculty> getFacultyList() {
         return facultyList;
@@ -116,7 +113,7 @@ public class FacultyController implements Serializable {
 			facultyNameOk = true;
 		}
 		else{
-			FacesMessage message = new FacesMessage("Faculty bereits vorhanden.");
+			FacesMessage message = new FacesMessage("Fachbereichsname ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("FacultyList:facName_reg", message);
 	    }
 	}
@@ -131,7 +128,7 @@ public class FacultyController implements Serializable {
 	        facultyShortNameOk=true;
 	    }
 	    else{
-	    	FacesMessage message = new FacesMessage("Facultykürzel bereits vorhanden.");
+	    	FacesMessage message = new FacesMessage("Fachbereichskürzel ist bereits vorhanden.");
             FacesContext.getCurrentInstance().addMessage("FacultyList:facShortName_reg", message);
 	    }
 	}
@@ -145,25 +142,29 @@ public class FacultyController implements Serializable {
         this.reg = reg;
     }
 	  
-	private UIComponent reg;  
+	private UIComponent reg;
+	
+	// Erstellen eines Fachbereichs
 	public void createFaculty() throws Exception  {
+		String msg;
 		EntityManager em = emf.createEntityManager();
 		Faculty fac = new Faculty();  
 		fac.setFacName(facultyName);    
 		fac.setFacShortName(facultyShortName);      
 		try {
 			facFacadeLocal.create(fac);
+			msg = "Eintrag wurde erstellt.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (IllegalStateException | SecurityException | SystemException ex) {
-	        }
+	    	msg = "Eintrag wurde nicht erstellt.";
+            addMessage("messages", msg);
+	       
 	    }
 		em.close();
 	}
 	
+	// Schaut ob Fachbereichsname und Fachbereichskurzform gesetzt worden sind, danach wird der Eintrag erstellt und zum Schluß wird die Liste aktualisiert.
 	public void createDoFaculty() throws SecurityException, SystemException, NotSupportedException, RollbackException, HeuristicMixedException, HeuristicRollbackException, Exception{
 		if(facultyNameOk == true && facultyShortNameOk == true ) {
 			createFaculty();
@@ -173,19 +174,18 @@ public class FacultyController implements Serializable {
 	
 	//----------------------------------------------------------------------------------------------------------------------------------------
 	
+	// Laden der Fachbereichsliste
 	public List<Faculty> getFacultyListAll(){		
 		List<Faculty> listFac;
 		listFac = facFacadeLocal.findAll();
 		return listFac;
 	}
 	
-	
-	
-	
-	
 	//----------------------------------------------------------------------------------------------------------------------------------------------
     
+	// Löschen eines Fachbereichseintrags
     public void deleteFaculty() throws Exception {
+    	String msg;
         facultyList.remove(facultySelected);        
         EntityManager em = emf.createEntityManager();
         TypedQuery<Faculty> q = em.createNamedQuery("Faculty.findByFbid",Faculty.class);
@@ -194,18 +194,18 @@ public class FacultyController implements Serializable {
         
         try {
         	this.facFacadeLocal.remove(faculty);
+        	msg = "Eintrag wurde gelöscht.";
+            addMessage("messages", msg);
 	    }
 	    catch (Exception e) {
-	        try {
-	            ut.rollback();
-	        } 
-	        catch (Exception ex) {
-	        }
+	    	msg = "Eintrag wurde nicht gelöscht.";
+            addMessage("messages", msg);
+	        
 	    }       
 		em.close();
     }
     
-    
+    // Ausgewählte Zeile wird in facultySelected gespeichert.
     public void onRowSelect(SelectEvent<Faculty> e) {
     	FacesMessage msg = new FacesMessage("Fakultät ausgewählt");
         FacesContext.getCurrentInstance().addMessage(null, msg);
@@ -214,37 +214,34 @@ public class FacultyController implements Serializable {
         
     }
     
+    // Bearbeiten eines Fachbereichseintrags
     public void addFaculty(){
-    	 try {
- 	        EntityManager em = emf.createEntityManager();
- 	        em.find(Faculty.class, facultySelected.getFbid());
- 	        faculty.setFbid(facultySelected.getFbid());
- 	        faculty.setFacName(facultySelected.getFacName());
- 	        faculty.setFacShortName(facultySelected.getFacShortName());
- 	        facFacadeLocal.edit(faculty);
+    	EntityManager em = emf.createEntityManager();
+    	String msg;
+    	 try { 
+ 	       em.find(Faculty.class, facultySelected.getFbid());
+ 	       faculty.setFbid(facultySelected.getFbid());
+ 	       faculty.setFacName(facultySelected.getFacName());
+ 	       faculty.setFacShortName(facultySelected.getFacShortName());
+ 	       facFacadeLocal.edit(faculty);
+ 	       msg = "Eintrag wurde bearbeitet.";
+           addMessage("messages", msg);
  	    }
- 	    catch (SecurityException | IllegalStateException e) {
- 	        try {
- 	            ut.rollback();
- 	        } 
- 	        catch (IllegalStateException | SecurityException | SystemException ex) {
- 	        }
+ 	    catch (Exception e) {
+ 	    	msg = "Eintrag wurde nicht bearbeitet.";
+            addMessage("messages", msg);
  	    }
+    	facultyList = getFacultyListAll();
+    	em.close();
     }
     
-    
-    
    // ---------------------------------------------------------------------------------------------------------------------
-    
-	
 	  
 	//Nachrichten an die View senden
 	private void addMessage(String loginformidName, String msg) {
 	   FacesMessage message = new FacesMessage(msg);
 	   FacesContext.getCurrentInstance().addMessage(loginformidName, message);     
 	}
-  
-  
-  
+
   
 }

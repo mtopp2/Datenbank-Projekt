@@ -8,27 +8,31 @@ import model.Sgmodul;
 import model.Stundenplaneintrag;
 import model.Stundenplansemester;
 
+
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
+
+
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
+
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import java.util.TimeZone;
+
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
+
 import javax.faces.context.FacesContext;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -36,28 +40,38 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+
 import javax.transaction.UserTransaction;
 import org.primefaces.event.ScheduleEntryMoveEvent;
 import org.primefaces.event.ScheduleEntryResizeEvent;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultScheduleEvent;
 import org.primefaces.model.DefaultScheduleModel;
-import org.primefaces.model.LazyScheduleModel;
+
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
+
+import java.util.GregorianCalendar;
+
 import java.util.Calendar;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
 
-import EJB.FacultyFacadeLocal;
+import javax.ejb.EJB;
 import EJB.StundenplaneintragFacadeLocal;
+
+/*
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.ListItem;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;*/
 
 /**
 *
@@ -80,21 +94,26 @@ public class ScheduleController implements Serializable {
 	private Sgmodul sgmodul;
 	private Faculty faculty;
 	private Stundenplansemester spSemester;
+	private Studiengang course;
 	
 	@EJB
 	private StundenplaneintragFacadeLocal speFacadeLocal;
 	
+	/**
+	 * Initialisierung des Wochenplans
+	 */
 	@PostConstruct
 	public void init() {
 		updateDb();
         selection();
-        events = new ScheduleModel[7];
-        for(int j = 0; j < 7; j++) { 	
+        events = new ScheduleModel[9];
+        for(int j = 0; j < 9; j++) { 	
         	events[j] = new DefaultScheduleModel();
         }
         eventLoader();
     }	
 	
+	// Variablen
 	private Date startTime;
 	private Date endTime;
 	private int spMeeting;
@@ -103,7 +122,7 @@ public class ScheduleController implements Serializable {
 	
 	TimeZone timeZoneDefault = TimeZone.getDefault(); 
 	
-	private ScheduleModel events[] = new ScheduleModel[7];
+	private ScheduleModel events[] = new ScheduleModel[9];
     private ScheduleEvent event = new DefaultScheduleEvent();
     private Date weekstart;
     
@@ -139,9 +158,8 @@ public class ScheduleController implements Serializable {
     ArrayList<Integer> sps2List = new ArrayList<>();
     private int spYearSelection;
     
-    Calendar calendar;
-    Calendar calendarStart;
-    Calendar calendarEnd;
+    GregorianCalendar calendarStart;
+    GregorianCalendar calendarEnd;
     LocalDateTime localTime;
     LocalDateTime localTime2;
     
@@ -155,13 +173,25 @@ public class ScheduleController implements Serializable {
     
     weekDay day;
     
+    boolean show1 = false;
+    boolean show2 = false;
+    boolean show3 = false;
+    boolean show4 = false;
+    boolean show5 = false;
+    boolean show6 = false;
+    boolean show7 = false;
+    boolean show8 = false;
+    
+    
     //--------------------------------------------------------------
     
-    public void updateDb() {
-    	int dayOffset;
-        weekstart = getWeekStartDate();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(weekstart);
+    /**
+     * Update der Stundenplaneinträge auf die aktuelle Woche
+     */
+    public void updateDb() {        
+        GregorianCalendar calStart =  new GregorianCalendar();
+        GregorianCalendar calEnd =  new GregorianCalendar();
+        
         EntityManager em = emf.createEntityManager();
     	try{// Laden der Datenbank
             Query query = em.createNamedQuery("Stundenplaneintrag.findAll", Stundenplaneintrag.class);
@@ -175,20 +205,23 @@ public class ScheduleController implements Serializable {
     		for(int i = 0; i < loadDb.size(); i++){            	
             	this.spe = new Stundenplaneintrag();
             	spe = loadDb.get(i);
-                dayOffset = spe.getSPEStartZeit().getDay()-1;
+            	calStart.setTime(spe.getSPEStartZeit());
+            	calEnd.setTime(spe.getSPEEndZeit());
+            	
+                day = weekDay.valueOfLabel(spe.getWochentag());
+                weekstart = getWeekdayDate(day);
                 
-                calendarStart = (Calendar) cal.clone();
                 //Zeiten
-                calendarStart.add(Calendar.DATE, dayOffset);
-                calendarStart.set(Calendar.HOUR_OF_DAY, spe.getSPEStartZeit().getHours());
-                calendarStart.set(Calendar.MINUTE, spe.getSPEStartZeit().getMinutes());
-                calendarStart.set(Calendar.SECOND, spe.getSPEStartZeit().getSeconds());
+                calendarStart.setTime(weekstart);
+                calendarStart.set(Calendar.HOUR_OF_DAY, calStart.get(Calendar.HOUR_OF_DAY));
+                calendarStart.set(Calendar.MINUTE, calStart.get(Calendar.MINUTE));
+                calendarStart.set(Calendar.SECOND, calStart.get(Calendar.SECOND));
 
                 
-                calendarEnd = (Calendar) calendarStart.clone();
-                calendarEnd.set(Calendar.HOUR_OF_DAY, spe.getSPEEndZeit().getHours());
-                calendarEnd.set(Calendar.MINUTE, spe.getSPEEndZeit().getMinutes());
-                calendarEnd.set(Calendar.SECOND, spe.getSPEEndZeit().getSeconds());
+                calendarEnd = (GregorianCalendar) calendarStart.clone();
+                calendarEnd.set(Calendar.HOUR_OF_DAY, calEnd.get(Calendar.HOUR_OF_DAY));
+                calendarEnd.set(Calendar.MINUTE, calEnd.get(Calendar.MINUTE));
+                calendarEnd.set(Calendar.SECOND, calEnd.get(Calendar.SECOND));
 
                 em.find(Stundenplaneintrag.class, spe.getSpid());
                 spe.setSPEStartZeit(calendarStart.getTime());
@@ -211,6 +244,9 @@ public class ScheduleController implements Serializable {
     
     //--------------------------------------------------------------
     
+    /**
+     * Schedule Attribut Showweekend ändern
+     */
     public void weekendChange() {
     	if (showWeekends == false) {
     		showWeekends = true;
@@ -220,16 +256,84 @@ public class ScheduleController implements Serializable {
     }
     
     //--------------------------------------------------------------
+    
+    /**
+     * Laden des Stundenplans
+     */
+    public void loadSchedule() {
+        loadModule();
+        
+        course = findSG(courseSelection, facultySelection);
+        
+        switch(course.getSemester()) {
+	    case 2:
+	    	show1 = true;
+	    	show2 = true;
+	    	show3 = false;
+	    	show4 = false;
+	    	show5 = false;
+	    	show6 = false;
+	    	show7 = false;
+	    	show8 = false;
+	    	break;
+	    case 4:
+	    	show1 = true;
+	    	show2 = true;
+	    	show3 = true;
+	    	show4 = true;
+	    	show5 = false;
+	    	show6 = false;
+	    	show7 = false;
+	    	show8 = false;
+	    	break;
+	    case 6:
+	    	show1 = true;
+	    	show2 = true;
+	    	show3 = true;
+	    	show4 = true;
+	    	show5 = true;
+	    	show6 = true;
+	    	show7 = false;
+	    	show8 = false;
+	    	break;
+	    case 8:
+	    	show1 = true;
+	    	show2 = true;
+	    	show3 = true;
+	    	show4 = true;
+	    	show5 = true;
+	    	show6 = true;
+	    	show7 = true;
+	    	show8 = true;
+	    	break;
+	    default:
+	    	show1 = false;
+	    	show2 = false;
+	    	show3 = false;
+	    	show4 = false;
+	    	show5 = false;
+	    	show6 = false;
+	    	show7 = false;
+	    	show8 = false;
+            break;
+        }
+	}
+    
+    
+    /**
+     * Leeren aller Events und anschließend neu laden
+     */
     public void loadModule() {
-    	
-    	
-    	for(int j = 0; j < 7; j++) {
+    	for(int j = 0; j < 9; j++) {
         	events[j].clear();
         }
         eventLoader();
     	
 	}
     
+	/**
+	 * Laden aller Events für die entsprechenden Einstellungen
+	 */
 	public void eventLoader() {        
         try{/* Laden der Datenbank*/
         	spSemester = findSPSelection(spSemesterSelection, spYearSelection);
@@ -243,7 +347,7 @@ public class ScheduleController implements Serializable {
         }
         catch(Exception e){}
         
-        for(int j = 0; j < 7; j++) {
+        for(int j = 0; j < 9; j++) {
 	        for(int i = 0; i < scheduleEntryList.size(); i++){
 	        	this.spe = new Stundenplaneintrag();
 	        	spe = scheduleEntryList.get(i);
@@ -271,6 +375,9 @@ public class ScheduleController implements Serializable {
         
 	}
 	
+	/**
+	 * Laden aller Listen aus der Datenbank
+	 */
 	public void selection() {
 		try{
             EntityManager em = emf.createEntityManager();
@@ -310,8 +417,7 @@ public class ScheduleController implements Serializable {
             teachingEventList.add(lva.getLvname());
         }
         
-        EntityManager em2 = emf.createEntityManager();
-        Query r = em2.createNamedQuery("Raum.findAll");
+        Query r = em.createNamedQuery("Raum.findAll");
         List RList = r.getResultList();
         for (Object RListitem : RList)
         {
@@ -319,8 +425,7 @@ public class ScheduleController implements Serializable {
             roomList.add(ra);
         }
         
-        EntityManager em3 = emf.createEntityManager();
-        Query s = em3.createNamedQuery("Sgmodul.findAll");
+        Query s = em.createNamedQuery("Sgmodul.findAll");
         List SList = s.getResultList();
         for (Object SListitem : SList)
         {
@@ -328,8 +433,7 @@ public class ScheduleController implements Serializable {
             sgmodulList.add(sg);
         }
 		
-		EntityManager em4 = emf.createEntityManager();
-        Query s1 = em4.createNamedQuery("Studiengang.findAll");
+        Query s1 = em.createNamedQuery("Studiengang.findAll");
         List S1List = s1.getResultList();
         for (Object S1Listitem : S1List)
         {
@@ -337,8 +441,7 @@ public class ScheduleController implements Serializable {
             courseList.add(sg1.getSGName());
         }
         
-        EntityManager em5 = emf.createEntityManager();
-        Query f = em5.createNamedQuery("Faculty.findAll");
+        Query f = em.createNamedQuery("Faculty.findAll");
         List FList = f.getResultList();
         for (Object FListitem : FList)
         {
@@ -346,8 +449,7 @@ public class ScheduleController implements Serializable {
             facultyList.add(f1.getFacName());
         }
         
-        EntityManager em6 = emf.createEntityManager();
-        Query sps = em6.createNamedQuery("Stundenplansemester.findAll");
+        Query sps = em.createNamedQuery("Stundenplansemester.findAll");
         List spssList = sps.getResultList();
         for (Object spsListitem : spssList)
         {
@@ -355,8 +457,7 @@ public class ScheduleController implements Serializable {
             spsList.add(spss);
         }
         
-        EntityManager em7 = emf.createEntityManager();
-        Query sps1 = em7.createNamedQuery("Stundenplansemester.findAllGroupBySpsemester");
+        Query sps1 = em.createNamedQuery("Stundenplansemester.findAllGroupBySpsemester");
         List sps11List = sps1.getResultList();
         for (Object sps1Listitem : sps11List)
         {
@@ -364,8 +465,7 @@ public class ScheduleController implements Serializable {
             sps1List.add(sps11.getSPSemester());
         }
         
-        EntityManager em8 = emf.createEntityManager();
-        Query sps2 = em8.createNamedQuery("Stundenplansemester.findAllGroupBySpJahr");
+        Query sps2 = em.createNamedQuery("Stundenplansemester.findAllGroupBySpJahr");
         List sps22List = sps2.getResultList();
         for (Object sps2Listitem : sps22List)
         {
@@ -386,24 +486,36 @@ public class ScheduleController implements Serializable {
 
 	}
 	
-	//Einfügen der Events
+    /**
+     * Einfügen der Events
+     * @throws Exception
+     */
     public void addEvent() throws Exception {
         
         String msg;
-        EntityManager em;
-        em = emf.createEntityManager();
+        GregorianCalendar calStart =  new GregorianCalendar();
+        GregorianCalendar calCreateStart =  new GregorianCalendar();
+        
+        GregorianCalendar calEnd =  new GregorianCalendar();
+        GregorianCalendar calCreateEnd =  new GregorianCalendar();
         
         try{
         	
         	weekdayStart = getWeekdayDate(day);
-        	weekdayStart.setHours(createWeekdayStart.getHours());
-        	weekdayStart.setMinutes(createWeekdayStart.getMinutes());
-        	weekdayStart.setSeconds(createWeekdayStart.getSeconds());
+        	calStart.setTime(weekdayStart);
+        	calCreateStart.setTime(createWeekdayStart);
+        	calStart.set(Calendar.HOUR_OF_DAY, calCreateStart.get(Calendar.HOUR_OF_DAY));
+        	calStart.set(Calendar.MINUTE, calCreateStart.get(Calendar.MINUTE));
+        	calStart.set(Calendar.SECOND, calCreateStart.get(Calendar.SECOND));
+        	weekdayStart = calStart.getTime();
 
         	weekdayEnd = getWeekdayDate(day);
-        	weekdayEnd.setHours(createWeekdayEnd.getHours());
-        	weekdayEnd.setMinutes(createWeekdayEnd.getMinutes());
-        	weekdayEnd.setSeconds(createWeekdayEnd.getSeconds());
+        	calEnd.setTime(weekdayEnd);
+        	calCreateEnd.setTime(createWeekdayEnd);
+        	calEnd.set(Calendar.HOUR_OF_DAY, calCreateEnd.get(Calendar.HOUR_OF_DAY));
+        	calEnd.set(Calendar.MINUTE, calCreateEnd.get(Calendar.MINUTE));
+        	calEnd.set(Calendar.SECOND, calCreateEnd.get(Calendar.SECOND));
+        	weekdayEnd = calEnd.getTime();
         	
             eventSelected.setSPEStartZeit(weekdayStart);
         	eventSelected.setSPEEndZeit(weekdayEnd);
@@ -422,10 +534,7 @@ public class ScheduleController implements Serializable {
             
             speFacadeLocal.create(eventSelected);
             
-            for(int j = 0; j < 7; j++) {
-	        	events[j].clear();
-	        }
-            eventLoader();
+            loadModule();
             
             msg = "Ereignis wurde hinzugefügt!";         
             addMessage("messages", msg);
@@ -433,31 +542,45 @@ public class ScheduleController implements Serializable {
             event = new DefaultScheduleEvent();
         }
         catch(Exception e){
-            msg = "Ereignis-Daten sind noch nicht vorhanden!";
+            msg = "Eventdaten wurden nicht übergeben!";
             addMessage("messages", msg);
             
         }
         
     }
     
-    //Bearbeiten der Events
+    /**
+     * Bearbeiten der Events
+     * @throws Exception
+     */
     public void editEvent() throws Exception {
 
     	String msg;
     	EntityManager em;
     	em = emf.createEntityManager();
+    	GregorianCalendar calStart =  new GregorianCalendar();
+        GregorianCalendar calCreateStart =  new GregorianCalendar();
+        
+        GregorianCalendar calEnd =  new GregorianCalendar();
+        GregorianCalendar calCreateEnd =  new GregorianCalendar();
 
     	try{
             em.find(Stundenplaneintrag.class, eventSelected.getSpid());            
-            weekdayStart = getWeekdayDate(day);
-        	weekdayStart.setHours(createWeekdayStart.getHours());
-        	weekdayStart.setMinutes(createWeekdayStart.getMinutes());
-        	weekdayStart.setSeconds(createWeekdayStart.getSeconds());
+        	weekdayStart = getWeekdayDate(day);
+        	calStart.setTime(weekdayStart);
+        	calCreateStart.setTime(createWeekdayStart);
+        	calStart.set(Calendar.HOUR_OF_DAY, calCreateStart.get(Calendar.HOUR_OF_DAY));
+        	calStart.set(Calendar.MINUTE, calCreateStart.get(Calendar.MINUTE));
+        	calStart.set(Calendar.SECOND, calCreateStart.get(Calendar.SECOND));
+        	weekdayStart = calStart.getTime();
 
         	weekdayEnd = getWeekdayDate(day);
-        	weekdayEnd.setHours(createWeekdayEnd.getHours());
-        	weekdayEnd.setMinutes(createWeekdayEnd.getMinutes());
-        	weekdayEnd.setSeconds(createWeekdayEnd.getSeconds());
+        	calEnd.setTime(weekdayEnd);
+        	calCreateEnd.setTime(createWeekdayEnd);
+        	calEnd.set(Calendar.HOUR_OF_DAY, calCreateEnd.get(Calendar.HOUR_OF_DAY));
+        	calEnd.set(Calendar.MINUTE, calCreateEnd.get(Calendar.MINUTE));
+        	calEnd.set(Calendar.SECOND, calCreateEnd.get(Calendar.SECOND));
+        	weekdayEnd = calEnd.getTime();
         	
             eventSelected.setSPEStartZeit(weekdayStart);
         	eventSelected.setSPEEndZeit(weekdayEnd);
@@ -480,27 +603,25 @@ public class ScheduleController implements Serializable {
             msg = "Ereignis wurde geändert!";
             addMessage("messages", msg);
             
-            for(int j = 0; j < 7; j++) {
-	        	events[j].clear();
-	        }
-	        eventLoader();
+            loadModule();
             
             event = new DefaultScheduleEvent();
        
 		}
 		catch(Exception e){
-		    msg = "Ereignis-Daten sind noch nicht vorhanden!";
+		    msg = "Eventdaten wurden nicht übergeben!";
 		    addMessage("messages", msg);
 		    
 		}
 		
     }
     
-    //Löschen von Events
+    /**
+     * Löschen von Events
+     * @throws Exception
+     */
     public void deleteEvent() throws Exception{
-        
-        String msg = "";        
-        
+        String msg;       
         
         EntityManager em = emf.createEntityManager();
         TypedQuery<Stundenplaneintrag> q = em.createNamedQuery("Stundenplaneintrag.findById",Stundenplaneintrag.class);
@@ -519,7 +640,10 @@ public class ScheduleController implements Serializable {
         events[semesterSelection].deleteEvent(event);
     }
     
-    //Auswahl der Events
+    /**
+     * Auswahl der Events
+     * @param e
+     */
     public void onEventSelect(SelectEvent<ScheduleEvent> e) {
         event = e.getObject();
         eventSelected = (Stundenplaneintrag) event.getData();
@@ -530,14 +654,16 @@ public class ScheduleController implements Serializable {
         roomId = eventSelected.getRaum().getRid();
         spsId = eventSelected.getStundenplansemester().getSpsid();
         
-        //day.label = eventSelected.getWochentag();
         day = weekDay.valueOfLabel(eventSelected.getWochentag());
         createWeekdayStart = eventSelected.getSPEStartZeit();
         createWeekdayEnd = eventSelected.getSPEEndZeit();
         
     }
-    
-    //Neue Events hinzufügen
+
+    /**
+     * Neue Events hinzufügen
+     * @param selectEvent
+     */
     public void onDateSelect(SelectEvent<LocalDateTime> selectEvent) {
         this.eventSelected = new Stundenplaneintrag();
         
@@ -556,13 +682,14 @@ public class ScheduleController implements Serializable {
         
     }
     
+    /**
+     * Event verschieben
+     * @param event
+     */
     public void onEventMove(ScheduleEntryMoveEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Event wurde verschoben.", "Delta:" + event.getDeltaAsDuration());
-        
         eventSelected = (Stundenplaneintrag) event.getScheduleEvent().getData();
         startTime = eventSelected.getSPEStartZeit();
         endTime = eventSelected.getSPEEndZeit();
-        //day = weekDay.valueOfLabel(eventSelected.getWochentag());
         
         long dura = event.getDeltaAsDuration().getSeconds();
         dura = dura * 1000;
@@ -596,13 +723,16 @@ public class ScheduleController implements Serializable {
                 addMessage("messages", msg);
         }
         catch(Exception e){
-            msg = "Ereignis-Daten sind noch nicht vorhanden!";
+            msg = "Eventdaten wurden nicht übergeben!";
             addMessage("messages", msg);
         }
     }
     
+    /**
+     * Verändern der Zeit durch hoch und runter ziehen des Events
+     * @param event
+     */
     public void onEventResize(ScheduleEntryResizeEvent event) {
-        FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Zeit des Events wurde verändert.", "Start-Delta:" + event.getDeltaStartAsDuration() + ", End-Delta: " + event.getDeltaEndAsDuration());
         eventSelected = (Stundenplaneintrag) event.getScheduleEvent().getData();
         startTime = eventSelected.getSPEStartZeit();
         endTime = eventSelected.getSPEEndZeit();
@@ -630,7 +760,7 @@ public class ScheduleController implements Serializable {
                 addMessage("messages", msg);
         }
         catch(Exception e){
-            msg = "Ereignis-Daten sind noch nicht vorhanden!";
+            msg = "Eventdaten wurden nicht übergeben!";
             addMessage("messages", msg);
         }
         
@@ -638,7 +768,11 @@ public class ScheduleController implements Serializable {
     }
     
     
-    // Fehler ausgeben
+    /**
+     * Fehler ausgeben
+     * @param toComponent
+     * @param message
+     */
     public void addMessage(String toComponent, String message){
         FacesMessage msg = new FacesMessage(message);
         FacesContext cxt = FacesContext.getCurrentInstance();
@@ -647,6 +781,7 @@ public class ScheduleController implements Serializable {
     
     //--------------------------------------------------------------
     
+    // Setter und Getter
     public ArrayList<String> getTeachingEventList() {
 		return teachingEventList;
 	}
@@ -831,7 +966,11 @@ public class ScheduleController implements Serializable {
 	}
 	
 	
-	// Listen Objekt finden
+	/**
+	 * Finden des Raumes durch die Raumid
+	 * @param rid
+	 * @return
+	 */
 	private Raum findRau(int rid) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -844,7 +983,12 @@ public class ScheduleController implements Serializable {
         }
         return room;
     }
-
+	
+	/**
+	 * Finden der Lehrveranstaltung durch den Lehrveranstaltungsname
+	 * @param lvname
+	 * @return
+	 */
 	private Lehrveranstaltungsart findLva(String lvname) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -858,6 +1002,11 @@ public class ScheduleController implements Serializable {
         return teachingEvent;
     }
 	
+	/**
+	 * Finden des Studiengangsmoduls durch die Studiengangsid
+	 * @param sgmid
+	 * @return
+	 */
 	private Sgmodul findSgm(int sgmid) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -871,6 +1020,11 @@ public class ScheduleController implements Serializable {
         return sgmodul;
     }
 	
+	/**
+	 * Finden des Stundenplansemesters durch die Stundenplansemesterid
+	 * @param sm
+	 * @return
+	 */
 	private Stundenplansemester findSP(int sm) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -884,8 +1038,35 @@ public class ScheduleController implements Serializable {
         return spSemester;
     }
 	
+	/**
+	 * Finden des Studienganges durch Studiengangsname und Fachbereich
+	 * @param courseSelec
+	 * @param facultySelec
+	 * @return
+	 */
+	private Studiengang findSG(String courseSelec, String facultySelec) {
+        try{
+            EntityManager em = emf.createEntityManager(); 
+            TypedQuery<Studiengang> query
+                = em.createNamedQuery("Studiengang.findBySGNameAndFacName",Studiengang.class);
+            query.setParameter("SGName", courseSelec);
+            query.setParameter("facName", facultySelec);
+            course = (Studiengang)query.getSingleResult();
+        }
+        catch(Exception e){   
+        }
+        return course;
+    }
+	
+	
 	//--------------------------------------------------------------
 	
+	/**
+	 * Finden des Stundenplansemesters durch SPSemester(Wintersemester oder Sommersemester) und des Stundenplansemesterjahres
+	 * @param sps
+	 * @param sm
+	 * @return
+	 */
 	private Stundenplansemester findSPSelection(String sps,int sm) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -899,16 +1080,6 @@ public class ScheduleController implements Serializable {
         }
         return spSemester;
     }	
-	
-	//--------------------------------------------------------------
-	
-	public static LocalDateTime asLocalDateTime(Date date) {
-	    return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-	}
-	
-	public static Date asDate(LocalDateTime localDateTime) {
-	    return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-	}
 
 	//--------------------------------------------------------------
 	
@@ -938,25 +1109,11 @@ public class ScheduleController implements Serializable {
 	public void setEvents(ScheduleModel[] events) {
 		this.events = events;
 	}
-
-	public static String formatDuration(Duration duration) {
-	    long seconds = duration.getSeconds();
-	    long absSeconds = Math.abs(seconds);
-	    String positive = String.format(
-	        "%d:%02d:%02d",
-	        absSeconds / 3600,
-	        (absSeconds % 3600) / 60,
-	        absSeconds % 60);
-	    return seconds < 0 ? "-" + positive : positive;
-	}
 	
-	public static Date addSeconds(Date date, Integer seconds) {
-	    Calendar cal = Calendar.getInstance();
-	    cal.setTime(date);
-	    cal.add(Calendar.SECOND, seconds);
-	    return cal.getTime();
-	  }
-	
+	/**
+	 * Setzt eine Calendarvariable auf den Anfang der aktuellen Woche
+	 * @return
+	 */
 	public static Date getWeekStartDate() {
 	    Calendar calendar = Calendar.getInstance();
 	    while (calendar.get(Calendar.DAY_OF_WEEK) != Calendar.MONDAY) {
@@ -965,12 +1122,22 @@ public class ScheduleController implements Serializable {
 	    return calendar.getTime();
 	}
 	
+	/**
+	 * Date in LocalDateTime umwandeln
+	 * @param dateToConvert
+	 * @return
+	 */
 	public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 	    return dateToConvert.toInstant()
 	      .atZone(ZoneId.systemDefault())
 	      .toLocalDateTime();
 	}
 	
+	/**
+	 * LocalDateTime in Date umwandeln
+	 * @param dateToConvert
+	 * @return
+	 */
 	Date convertToDateViaInstant(LocalDateTime dateToConvert) {
 	    return java.util.Date
 	      .from(dateToConvert.atZone(ZoneId.systemDefault())
@@ -991,41 +1158,6 @@ public class ScheduleController implements Serializable {
 
 	public void setLocalTime2(LocalDateTime localTime2) {
 		this.localTime2 = localTime2;
-	}
-
-	public Calendar getCalendar() {
-		return calendar;
-	}
-
-	public void setCalendar(Calendar calendar) {
-		this.calendar = calendar;
-	}
-	
-	private Date ConvertToDate(String dateString){
-	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	    Date convertedDate = new Date();
-	    try {
-	        convertedDate = dateFormat.parse(dateString);
-	    } catch (ParseException e) {
-	        // TODO Auto-generated catch block
-	    }
-	    return convertedDate;
-	}
-
-	public Calendar getCalendarStart() {
-		return calendarStart;
-	}
-
-	public void setCalendarStart(Calendar calendarStart) {
-		this.calendarStart = calendarStart;
-	}
-
-	public Calendar getCalendarEnd() {
-		return calendarEnd;
-	}
-
-	public void setCalendarEnd(Calendar calendarEnd) {
-		this.calendarEnd = calendarEnd;
 	}
 
 	public TimeZone getTimeZoneDefault() {
@@ -1125,7 +1257,7 @@ public class ScheduleController implements Serializable {
 	public void setWeekdayEnd(Date weekdayEnd) {
 		this.weekdayEnd = weekdayEnd;
 	}
-	
+	// Enum Weekday
 	public enum weekDay {
 		Montag("Montag"), Dienstag("Dienstag"), Mittwoch("Mittwoch"), Donnerstag("Donnerstag"), Freitag("Freitag"), Samstag("Samstag");
 		 
@@ -1148,9 +1280,16 @@ public class ScheduleController implements Serializable {
 		    return null;
 		}
 	}
-	
+
+	/**
+	 * Enum weekDay wird die jeweilige Calendarvariable umgewandelt
+	 * @param weekDay
+	 * @return
+	 */
 	public static Date getWeekdayDate(weekDay weekDay) {
+		Date date = getWeekStartDate();
 	    Calendar calendar = Calendar.getInstance();
+	    calendar.setTime(date);
 	    
 	    switch(weekDay) {
 	    case Montag:
@@ -1217,5 +1356,478 @@ public class ScheduleController implements Serializable {
 	public void setCreateWeekdayEnd(Date createWeekdayEnd) {
 		this.createWeekdayEnd = createWeekdayEnd;
 	}
+
+	public Studiengang getCourse() {
+		return course;
+	}
+
+	public void setCourse(Studiengang course) {
+		this.course = course;
+	}
+
+	public boolean isShow1() {
+		return show1;
+	}
+
+	public void setShow1(boolean show1) {
+		this.show1 = show1;
+	}
+
+	public boolean isShow2() {
+		return show2;
+	}
+
+	public void setShow2(boolean show2) {
+		this.show2 = show2;
+	}
+
+	public boolean isShow3() {
+		return show3;
+	}
+
+	public void setShow3(boolean show3) {
+		this.show3 = show3;
+	}
+
+	public boolean isShow4() {
+		return show4;
+	}
+
+	public void setShow4(boolean show4) {
+		this.show4 = show4;
+	}
+
+	public boolean isShow5() {
+		return show5;
+	}
+
+	public void setShow5(boolean show5) {
+		this.show5 = show5;
+	}
+
+	public boolean isShow6() {
+		return show6;
+	}
+
+	public void setShow6(boolean show6) {
+		this.show6 = show6;
+	}
+
+	public boolean isShow7() {
+		return show7;
+	}
+
+	public void setShow7(boolean show7) {
+		this.show7 = show7;
+	}
+
+	public boolean isShow8() {
+		return show8;
+	}
+
+	public void setShow8(boolean show8) {
+		this.show8 = show8;
+	}
+
+	public GregorianCalendar getCalendarStart() {
+		return calendarStart;
+	}
+
+	public void setCalendarStart(GregorianCalendar calendarStart) {
+		this.calendarStart = calendarStart;
+	}
+
+	public GregorianCalendar getCalendarEnd() {
+		return calendarEnd;
+	}
+
+	public void setCalendarEnd(GregorianCalendar calendarEnd) {
+		this.calendarEnd = calendarEnd;
+	}
+	//--------------------------------------------------------
+	
+	// Exportieren
+	
+/*--	public void preProcessPDF(Object doc) {
+        Document pdf = (Document) doc;
+        pdf.open();
+        pdf.setPageSize(PageSize.A4);
+        pdf.setMargins((float) 2.5, (float) 2.5, (float) 2.5, (float) 2.5);
+
+        createPDF(pdf);
+    }
+
+    public void postProcessPDF(Object doc) {
+        try {
+            Document pdf = (Document) doc;
+            pdf.close();
+        } catch (Exception  ex) {
+            //LOG.log(Level.SEVERE, ex.getMessage());
+        	Logger.getLogger(ConsoleHandler.class.getName())
+            .log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void createPDF(Document pdfdocument) {
+        // 1 cm = 0,393700787 inch
+        // 72 user unit = 1 inch
+        // 1 cm = 28,346456664 user unit
+
+//        OutputStream file = null;
+//        if (this.pruefungenEJB != null) {
+//            System.out.println("not null");
+//        } else {
+//            System.out.println("null");
+//        }
+        try {
+            PdfPTable pdfTable;
+
+//            file = new FileOutputStream(new File("SamplePDF.pdf"));
+            //float cm = 28.35f;
+            //float margin = 0.8f * cm;
+            //float marginLeft   = margin;
+            //float marginRight  = margin;
+            //float marginTop    = margin;
+            //float marginBottom = margin;
+//            Font font = new Font(Font.HELVETICA, 11);
+//            Document pdfdocument = new Document(PageSize.A4, marginLeft, marginRight, marginTop, marginBottom );
+//            PdfWriter pdfw = PdfWriter.getInstance(document, file);
+            pdfdocument.open();
+            //pdfdocument.setPageSize(PageSize.A4);
+            //pdfdocument.setMargins(marginLeft, marginRight, marginTop, marginBottom);
+
+//            document.add(new Paragraph("First iText PDF"));
+//            document.add(new Paragraph(new Date().toString()));
+//            document.addAuthor("Krishna Srinivasan");
+//            document.addCreationDate();
+//            document.addCreator("JavaBeat");
+//            document.addTitle("Sample PDF");
+//            //Create Paragraph
+//            Paragraph paragraph = new Paragraph("Title 1",new Font(Font.TIMES_ROMAN, 18,Font.BOLD));
+//            //New line
+//            paragraph.add(new Paragraph(" "));
+//            paragraph.add("Test Paragraph");
+//            paragraph.add(new Paragraph(" "));
+//            document.add(paragraph);
+//            
+//            //Create a table in PDF
+//            pdfTable = new PdfPTable(3);
+//            PdfPCell cell1 = new PdfPCell(new Phrase("Table Header 1"));
+//            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+//            pdfTable.addCell(cell1);
+//            
+//            cell1 = new PdfPCell(new Phrase("Table Header 2"));
+//            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+//            pdfTable.addCell(cell1);
+//            
+//            cell1 = new PdfPCell(new Phrase("Table Header 3"));
+//            cell1.setHorizontalAlignment(Element.ALIGN_CENTER);
+//            pdfTable.addCell(cell1);
+//            
+//            pdfTable.setHeaderRows(1);
+//            pdfTable.addCell("Row 1 Col 1");
+//            pdfTable.addCell("Row 1 Col 2");
+//            pdfTable.addCell("Row 1 Col 3");
+//            pdfTable.addCell("Row 2 Col 1");
+//            pdfTable.addCell("Row 2 Col 2");
+//            pdfTable.addCell("Row 2 Col 3");
+//            document.add(pdfTable);
+//            
+//            
+//            document.add( new Paragraph(""));
+/*--            pdfTable = new PdfPTable(6);
+            pdfTable.setWidthPercentage(80.0f); //nur 80% wg. Margins
+            pdfTable.setSpacingBefore(15f);
+            pdfTable.setWidths(new float[]{30f, 10f, 60f, 30f, 10f, 10f});
+
+            CreatePDFHeader(pdfTable);
+            CreatePDFFooter(pdfTable);
+
+            pdfTable.setHeaderRows(3 + 1); // Alle Zeilen Header + Footer
+            pdfTable.setFooterRows(1);
+            pdfTable.completeRow();
+
+            CreatePDFBody(pdfTable);
+
+            pdfdocument.add(pdfTable);
+            //pdfdocument.close();
+            //file.close();
+            //--Seid jdk 8 wird ConsoleHandler anstatt PrintHandler benutzt
+        } catch (Exception ex) {
+            Logger.getLogger(ConsoleHandler.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+//        finally {
+//            try {
+//                file.close();
+//            } catch (IOException ex) {
+//                Logger.getLogger(PrintHandler.class.getName())
+//                      .log(Level.SEVERE, null, ex);
+//            }
+//        }
+    }
+/*--
+    public void CreatePDFFooter(PdfPTable table) {
+
+        Font font = FontFactory.getFont("Arial", 10, Font.BOLD);
+        PdfPCell cell;
+        PdfPTable subtable;
+        //ArrayList<PdfPCell> rightcells = new ArrayList();
+        //ArrayList<PdfPCell> leftcells = new ArrayList();
+
+        // Erstelldatum und Ort
+        // Änderungen in Rot
+        // Prof. Dr.-Ing. Name
+        // Prüfungsausschussvorsitzender
+        // DONE (09/2020): Lesen der Prüfformen aus der Stringliste
+        String[] lefttexts = new String[5];
+        lefttexts[0] = "Bielefeld, " + new SimpleDateFormat("dd.MM.yyyy",
+                Locale.GERMAN).format(new Date());
+        //lefttexts[1] = "";
+        //lefttexts[2] = "Änderungen i.d.R. hervorgehoben.";
+        //lefttexts[3] = this.currentPAVString;
+        //lefttexts[4] = "Prüfungsausschussvorsitzender";
+
+        subtable = new PdfPTable(1);
+        for (int i = 0; i < 1; i++) {
+            String text = lefttexts[i];
+            cell = new PdfPCell(new Phrase(text, font));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            if (i == 0) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.TOP);
+            } else if (i < 4) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            }
+            subtable.addCell(cell);
+        }
+        cell = new PdfPCell(subtable);
+        cell.setColspan(3);
+        table.addCell(cell);
+
+        // Legende
+        // jetzt aus der Stringliste
+        /*int index = 1;
+        String[] righttexts = new String[this.stringListPruefungsformen.size() + 1];
+        righttexts[0] = "Legende:";
+        for (String pf : stringListPruefungsformen) {
+            righttexts[index++] = pf;
+        }
+
+        subtable = new PdfPTable(1);
+        //Obere Grenze "=" wegen String "Legende" (kommt als String hinzu!)
+        for (int i = 0; i <= this.stringListPruefungsformen.size(); i++) {
+            String text = righttexts[i];
+            cell = new PdfPCell(new Phrase(text, font));
+            cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+            if (i == 0) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.TOP);
+            } else if (i < this.stringListPruefungsformen.size()) {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT);
+            } else {
+                cell.setBorder(Rectangle.LEFT | Rectangle.RIGHT | Rectangle.BOTTOM);
+            }
+            subtable.addCell(cell);
+        }
+
+        cell = new PdfPCell(subtable);
+        cell.setColspan(3);
+        table.addCell(cell);*/
+
+/*--    }
+
+    public void CreatePDFBody(PdfPTable table) {
+        String text;
+        
+        spSemester = findSPSelection(spSemesterSelection, spYearSelection);
+        spsId = spSemester.getSpsid();
+        EntityManager em = emf.createEntityManager();
+        Query query = em.createNamedQuery("Stundenplaneintrag.findAllPlanD", Stundenplaneintrag.class);
+        query.setParameter("stgang", courseSelection);
+        query.setParameter("facName", facultySelection);
+        query.setParameter("spsid", spsId);
+        scheduleEntryList = query.getResultList();
+
+//       List<Pruefplaneintrag> all = pruefungenEJB.findAll();
+//        List<Stundenplaneintrag> all
+//                = pruefungenEJB.findAllByPruefPeriodeAndStudiengang(
+//                        currentPruefperiode, currentStudiengang);
+//       PdfPCell cell = table.getDefaultCell();
+        /*
+        System.out.println("Padding " + "top " + cell.getPaddingTop() + 
+                                        "bottom" + cell.getPaddingBottom() +
+                "left " + cell.getPaddingLeft() + 
+                "right " + cell.getPaddingRight() );
+        System.out.println(
+                ">width "   + cell.getBorderWidthLeft()
+                + "top "   + cell.getBorderWidthTop()
+                + "bottom "+ cell.getBorderWidthBottom()
+                + "left "  + cell.getBorderWidthLeft()
+                + "right " + cell.getBorderWidthRight()
+                );
+         */
+//        table.getDefaultCell().setPadding(2.0f);
+//        table.getDefaultCell().setPaddingBottom(50.0f);
+
+        //for (Stundenplaneintrag eintrag : scheduleEntryList) {
+/*--    	for(int i = 0; i < scheduleEntryList.size(); i++){
+        	this.spe = new Stundenplaneintrag();
+        	spe = scheduleEntryList.get(i);
+            /*
+            System.out.println("Prüfung " + pruefung.getPPEDatZeit() + " " 
+                               + pruefung.getSgmid().getModID().getModName() );
+             */
+
+/*--            Date startdatum = spe.getSPEStartZeit();
+            //boolean renderDate = RenderDate(startdatum);
+            //boolean withTopBorder = renderDate;
+
+            // Datum
+            text = "";
+            /*if (renderDate) {
+                text += new SimpleDateFormat("dd.MM.yyyy (EEEE)",
+                        Locale.GERMAN).format(startdatum);
+            }*/
+/*--            text += new SimpleDateFormat("dd.MM.yyyy (EEEE)", Locale.GERMAN).format(startdatum);
+            table.addCell(CreateBodyCell(text, Element.ALIGN_LEFT, 1));
+
+            // Prüfung kurz
+            text = "";
+            text += spe.getSgmodul().getModul().getModKuerzel();
+
+
+            table.addCell(CreateBodyCell(text, Element.ALIGN_LEFT, 1));
+
+            // Prüfung lang
+            text = "";
+            text += spe.getSgmodul().getModul().getModName();
+
+            table.addCell(CreateBodyCell(text, Element.ALIGN_LEFT, 1));;
+
+            // Prüfer
+            /*text = "";
+            text += eintrag.getErstPruefID().getPrName();
+            if (eintrag.getZweitPruefID() != null) {
+                text += " / ";
+                text += eintrag.getZweitPruefID().getPrName();
+            }
+
+            table.addCell(CreateBodyCell(text, Element.ALIGN_LEFT, 1));*/
+
+            // Form
+            /*text = "";
+            text += eintrag.getPfid().getPForm().substring(0, 1);
+
+            table.addCell(CreateBodyCell(text, Element.ALIGN_CENTER, 1));*/
+
+            // Dauer
+/*--            text = "";
+            text += spe.getLehrveranstaltungsart().getLvdauer();
+
+            table.addCell(CreateBodyCell(text, Element.ALIGN_CENTER, 1));
+
+        }
+    }
+
+    public PdfPCell CreateBodyCell(String text, int Alignment, int Colspan) {
+
+        PdfPCell cell;
+
+        Font font = FontFactory.getFont("Arial", 10, Font.NORMAL);
+        cell = new PdfPCell(new Phrase(text, font));
+        cell.setColspan(Colspan);
+        cell.setHorizontalAlignment(Alignment);
+
+        return cell;
+    }
+
+    public PdfPCell CreateHeaderCell(String text, int Alignment, int Colspan) {
+
+        PdfPCell cell;
+        Font font = FontFactory.getFont("Arial", 10, Font.BOLD);
+        cell = new PdfPCell(new Phrase(text, font));
+        cell.setColspan(Colspan);
+        cell.setHorizontalAlignment(Alignment);
+
+        return cell;
+    }
+
+    public void CreatePDFHeader(PdfPTable table) {
+
+        String text;
+
+        //-----------------------------
+        // ERSTE Zeile
+        // Stand
+        text = "Version: " + new SimpleDateFormat("dd.MM.yyyy",
+                Locale.GERMAN).format(new Date());
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_RIGHT, 6));
+
+        //-----------------------------
+        // ZWEITE Zeile
+        // Fachbereich
+        text = "" + facultySelection;
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_LEFT, 2));
+        // Studiengang
+        text = "" + courseSelection;
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_LEFT, 2));
+
+        // Semester Jahr Termin
+        text = "";
+        text += spSemesterSelection;
+        text += " ";
+        text += spYearSelection;
+
+        //text += "        ";
+        //if (currentPruefperiode.getPruefTermin().startsWith("T1")) {
+        //    text += "1. Termin";
+        //} else {
+        //    text += "2. Termin";
+        //}
+        //table.addCell(CreateHeaderCell(text, Element.ALIGN_LEFT, 1));
+
+        // Startdatum - Enddatum
+        text = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN).format(
+                spSemester.getStartDatum());
+        text += " - ";
+        text += new SimpleDateFormat("dd.MM.yyyy", Locale.GERMAN).format(
+                spSemester.getEndDatum());
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_CENTER, 3));
+
+        //-----------------------------
+        // DRITTE Zeile
+        // Datum
+        text = "Datum";
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_CENTER, 1));
+
+        // Fach
+        text = "Modul";
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_CENTER, 2));
+
+        // Prüfer
+        text = "Prüfer";
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_CENTER, 1));
+
+        // Form
+        text = "Form";
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_CENTER, 1));
+
+        // Dauer
+        text = "Dauer";
+        table.addCell(CreateHeaderCell(text, Element.ALIGN_CENTER, 1));
+
+        // Zeit
+        //text = "Zeit";
+        //table.addCell( CreateHeaderCell(text, Element.ALIGN_CENTER, 1));
+        // Raum
+        //text = "Raum";
+        //table.addCell( CreateHeaderCell(text, Element.ALIGN_CENTER, 1));
+//        cell.setHorizontalAlignment(Element.ALIGN_LEFT);
+//        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+//        cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+//        
+    }--*/
+	
 	
 }

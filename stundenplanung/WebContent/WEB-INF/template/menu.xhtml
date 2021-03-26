@@ -28,7 +28,7 @@
         <p:submenu label="Anzeigen" >
             <p:menuitem value="Stundenplan" action="/showspe.xhtml?faces-redirect=true"  /> 
 			<p:menuitem value="StundenplanProf" action="/showspeprof.xhtml?faces-redirect=true"  />
-            <p:menuitem value="Kopierer" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/scheduleCopie.xhtml?faces-redirect=true"  /> 
+            <p:menuitem value="Kopierer" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/scheduleCopy.xhtml?faces-redirect=true"  /> 
             <p:menuitem value="Modul" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/showmodul.xhtml?faces-redirect=true"  />
             <p:menuitem value="Pruefcodes" rendered="#{(loginController.isLoggedIn and (loginController.isAdm or loginController.isSgl or loginController.isRzp))}" action="/showpruefcode.xhtml?faces-redirect=true"  />
             <p:menuitem value="Benutzer" rendered="#{(loginController.isLoggedIn and loginController.isAdm)}" action="/showaccount.xhtml?faces-redirect=true"  />                                                               

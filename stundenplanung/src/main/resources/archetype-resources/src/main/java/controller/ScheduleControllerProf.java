@@ -1,10 +1,6 @@
 package controller;
 
-import model.Faculty;
-import model.Studiengang;
-import model.Lehrveranstaltungsart;
-import model.Raum;
-import model.Sgmodul;
+
 import model.Stundenplaneintrag;
 import model.Stundenplansemester;
 import model.Dozenten;
@@ -12,53 +8,37 @@ import model.Dozenten;
 import javax.inject.Named;
 import javax.enterprise.context.SessionScoped;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
+
 import java.time.LocalDateTime;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDate;
+
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
+
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.faces.application.FacesMessage;
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
+
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.HeuristicRollbackException;
-import javax.transaction.NotSupportedException;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+
 import javax.transaction.UserTransaction;
-import org.primefaces.event.ScheduleEntryMoveEvent;
-import org.primefaces.event.ScheduleEntryResizeEvent;
-import org.primefaces.event.SelectEvent;
+
 import org.primefaces.model.DefaultScheduleEvent;
-import org.primefaces.model.DefaultScheduleModel;
+
 import org.primefaces.model.LazyScheduleModel;
 import org.primefaces.model.ScheduleEvent;
 import org.primefaces.model.ScheduleModel;
-import java.util.Calendar;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
-import javax.ejb.EJB;
 
-import EJB.FacultyFacadeLocal;
-import EJB.StundenplaneintragFacadeLocal;
+
 
 /**
 *
@@ -79,6 +59,9 @@ public class ScheduleControllerProf implements Serializable{
 	private Dozenten professor;
 	private Stundenplansemester spSemester;
 	
+	/**
+	 * Initialisierung
+	 */
 	@PostConstruct
 	public void init() {
         selection();
@@ -111,6 +94,9 @@ public class ScheduleControllerProf implements Serializable{
     
     //-------------------------------------------------------------------------------------------------
 	
+    /**
+     * Toggelt die showWeekend Variable
+     */
     public void weekendChange() {
     	if (showWeekends == false) {
     		showWeekends = true;
@@ -119,6 +105,9 @@ public class ScheduleControllerProf implements Serializable{
     	}
     }
     
+	/**
+	 * Laden aller Listen aus der Datenbank
+	 */
 	public void selection() {
 		EntityManager em = emf.createEntityManager();
         Query q = em.createNamedQuery("Dozenten.findAll");
@@ -153,11 +142,18 @@ public class ScheduleControllerProf implements Serializable{
         spsId = spSemester.getSpsid();
 	}
 	
-public void loadModule() {
+	/**
+	 * Leeren aller Events und anschließend neu laden
+	 */
+	public void loadModule() {
         lazyEventModel.clear();
         eventLoader();
 	}
 	
+	// 
+	/**
+	 * Laden der Events
+	 */
 	public void eventLoader() {        
         try{/* Laden der Datenbank*/
         	spSemester = findSPSelection(spSemesterSelection, spYearSelection);
@@ -196,6 +192,11 @@ public void loadModule() {
 	
 	//-------------------------------------------------------------------------------------------------
 	
+	/**
+	 * Umwandlung von Date to LocalDateTime
+	 * @param dateToConvert
+	 * @return
+	 */
 	public LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {
 	    return dateToConvert.toInstant()
 	      .atZone(ZoneId.systemDefault())
@@ -273,6 +274,12 @@ public void loadModule() {
 		this.showWeekends = showWeekends;
 	}
 	
+	/**
+	 * Finden des Stundenplansemesters durch Stundenplansemester und Stundenplansemesterjahr
+	 * @param sps
+	 * @param sm
+	 * @return
+	 */
 	private Stundenplansemester findSPSelection(String sps,int sm) {
         try{
             EntityManager em = emf.createEntityManager(); 
@@ -334,8 +341,5 @@ public void loadModule() {
 	public void setSpsId(int spsId) {
 		this.spsId = spsId;
 	}
-	
-	
-	
 
 }

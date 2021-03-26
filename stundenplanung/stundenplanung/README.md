@@ -1,2 +1,0 @@
-# Studienarbeit
-Datenbankprojekt
